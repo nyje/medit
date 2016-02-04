@@ -1201,15 +1201,13 @@ moo_get_user_cache_dir (void)
 void
 moo_set_user_cache_dir (const char *path)
 {
-    G_LOCK (moo_user_cache_dir);
+    g_return_if_fail (moo_is_main_thread ());
 
     if (moo_user_cache_dir)
         g_critical ("user cache dir already set");
 
     g_free (moo_user_cache_dir);
     moo_user_cache_dir = g_strdup (path);
-
-    G_UNLOCK (moo_user_cache_dir);
 }
 
 #ifdef __WIN32__
@@ -1290,15 +1288,13 @@ moo_get_user_data_dir (void)
 void
 moo_set_user_data_dir (const char *path)
 {
-    G_LOCK (moo_user_data_dir);
+    g_return_if_fail (moo_is_main_thread ());
 
     if (moo_user_data_dir)
         g_critical ("user data dir already set");
 
     g_free (moo_user_data_dir);
     moo_user_data_dir = g_strdup (path);
-
-    G_UNLOCK (moo_user_data_dir);
 }
 
 void
