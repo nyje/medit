@@ -646,11 +646,15 @@ run_async (const char     *cmd_line,
         real_env = _moo_env_add (envp);
 
         if (screen)
+        {
             result = gdk_spawn_on_screen (screen, working_dir, (char**) argv, real_env,
                                           flags, NULL, NULL, NULL, &error);
+        }
         else
-            result = g_spawn_async (working_dir, (char**) argv, real_env,
-                                    flags, NULL, NULL, NULL, &error);
+        {
+            result = g_spawn_async(working_dir, (char**) argv, real_env,
+                                   flags, NULL, NULL, NULL, &error);
+        }
 
         g_strfreev (real_env);
     }

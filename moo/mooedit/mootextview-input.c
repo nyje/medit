@@ -457,7 +457,7 @@ _moo_text_view_update_text_cursor (MooTextView *view,
 static void
 set_invisible_cursor (GdkWindow *window)
 {
-    GdkDisplay *display = gdk_drawable_get_display (window);
+    GdkDisplay *display = gdk_window_get_display (window);
     GdkCursor *cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
     gdk_window_set_cursor (window, cursor);
     gdk_cursor_unref (cursor);
@@ -550,7 +550,7 @@ left_window_click (GtkTextView    *text_view,
     MooTextView *view = MOO_TEXT_VIEW (text_view);
 
     *line_numbers = FALSE;
-    gdk_drawable_get_size (event->window, &window_width, NULL);
+    window_width = gdk_window_get_width (event->window);
 
     if (view->priv->lm.show_icons && event->x >= 0 && event->x < view->priv->lm.icon_width)
     {

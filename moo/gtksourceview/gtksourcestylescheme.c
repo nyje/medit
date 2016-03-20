@@ -692,7 +692,7 @@ apply_cursor_style (GtkSourceStyleScheme *scheme,
 
 		if (primary != NULL && secondary == NULL)
 		{
-			secondary_color = widget->style->base[GTK_STATE_NORMAL];
+			secondary_color = gtk_widget_get_style(widget)->base[GTK_STATE_NORMAL];
 			secondary_color.red = ((gint) secondary_color.red + primary->red) / 2;
 			secondary_color.green = ((gint) secondary_color.green + primary->green) / 2;
 			secondary_color.blue = ((gint) secondary_color.blue + primary->blue) / 2;
