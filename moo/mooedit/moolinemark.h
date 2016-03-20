@@ -86,7 +86,7 @@ void        moo_line_mark_set_markup            (MooLineMark    *mark,
 const char *moo_line_mark_get_stock_id          (MooLineMark    *mark);
 GdkPixbuf  *moo_line_mark_get_pixbuf            (MooLineMark    *mark);
 const char *moo_line_mark_get_markup            (MooLineMark    *mark);
-GdkGC      *moo_line_mark_get_background_gc     (MooLineMark    *mark);
+const GdkColor *moo_line_mark_get_background    (MooLineMark    *mark);
 
 
 G_END_DECLS

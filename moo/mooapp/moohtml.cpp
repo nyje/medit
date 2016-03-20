@@ -1317,7 +1317,8 @@ moo_html_size_allocate_real (GtkWidget *widget,
     window = gtk_text_view_get_window (GTK_TEXT_VIEW (widget), GTK_TEXT_WINDOW_TEXT);
     g_return_if_fail (window != NULL);
 
-    gdk_drawable_get_size (window, &child_width, &height);
+    child_width = gdk_window_get_width (window);
+    height = gdk_window_get_height (window);
     border_width = gtk_container_get_border_width (GTK_CONTAINER (widget));
     child_width -= 2 * border_width + 2 * widget->style->xthickness +
             gtk_text_view_get_left_margin (GTK_TEXT_VIEW (widget)) +
