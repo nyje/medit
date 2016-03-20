@@ -257,9 +257,9 @@ list_row_activated (GtkWidget *widget)
     window = NULL;
 
   if (window
-      && widget != window->default_widget
-      && !(widget == window->focus_widget &&
-	   (!window->default_widget || !GTK_WIDGET_SENSITIVE (window->default_widget))))
+      && widget != gtk_window_get_default_widget(window)
+      && !(widget == gtk_window_get_focus(window) &&
+      (!gtk_window_get_default_widget(window) || !GTK_WIDGET_SENSITIVE(gtk_window_get_default_widget(window)))))
     {
       gtk_window_activate_default (window);
     }
