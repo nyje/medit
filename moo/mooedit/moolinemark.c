@@ -27,7 +27,6 @@
 
 struct MooLineMarkPrivate {
     GdkColor background;
-    GdkGC *background_gc;
 
     char *stock_id;
     GdkPixbuf *pixbuf;
@@ -63,7 +62,6 @@ static void     moo_line_mark_get_property  (GObject        *object,
                                              GParamSpec     *pspec);
 
 static void     moo_line_mark_changed       (MooLineMark    *mark);
-static void     update_background_gc        (MooLineMark    *mark);
 static void     update_pixbuf               (MooLineMark    *mark);
 
 static void     moo_line_mark_deleted_real  (MooLineMark    *mark);
@@ -196,8 +194,6 @@ moo_line_mark_finalize (GObject *object)
 
     if (mark->priv->pixbuf)
         g_object_unref (mark->priv->pixbuf);
-    if (mark->priv->background_gc)
-        g_object_unref (mark->priv->background_gc);
 
     g_free (mark->priv->stock_id);
     g_free (mark->priv->markup);
@@ -331,8 +327,6 @@ moo_line_mark_set_background_gdk (MooLineMark    *mark,
             changed = TRUE;
         }
     }
-
-    update_background_gc (mark);
 
     if (notify_set || notify_bg)
     {
@@ -560,59 +554,6 @@ moo_line_mark_get_pixbuf (MooLineMark *mark)
 
 
 static void
-update_background_gc (MooLineMark *mark)
-{
-    GHashTable *cache;
-    GdkGC *gc;
-
-    if (!mark->priv->realized || !mark->priv->background_set)
-    {
-        if (mark->priv->background_gc)
-            g_object_unref (mark->priv->background_gc);
-        mark->priv->background_gc = NULL;
-        return;
-    }
-
-    g_assert (mark->priv->widget != NULL);
-    g_return_if_fail (GTK_IS_WIDGET (mark->priv->widget));
-    g_return_if_fail (GTK_WIDGET_REALIZED (mark->priv->widget));
-
-    cache = g_object_get_data (G_OBJECT (mark->priv->widget),
-                               "moo-line-mark-colors");
-
-    if (!cache)
-    {
-        cache = g_hash_table_new_full ((GHashFunc) gdk_color_hash,
-                                       (GEqualFunc) gdk_color_equal,
-                                       (GDestroyNotify) gdk_color_free,
-                                       g_object_unref);
-        g_object_set_data_full (G_OBJECT (mark->priv->widget),
-                                "moo-line-mark-colors", cache,
-                                (GDestroyNotify) g_hash_table_destroy);
-    }
-
-    gc = g_hash_table_lookup (cache, &mark->priv->background);
-
-    if (!gc)
-    {
-        GdkColormap *colormap;
-
-        colormap = gtk_widget_get_colormap (mark->priv->widget);
-        g_return_if_fail (colormap != NULL);
-
-        gc = gdk_gc_new (mark->priv->widget->window);
-        gdk_colormap_alloc_color (colormap,
-                                  &mark->priv->background,
-                                  TRUE, TRUE);
-        gdk_gc_set_foreground (gc, &mark->priv->background);
-        g_hash_table_insert (cache, gdk_color_copy (&mark->priv->background), gc);
-    }
-
-    mark->priv->background_gc = g_object_ref (gc);
-}
-
-
-static void
 update_pixbuf (MooLineMark *mark)
 {
     GHashTable *cache;
@@ -665,7 +606,6 @@ _moo_line_mark_realize (MooLineMark *mark,
     mark->priv->realized = TRUE;
     mark->priv->widget = widget;
 
-    update_background_gc (mark);
     update_pixbuf (mark);
 }
 
@@ -679,10 +619,6 @@ _moo_line_mark_unrealize (MooLineMark *mark)
     mark->priv->realized = FALSE;
     mark->priv->widget = NULL;
 
-    if (mark->priv->background_gc)
-        g_object_unref (mark->priv->background_gc);
-    mark->priv->background_gc = NULL;
-
     if (mark->priv->pixbuf && mark->priv->stock_id)
     {
         g_object_unref (mark->priv->pixbuf);
@@ -691,11 +627,11 @@ _moo_line_mark_unrealize (MooLineMark *mark)
 }
 
 
-GdkGC *
-moo_line_mark_get_background_gc (MooLineMark *mark)
+const GdkColor *
+moo_line_mark_get_background(MooLineMark *mark)
 {
     g_return_val_if_fail (MOO_IS_LINE_MARK (mark), NULL);
-    return mark->priv->background_gc;
+    return mark->priv->background_set ? &mark->priv->background : NULL;
 }
 
 
