@@ -110,6 +110,8 @@ SET(mooutils_sources
 	mooutils/moouixml.cpp
 	mooutils/mooundo.cpp
 	mooutils/mooundo.h
+	mooutils/mooundo2.cpp
+	mooutils/mooundo2.h
 	mooutils/mooutils.h
 	mooutils/mooutils-debug.h
 	mooutils/mooutils-enums.c

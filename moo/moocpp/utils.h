@@ -115,14 +115,62 @@ class raii
 public:
     using func_type = std::function<void()>;
 
-    raii(func_type f) : m_f(std::move(f)) {}
-    ~raii() { m_f(); }
+    raii(func_type&& f) : m_f(std::move(f)) {}
+    ~raii() { if (m_do) m_f(); }
+
+    raii(raii&& other) : m_f(move(other.m_f)) { other.m_do = false; }
 
     MOO_DISABLE_COPY_OPS(raii);
 
 private:
     func_type m_f;
+    bool m_do = true;
 };
+
+template<typename Func>
+raii on_scope_exit(Func&& f)
+{
+    return raii{ move(f) };
+}
+
+template<typename T>
+class value_restore
+{
+public:
+    value_restore(T& x)
+        : m_r(x)
+        , m_v(x)
+    {
+    }
+
+    value_restore(value_restore&& other)
+        : m_r(other.m_r)
+        , m_v(std::move(other.m_v))
+    {
+        other.m_do = false;
+    }
+
+    ~value_restore()
+    {
+        if (m_do)
+            m_r = m_v;
+    }
+
+    MOO_DISABLE_COPY_OPS(value_restore);
+
+private:
+    T& m_r;
+    T m_v;
+    bool m_do = true;
+};
+
+template<typename T>
+value_restore<T> set_temp_value(T& x, const T& tmp_val)
+{
+    value_restore<T> r(x);
+    x = tmp_val;
+    return r;
+}
 
 } // namespace moo
 
