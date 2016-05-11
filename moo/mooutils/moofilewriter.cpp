@@ -248,7 +248,7 @@ moo_local_file_writer_new (g::File            file,
             g_set_error (&error, G_FILE_ERROR,
                          mgw_file_error_from_errno (err),
                          _("Could not create folder %s: %s"),
-                         display_name, mgw_strerror (err));
+                         display_name.get(), mgw_strerror (err));
             return nullptr;
         }
     }

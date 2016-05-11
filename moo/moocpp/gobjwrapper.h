@@ -78,12 +78,12 @@ public:
 
     void ref()
     {
-        g_object_ref (gobj());
+        g_object_ref (obj_ref_type::gobj());
     }
 
     void unref()
     {
-        g_object_unref (gobj());
+        g_object_unref (obj_ref_type::gobj());
     }
 
     MOO_DISABLE_COPY_OPS(gobj_wrapper);

@@ -98,18 +98,18 @@ G_END_DECLS
 #ifdef __cplusplus
 
 template<typename ...Args>
-inline bool moo_file_writer_printf (MooFileWriter *writer, const char* fmt, Args&& ...args) G_GNUC_PRINTF (2, 3)
+inline bool moo_file_writer_printf (MooFileWriter *writer, const char* fmt, Args&& ...args)
 {
-    gstr s = gstr::printf (fmt, std::forward<Args> (args)...);
+    moo::gstr s = moo::gstr::printf (fmt, std::forward<Args> (args)...);
     return moo_file_writer_write (writer, s);
 }
 
 template<typename ...Args>
 inline bool moo_file_writer_printf_markup (MooFileWriter  *writer,
                                            const char     *fmt,
-                                           Args&&... args) G_GNUC_PRINTF (2, 3)
+                                           Args&&... args)
 {
-    gstr s = g::markup_printf_escaped (fmt, std::forward<Args> (args)...);
+    moo::gstr s = moo::g::markup_printf_escaped (fmt, std::forward<Args> (args)...);
     return moo_file_writer_write (writer, s);
 }
 

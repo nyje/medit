@@ -354,7 +354,7 @@ gstr gstr::vprintf(const char* format, va_list args)
 }
 
 
-const size_t std::hash<moo::gstr>::operator()(const moo::gstr& s) const
+size_t std::hash<moo::gstr>::operator()(const moo::gstr& s) const
 {
     return g_str_hash (s.is_null () ? "" : s.get ());
 }

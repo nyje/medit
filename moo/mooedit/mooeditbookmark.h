@@ -42,7 +42,7 @@ struct MooEditBookmark
     static void set_enable_bookmarks    (Edit           edit,
                                          bool           enable);
     static bool get_enable_bookmarks    (const Edit&    edit);
-#endif __cplusplus
+#endif // __cplusplus
 };
 
 struct MooEditBookmarkClass

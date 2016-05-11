@@ -122,14 +122,14 @@ void _moo_log_impl (MooCodeLoc loc, GLogLevelFlags flags, moo::gstr message);
 void MOO_NORETURN _moo_error_impl (MooCodeLoc loc, moo::gstr message);
 
 template<typename ...Args>
-inline void _moo_log (MooCodeLoc loc, GLogLevelFlags flags, const char *format, Args&& ...args) G_GNUC_PRINTF (3, 4)
+inline void _moo_log (MooCodeLoc loc, GLogLevelFlags flags, const char *format, Args&& ...args)
 {
     moo::gstr message = moo::gstr::printf (format, std::forward<Args> (args)...);
     _moo_log_impl (loc, flags, std::move (message));
 }
 
 template<typename ...Args>
-inline void MOO_NORETURN _moo_error (MooCodeLoc loc, const char *format, Args&& ...args) G_GNUC_PRINTF (2, 3)
+inline void MOO_NORETURN _moo_error (MooCodeLoc loc, const char *format, Args&& ...args)
 {
     moo::gstr message = moo::gstr::printf (format, std::forward<Args> (args)...);
     _moo_error_impl (loc, std::move (message));
@@ -295,7 +295,7 @@ G_END_DECLS
 #ifdef __cplusplus
 
 template<typename ...Args>
-inline void moo_g_log_checked (const char* domain, GLogLevelFlags flags, const char* format, Args&& ...args) G_GNUC_PRINTF (3, 4)
+inline void moo_g_log_checked (const char* domain, GLogLevelFlags flags, const char* format, Args&& ...args)
 {
     static_assert(moo::printf_helper::is_valid_arg<Args...>::value, "Passed an object to g_log");
     g_log (domain, flags, format, std::forward<Args> (args)...);

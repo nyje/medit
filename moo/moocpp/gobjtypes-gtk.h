@@ -59,7 +59,7 @@ MOO_DEFINE_GTK_TYPE (Object, GObject, GTK_TYPE_OBJECT)
 MOO_DEFINE_GTK_TYPE (Widget, GtkObject, GTK_TYPE_WIDGET)
 
 template<>
-class ::moo::gobj_ref<GtkObject> : public virtual ::moo::gobj_ref_parent<GtkObject>
+class moo::gobj_ref<GtkObject> : public virtual moo::gobj_ref_parent<GtkObject>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkObject);
@@ -68,7 +68,7 @@ public:
 };
 
 template<>
-class ::moo::gobj_ref<GtkWidget> : public virtual ::moo::gobj_ref_parent<GtkWidget>
+class moo::gobj_ref<GtkWidget> : public virtual moo::gobj_ref_parent<GtkWidget>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkWidget);
@@ -86,7 +86,7 @@ MOO_DEFINE_GTK_TYPE(Menu, GtkMenuShell, GTK_TYPE_MENU)
 MOO_DEFINE_GTK_TYPE (TextView, GtkWidget, GTK_TYPE_TEXT_VIEW)
 
 template<>
-class ::moo::gobj_ref<GtkTextView> : public virtual ::moo::gobj_ref_parent<GtkTextView>
+class moo::gobj_ref<GtkTextView> : public virtual moo::gobj_ref_parent<GtkTextView>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS(GtkTextView);
@@ -98,7 +98,7 @@ public:
 MOO_DEFINE_GTK_IFACE (TreeModel, GTK_TYPE_TREE_MODEL)
 
 template<>
-class ::moo::gobj_ref<GtkTreeModel> : public virtual ::moo::gobj_ref_parent<GtkTreeModel>
+class moo::gobj_ref<GtkTreeModel> : public virtual moo::gobj_ref_parent<GtkTreeModel>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkTreeModel);
@@ -161,9 +161,9 @@ MOO_DEFINE_GTK_TYPE (ListStore, GObject, GTK_TYPE_LIST_STORE)
 MOO_GOBJ_IMPLEMENTS_IFACE (GtkListStore, GtkTreeModel)
 
 template<>
-class ::moo::gobj_ref<GtkListStore>
-    : public virtual ::moo::gobj_ref_parent<GtkListStore>
-    , public virtual ::moo::gobj_ref<GtkTreeModel>
+class moo::gobj_ref<GtkListStore>
+    : public virtual moo::gobj_ref_parent<GtkListStore>
+    , public virtual moo::gobj_ref<GtkTreeModel>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS(GtkListStore);
@@ -233,9 +233,9 @@ MOO_DEFINE_GTK_TYPE (TreeStore, GObject, GTK_TYPE_TREE_STORE)
 MOO_GOBJ_IMPLEMENTS_IFACE (GtkTreeStore, GtkTreeModel)
 
 template<>
-class ::moo::gobj_ref<GtkTreeStore>
-    : public virtual ::moo::gobj_ref_parent<GtkTreeStore>
-    , public virtual ::moo::gobj_ref<GtkTreeModel>
+class moo::gobj_ref<GtkTreeStore>
+    : public virtual moo::gobj_ref_parent<GtkTreeStore>
+    , public virtual moo::gobj_ref<GtkTreeModel>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkTreeStore);
@@ -272,7 +272,7 @@ private:
 
 
 template<>
-class ::moo::gobj_ref<GtkTreeView> : public virtual ::moo::gobj_ref_parent<GtkTreeView>
+class moo::gobj_ref<GtkTreeView> : public virtual moo::gobj_ref_parent<GtkTreeView>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkTreeView);
@@ -478,7 +478,7 @@ public:
 };
 
 template<>
-class ::moo::gobj_ref<GtkTreeViewColumn> : public virtual ::moo::gobj_ref_parent<GtkTreeViewColumn>
+class moo::gobj_ref<GtkTreeViewColumn> : public virtual moo::gobj_ref_parent<GtkTreeViewColumn>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkTreeViewColumn);
@@ -509,13 +509,7 @@ public:
 
     // void TFunc(gtk::TreeViewColumn, gtk::CellRenderer, gtk::TreeModel, const GtkTreeIter&)
     template<typename TFunc>
-    void set_cell_data_func (gtk::CellRenderer& cell_renderer, TFunc func)
-    {
-        TreeCellDataFunc<TFunc> *data = new TreeCellDataFunc<TFunc>{ std::move (func) };
-        gtk_tree_view_column_set_cell_data_func (gobj (), cell_renderer.gobj (),
-                                                 TreeCellDataFunc<TFunc>::cell_data_func, data,
-                                                 TreeCellDataFunc<TFunc>::destroy);
-    }
+    inline void set_cell_data_func (gtk::CellRenderer& cell_renderer, TFunc func);
 
     void    clear_attributes (gtk::CellRenderer& cell_renderer);
     void    set_spacing (int spacing);
@@ -564,14 +558,14 @@ public:
 };
 
 template<>
-class ::moo::gobj_ref<GtkCellRenderer> : public virtual ::moo::gobj_ref_parent<GtkCellRenderer>
+class moo::gobj_ref<GtkCellRenderer> : public virtual moo::gobj_ref_parent<GtkCellRenderer>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkCellRenderer);
 };
 
 template<>
-class ::moo::gobj_ref<GtkCellRendererText> : public virtual ::moo::gobj_ref_parent<GtkCellRendererText>
+class moo::gobj_ref<GtkCellRendererText> : public virtual moo::gobj_ref_parent<GtkCellRendererText>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkCellRendererText);
@@ -582,7 +576,7 @@ public:
 };
 
 template<>
-class ::moo::gobj_ref<GtkCellRendererToggle> : public virtual ::moo::gobj_ref_parent<GtkCellRendererToggle>
+class moo::gobj_ref<GtkCellRendererToggle> : public virtual moo::gobj_ref_parent<GtkCellRendererToggle>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkCellRendererToggle);
@@ -596,7 +590,7 @@ public:
 };
 
 template<>
-class ::moo::gobj_ref<GtkCellRendererPixbuf> : public virtual ::moo::gobj_ref_parent<GtkCellRendererPixbuf>
+class moo::gobj_ref<GtkCellRendererPixbuf> : public virtual moo::gobj_ref_parent<GtkCellRendererPixbuf>
 {
 public:
     MOO_DEFINE_GOBJREF_METHODS (GtkCellRendererPixbuf);
@@ -619,22 +613,34 @@ TreeCellDataFunc<TFunc>::cell_data_func (GtkTreeViewColumn *tree_column,
     g_return_if_fail (iter != nullptr);
     g_return_if_fail (p != nullptr);
     TreeCellDataFunc& data = *reinterpret_cast<TreeCellDataFunc*>(p);
-    data.m_func (wrap (*tree_column), wrap (*cell), wrap (*tree_model),
+    data.m_func (moo::wrap (*tree_column), moo::wrap (*cell), moo::wrap (*tree_model),
                  const_cast<const GtkTreeIter&>(*iter));
 }
 
 
 template<typename TFunc>
 inline int
-::moo::gobj_ref<GtkTreeView>::insert_column_with_data_func (int position,
-                                                            const char* title,
-                                                            gtk::CellRenderer& cell,
-                                                            TFunc func)
+moo::gobj_ref<GtkTreeView>::insert_column_with_data_func (int position,
+                                                          const char* title,
+                                                          gtk::CellRenderer& cell,
+                                                          TFunc func)
 {
     TreeCellDataFunc<TFunc> *data = new TreeCellDataFunc<TFunc>{ std::move (func) };
-    gtk_tree_view_insert_column_with_data_func (gobj (), position, title, cell.gobj (),
-                                                TreeCellDataFunc<TFunc>::cell_data_func, data,
-                                                TreeCellDataFunc<TFunc>::destroy);
+    return gtk_tree_view_insert_column_with_data_func (gobj (), position, title, cell.gobj (),
+                                                       TreeCellDataFunc<TFunc>::cell_data_func, data,
+                                                       TreeCellDataFunc<TFunc>::destroy);
+}
+
+
+// void TFunc(gtk::TreeViewColumn, gtk::CellRenderer, gtk::TreeModel, const GtkTreeIter&)
+template<typename TFunc>
+inline void
+moo::gobj_ref<GtkTreeViewColumn>::set_cell_data_func (gtk::CellRenderer& cell_renderer, TFunc func)
+{
+    TreeCellDataFunc<TFunc> *data = new TreeCellDataFunc<TFunc>{ std::move (func) };
+    gtk_tree_view_column_set_cell_data_func (gobj (), cell_renderer.gobj (),
+                                             TreeCellDataFunc<TFunc>::cell_data_func, data,
+                                             TreeCellDataFunc<TFunc>::destroy);
 }
 
 

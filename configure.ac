@@ -84,12 +84,9 @@ if test x$MOO_DEV_MODE = "xyes" -a "x$XSLTPROC" = "x"; then
   AC_MSG_ERROR([xsltproc not found])
 fi
 
-AC_DEFINE(MOO_CONFIG_H_INCLUDED, 1)
 AC_CONFIG_HEADERS([config.h])
-AH_TOP([#ifndef __CONFIG_H__
-#define __CONFIG_H__])
-AH_BOTTOM([#include <moo-config.h>
-#endif // __CONFIG_H__])
+AH_TOP([#pragma once])
+AH_BOTTOM([#include <moo-config.h>])
 
 MOO_LT_LIB_M
 

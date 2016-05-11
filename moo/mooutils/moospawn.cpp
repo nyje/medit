@@ -450,13 +450,17 @@ stderr_watch_removed (MooCmd *cmd)
 
 
 #ifndef __WIN32__
+namespace {
+struct ChildSetupData {
+    GSpawnChildSetupFunc child_setup;
+    gpointer user_data;
+};
+}
+
 static void
 real_child_setup (gpointer user_data)
 {
-    struct {
-        GSpawnChildSetupFunc child_setup;
-        gpointer user_data;
-    } *data = user_data;
+    ChildSetupData *data = reinterpret_cast<ChildSetupData*>(user_data);
 
     setpgid (0, 0);
 
@@ -513,10 +517,7 @@ moo_cmd_run_command (MooCmd     *cmd,
     ChildWatchData *child_watch_data;
 
 #ifndef __WIN32__
-    struct {
-        GSpawnChildSetupFunc child_setup;
-        gpointer user_data;
-    } data;
+    ChildSetupData data;
 #endif
 
     g_return_val_if_fail (MOO_IS_CMD (cmd), FALSE);

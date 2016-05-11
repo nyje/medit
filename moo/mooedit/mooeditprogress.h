@@ -23,4 +23,4 @@ void            _moo_edit_progress_set_cancel_func (MooEditProgress& progress,
 void            _moo_edit_progress_set_text        (MooEditProgress& progress,
                                                     const char*      text);
 
-#endif __cplusplus
+#endif // __cplusplus

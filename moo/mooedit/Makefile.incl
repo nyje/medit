@@ -24,76 +24,76 @@ moo_sources +=					\
 	mooedit/mootextiter.h			\
 	mooedit/mootextsearch.h			\
 	mooedit/mootextstylescheme.h		\
-	mooedit/mooeditview.c			\
+	mooedit/mooeditview.cpp			\
 	mooedit/mooeditview-priv.h		\
 	mooedit/mooeditview-impl.h		\
-	mooedit/mooeditview-script.c		\
+	mooedit/mooeditview-script.cpp		\
 	mooedit/mooeditview-script.h		\
 	mooedit/mooedit-accels.h		\
-	mooedit/mooeditaction.c			\
+	mooedit/mooeditaction.cpp		\
 	mooedit/mooeditaction-factory.cpp	\
 	mooedit/mooeditaction-factory.h		\
 	mooedit/mooeditbookmark.cpp		\
 	mooedit/mooedit.cpp			\
-	mooedit/mooeditconfig.c			\
+	mooedit/mooeditconfig.cpp		\
 	mooedit/mooeditdialogs.cpp		\
 	mooedit/mooedit-enum-types.c		\
 	mooedit/mooedit-enum-types.h		\
 	mooedit/mooedit-enums.h			\
 	mooedit/mooedit-fileops.cpp		\
 	mooedit/mooedit-fileops.h		\
-	mooedit/mooeditfiltersettings.c		\
-	mooedit/mooedithistoryitem.c		\
+	mooedit/mooeditfiltersettings.cpp	\
+	mooedit/mooedithistoryitem.cpp		\
 	mooedit/mooedit-impl.h			\
-	mooedit/mooedit-script.c		\
+	mooedit/mooedit-script.cpp		\
 	mooedit/mooedit-script.h		\
-	mooedit/mooeditprefs.c			\
-	mooedit/mooeditprefspage.c		\
+	mooedit/mooeditprefs.cpp		\
+	mooedit/mooeditprefspage.cpp		\
 	mooedit/mooedit-private.h		\
 	mooedit/mooeditprogress.h		\
-	mooedit/mooeditprogress.c		\
-	mooedit/mooedittab.c			\
+	mooedit/mooeditprogress.cpp		\
+	mooedit/mooedittab.cpp			\
 	mooedit/mooedittab.h			\
 	mooedit/mooedittab-impl.h		\
-	mooedit/mooeditwindow.c			\
+	mooedit/mooeditwindow.cpp		\
 	mooedit/mooeditwindow-impl.h		\
 	mooedit/mooeditfileinfo-impl.h		\
 	mooedit/mooeditfileinfo.cpp		\
-	mooedit/moofold.c			\
+	mooedit/moofold.cpp			\
 	mooedit/moofold.h			\
-	mooedit/mooindenter.c			\
+	mooedit/mooindenter.cpp			\
 	mooedit/mooindenter.h			\
-	mooedit/moolang.c			\
+	mooedit/moolang.cpp			\
 	mooedit/moolang.h			\
 	mooedit/moolangmgr.cpp			\
 	mooedit/moolangmgr.h			\
 	mooedit/moolangmgr-private.h		\
 	mooedit/moolang-private.h		\
-	mooedit/moolinebuffer.c			\
+	mooedit/moolinebuffer.cpp		\
 	mooedit/moolinebuffer.h			\
-	mooedit/moolinemark.c			\
+	mooedit/moolinemark.cpp			\
 	mooedit/moolinemark.h			\
-	mooedit/mooplugin.c			\
-	mooedit/mooplugin-loader.c		\
+	mooedit/mooplugin.cpp			\
+	mooedit/mooplugin-loader.cpp		\
 	mooedit/mooplugin-loader.h		\
 	mooedit/mooplugin-macro.h		\
-	mooedit/mootextbtree.c			\
+	mooedit/mootextbtree.cpp		\
 	mooedit/mootextbtree.h			\
-	mooedit/mootextbuffer.c			\
-	mooedit/mootextfind.c			\
-	mooedit/mootextprint.c			\
+	mooedit/mootextbuffer.cpp		\
+	mooedit/mootextfind.cpp			\
+	mooedit/mootextprint.cpp		\
 	mooedit/mootextprint-private.h		\
 	mooedit/mootext-private.h		\
-	mooedit/mootextsearch.c			\
+	mooedit/mootextsearch.cpp		\
 	mooedit/mootextsearch-private.h		\
-	mooedit/mootextstylescheme.c		\
-	mooedit/mootextview.c			\
-	mooedit/mootextview-input.c		\
+	mooedit/mootextstylescheme.cpp		\
+	mooedit/mootextview.cpp			\
+	mooedit/mootextview-input.cpp		\
 	mooedit/mootextview-private.h   	\
 	mooedit/mooeditor.cpp			\
 	mooedit/mooeditor-impl.h		\
 	mooedit/mooeditor-private.h		\
-	mooedit/mooeditor-tests.c		\
+	mooedit/mooeditor-tests.cpp		\
 	mooedit/mooeditor-tests.h		\
 	mooedit/mooeditor-tests.h
 
