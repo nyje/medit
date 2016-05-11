@@ -457,6 +457,11 @@ void strbuilder::append(const char* val, gssize len)
     g_string_append_len(m_buf, val, len);
 }
 
+void strbuilder::append(const gstrp& val)
+{
+    append(val.get());
+}
+
 void strbuilder::append(char c)
 {
     g_return_if_fail(m_buf);
@@ -475,6 +480,11 @@ void strbuilder::prepend(const char* val, gssize len)
     g_string_prepend_len(m_buf, val, len);
 }
 
+void strbuilder::prepend(const gstrp& val)
+{
+    prepend(val.get());
+}
+
 void strbuilder::prepend(char c)
 {
     g_return_if_fail(m_buf);
@@ -491,6 +501,11 @@ void strbuilder::insert(gssize pos, const char* val, gssize len)
 {
     g_return_if_fail(m_buf);
     g_string_insert_len(m_buf, pos, val, len);
+}
+
+void strbuilder::insert(gssize pos, const gstrp& val)
+{
+    insert(pos, val.get());
 }
 
 void strbuilder::insert(gssize pos, char c)
