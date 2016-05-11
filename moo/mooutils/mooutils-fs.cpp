@@ -740,6 +740,12 @@ normalize_full_path_win32 (const gstr& fullpath)
     return gstr::wrap_new (path);
 }
 
+static char*
+normalize_full_path_win32_test_func (const char* fullpath)
+{
+    return normalize_full_path_win32 (gstr::wrap_const (fullpath)).release_owned();
+}
+
 gstr
 _moo_normalize_file_path (const gstr& filename)
 {
@@ -1002,8 +1008,9 @@ test_normalize_file_path_win32 (void)
 
     for (i = 0; i < paths->len; i += 2)
     {
-        test_normalize_path_one (paths->pdata[i], paths->pdata[i+1],
-                                 normalize_full_path_win32,
+        test_normalize_path_one (reinterpret_cast<char*> (paths->pdata[i]),
+                                 reinterpret_cast<char*> (paths->pdata[i+1]),
+                                 normalize_full_path_win32_test_func,
                                  "normalize_full_path_win32");
         g_free (paths->pdata[i]);
         g_free (paths->pdata[i+1]);

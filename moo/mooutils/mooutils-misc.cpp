@@ -66,7 +66,7 @@ static gpointer copy_pointer(gpointer p)
     return p;
 }
 
-static void free_pointer(gpointer p)
+static void free_pointer(gpointer)
 {
 }
 
@@ -291,7 +291,7 @@ find_by_xid (GSList *windows, XID w)
 
     for (l = windows; l != NULL; l = l->next)
         if (GDK_WINDOW_XID (GTK_WIDGET(l->data)->window) == w)
-            return l->data;
+            return reinterpret_cast<GtkWindow*> (l->data);
 
     return NULL;
 }
@@ -317,7 +317,7 @@ _moo_get_top_window (GSList *windows)
     g_return_val_if_fail (windows != NULL, NULL);
 
     if (!windows->next)
-        return windows->data;
+        return reinterpret_cast<GtkWindow*> (windows->data);
 
     for (l = windows; l != NULL; l = l->next)
     {
@@ -979,7 +979,7 @@ public:
     }
 
     void log(const char       *log_domain,
-             GLogLevelFlags    flags,
+             GLogLevelFlags,
              const char       *message) override
     {
         gstr string;
@@ -1013,13 +1013,11 @@ moo_set_log_func_file (const char *log_file)
 class LogWriterSilent : public ILogWriter
 {
 public:
-    void print(const char* string) override
+    void print(const char*) override
     {
     }
 
-    void log(const char       *log_domain,
-             GLogLevelFlags    flags,
-             const char       *message) override
+    void log(const char*, GLogLevelFlags, const char*) override
     {
     }
 };
@@ -1211,7 +1209,7 @@ moo_get_user_cache_dir (void)
     G_LOCK (moo_user_cache_dir);
 
     if (!moo_user_cache_dir)
-        moo_user_cache_dir = g_build_filename (g_get_user_cache_dir (), MOO_PACKAGE_NAME, NULL);
+        moo_user_cache_dir = g_build_filename (g_get_user_cache_dir (), MOO_PACKAGE_NAME, nullptr);
 
     G_UNLOCK (moo_user_cache_dir);
 
@@ -1295,7 +1293,7 @@ moo_get_user_data_dir (void)
 
         moo_user_data_dir = g_build_filename (basedir,
                                               MOO_PACKAGE_NAME,
-                                              NULL);
+                                              nullptr);
 
         g_free (freeme);
     }
@@ -1358,7 +1356,7 @@ moo_make_user_data_dir (const char *path)
     user_dir = moo_get_user_data_dir ();
     g_return_val_if_fail (user_dir != NULL, FALSE);
 
-    full_path = g_build_filename (user_dir, path, NULL);
+    full_path = g_build_filename (user_dir, path, nullptr);
     result = _moo_mkdir_with_parents (full_path, &err);
 
     if (result != 0)
@@ -1440,13 +1438,13 @@ enumerate_data_dirs (MooDataDirType type,
             const char* const *p;
 
             for (p = g_get_system_data_dirs (); p && *p; ++p)
-                g_ptr_array_add (dirs, g_build_filename (*p, MOO_PACKAGE_NAME, NULL));
+                dirs.push_back (g::build_filename (*p, MOO_PACKAGE_NAME, nullptr));
 
-            g_ptr_array_add (dirs, g_strdup (MOO_DATA_DIR));
+            dirs.push_back (gstr::wrap_const (MOO_DATA_DIR));
         }
         else
         {
-            g_ptr_array_add (dirs, g_strdup (MOO_LIB_DIR));
+            dirs.push_back (gstr::wrap_const (MOO_LIB_DIR));
         }
 #endif
     }
@@ -1573,7 +1571,7 @@ moo_get_stuff_subdirs (const char    *subdir,
     dirs = g_new0 (char*, n_dirs + 1);
 
     for (i = 0; i < n_dirs; ++i)
-        dirs[i] = g_build_filename (data_dirs[i], subdir, NULL);
+        dirs[i] = g_build_filename (data_dirs[i], subdir, nullptr);
 
     return dirs;
 }

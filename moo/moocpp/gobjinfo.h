@@ -95,7 +95,7 @@ namespace moo {                                                                 
         static Super* down_cast(Object *o)                                                      \
         {                                                                                       \
             static_assert(gobj_is_subclass<Object, Super>::value,                               \
-                          "In " __FUNCTION__ ": Super is not a superclass of " #Object);        \
+                          "Super is not a superclass of " #Object);                             \
             Parent* p = reinterpret_cast<Parent*>(o);                                           \
             Super* s = gobj_is_subclass<Parent, Super>::down_cast(p);                           \
             return s;                                                                           \

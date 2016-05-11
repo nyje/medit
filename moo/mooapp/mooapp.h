@@ -113,4 +113,4 @@ private:
     Private* p;
 };
 
-#endif __cplusplus
+#endif // __cplusplus

@@ -67,7 +67,7 @@ get_display_name (void)
 
         if (display_name && display_name[0])
         {
-            char *colon, *dot;
+            const char *colon, *dot;
 
             if ((colon = strchr (display_name, ':')) &&
                 (dot = strrchr (display_name, '.')) &&
@@ -155,9 +155,9 @@ input_channel_start_io (int           fd,
     *io_channel = g_io_channel_unix_new (fd);
     g_io_channel_set_encoding (*io_channel, NULL, NULL);
 
-    *io_watch = _moo_io_add_watch (*io_channel,
-                                   G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR,
-                                   io_func, data);
+    *io_watch = g_io_add_watch (*io_channel,
+                                GIOCondition (G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR),
+                                io_func, data);
 
     source = g_main_context_find_source_by_id (NULL, *io_watch);
     g_source_set_can_recurse (source, TRUE);
@@ -283,7 +283,7 @@ _moo_app_input_broadcast (const char *header,
 
             for (l = _moo_app_input_instance->pipes; !my_name && l != NULL; l = l->next)
             {
-                InputChannel *ch = l->data;
+                InputChannel *ch = reinterpret_cast<InputChannel*> (l->data);
                 const char *ch_name = _moo_app_input_channel_get_name (ch);
                 if (ch_name && strcmp (ch_name, name) == 0)
                     my_name = TRUE;

@@ -108,7 +108,7 @@ public:                                                                         
                                                                                         \
     object_type* gobj() const                                                           \
     {                                                                                   \
-        return reinterpret_cast<object_type*>(raw_gobj());                              \
+        return reinterpret_cast<object_type*>(super::raw_gobj());                       \
     }                                                                                   \
                                                                                         \
     template<typename X>                                                                \

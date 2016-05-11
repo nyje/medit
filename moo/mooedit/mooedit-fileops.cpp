@@ -1067,7 +1067,7 @@ try_convert_to_utf8_from_utf8 (const char *data,
     if (!valid_utf8 && invalid + 1 == data + len && *invalid == 0)
         valid_utf8 = TRUE;
 
-    return valid_utf8 ? gstr::wrap_const (data) : NULL;
+    return valid_utf8 ? gstr::wrap_const (data) : gstr::null;
 }
 
 static gboolean

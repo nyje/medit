@@ -50,7 +50,7 @@ gstr utf8_strdown(const char* str);
 gstr markup_vprintf_escaped(const char* fmt, va_list args) G_GNUC_PRINTF (1, 0);
 
 template<typename ...Args>
-inline gstr markup_printf_escaped (const char* format, Args&& ...args) G_GNUC_PRINTF (1, 2)
+inline gstr markup_printf_escaped (const char* format, Args&& ...args)
 {
     return wrap_new (printf_helper::callv (g_markup_printf_escaped, format, std::forward<Args> (args)...));
 }

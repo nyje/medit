@@ -124,7 +124,7 @@ inline void init_cpp_private(T* owner, TPriv*& p, Args&& ...args)
 }
 
 template<typename T, typename TPriv>
-inline void finalize_cpp_private(T* owner, TPriv*& p)
+inline void finalize_cpp_private(G_GNUC_UNUSED T* owner, TPriv*& p)
 {
 #ifdef MOO_DEBUG
     g_assert(g_object_get_data(G_OBJECT(owner), "__moo_cpp_private_init__") == GINT_TO_POINTER(true));
@@ -219,8 +219,8 @@ public:
 template<typename T>
 struct cpp_vararg_dest_fixer
 {
-    template<typename T>
-    static void* apply (T) = delete;
+    template<typename U>
+    static void* apply (U) = delete;
 };
 
 template<typename T>

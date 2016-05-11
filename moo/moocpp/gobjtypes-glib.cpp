@@ -18,12 +18,12 @@
 using namespace moo;
 using namespace g;
 
-void ::extern_g_free(gpointer p)
+void extern_g_free(gpointer p)
 {
     g_free(p);
 }
 
-void ::extern_g_object_unref(gpointer o)
+void extern_g_object_unref(gpointer o)
 {
     g_object_unref(o);
 }
@@ -155,7 +155,7 @@ guint Object::signal_handlers_disconnect_matched(GSignalMatchType mask, guint si
 
 void Object::set_data(const char* key, gpointer value, GDestroyNotify destroy)
 {
-    g_object_set_data(gobj(), key, value);
+    g_object_set_data_full(gobj(), key, value, destroy);
 }
 
 void Object::set_data(GQuark q, gpointer data, GDestroyNotify destroy)

@@ -1656,7 +1656,7 @@ moo_window_class_new_action_custom (MooWindowClass     *klass,
     g_return_if_fail (func != NULL);
 
     action_factory = moo_action_factory_new_func ((MooActionFactoryFunc) custom_action_factory_func, NULL);
-    g_object_set_data (G_OBJECT (action_factory), "moo-window-class-action-func", func);
+    g_object_set_data (G_OBJECT (action_factory), "moo-window-class-action-func", reinterpret_cast<gpointer> (func));
     g_object_set_data_full (G_OBJECT (action_factory), "moo-window-class-action-func-data",
                             data, notify);
 
