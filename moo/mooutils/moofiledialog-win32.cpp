@@ -79,7 +79,7 @@ public:
             QITABENT(FileDialogCallback, IFileDialogEvents),
             QITABENT(FileDialogCallback, IFileDialogControlEvents),
             QITABENTMULTI(FileDialogCallback, IUnknown, IFileDialogEvents),
-            {0},
+            {nullptr},
         };
         return QISearch(this, qit, riid, ppv);
     }

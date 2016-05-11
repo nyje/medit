@@ -456,11 +456,11 @@ void App::Private::init_editor ()
 void App::Private::init_ui ()
 {
     gobj_ptr<MooUiXml> xml;
-    char **files, **p;
+    char **files;
 
     files = moo_get_data_files (MOO_UI_XML_FILE);
 
-    for (p = files; p && *p; ++p)
+    for (char **p = files; p && *p; ++p)
     {
         GError *error = NULL;
         GMappedFile *file;
