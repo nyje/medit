@@ -1888,65 +1888,6 @@ void MOO_NORETURN _moo_errorv (MooCodeLoc loc, const char *format, va_list args)
 }
 
 
-/*******************************************************************************
- * Former eggregex stuff
- */
-gboolean
-_moo_regex_escape (const char *string,
-                   gssize      bytes,
-                   GString    *dest)
-{
-    const char *p, *piece, *end;
-    gboolean escaped = FALSE;
-
-    g_return_val_if_fail (string != NULL, TRUE);
-    g_return_val_if_fail (dest != NULL, TRUE);
-
-    if (bytes < 0)
-        bytes = strlen (string);
-
-    end = string + bytes;
-    p = piece = string;
-
-    while (p < end)
-    {
-        switch (*p)
-        {
-            case '\\':
-            case '|':
-            case '(':
-            case ')':
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case '^':
-            case '$':
-            case '*':
-            case '+':
-            case '?':
-            case '.':
-                escaped = TRUE;
-                if (p != piece)
-                    g_string_append_len (dest, piece, p - piece);
-                g_string_append_c (dest, '\\');
-                g_string_append_c (dest, *p);
-                piece = ++p;
-                break;
-
-            default:
-                p = g_utf8_next_char (p);
-                break;
-        }
-    }
-
-    if (escaped && piece < end)
-        g_string_append_len (dest, piece, end - piece);
-
-    return escaped;
-}
-
-
 char **
 moo_strnsplit_lines (const char *string,
                      gssize      len,
