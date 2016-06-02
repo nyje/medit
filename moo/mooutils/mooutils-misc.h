@@ -198,10 +198,6 @@ moo_assign_obj (void** dest, void* src)
 
 const char *_moo_get_pid_string             (void);
 
-gboolean    _moo_regex_escape               (const char *string,
-                                             gssize      bytes,
-                                             GString    *dest);
-
 const char  *moo_error_message              (GError *error);
 
 gboolean     moo_signal_accumulator_continue_cancel (GSignalInvocationHint *ihint,
