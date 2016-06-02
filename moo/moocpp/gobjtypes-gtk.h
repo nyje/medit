@@ -184,7 +184,7 @@ public:
     template<typename T>
     void set (const GtkTreeIter& iter, int column, T&& value)
     {
-        gtk_list_store_set (gobj (), const_cast<GtkTreeIter*>(&iter), column, cpp_vararg_value_fixer<T>::apply (std::forward<T> (value)), -1);
+        gtk_list_store_set (gobj (), const_cast<GtkTreeIter*>(&iter), column, cpp_vararg_value_fixer<T>::apply (std::forward<T&&> (value)), -1);
     }
 
     template<typename T, typename... Args>

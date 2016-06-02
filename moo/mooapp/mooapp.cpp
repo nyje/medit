@@ -589,7 +589,7 @@ void App::Private::sm_quit_requested (App::Private* self)
 void App::Private::sm_quit (App::Private* self)
 {
     if (!self->app.quit())
-        self->do_quit (app);
+        self->do_quit (self->app);
 }
 
 #endif // __WIN32__
@@ -1075,7 +1075,7 @@ void App::Private::report_bug (GtkWidget *window)
 
     gstr version_escaped = g::uri_escape_string (MOO_DISPLAY_VERSION);
 
-    gstr os = get_system_name ();
+    gstr os = gstr::wrap_new (get_system_name ());
     if (!os.empty())
         os = g::uri_escape_string (os);
 

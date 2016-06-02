@@ -388,13 +388,13 @@ _moo_file_stat (MooFile    *file,
                         g_free (display_name);
                     });
                     file->info = MOO_FILE_INFO_IS_LOCKED | MOO_FILE_INFO_EXISTS;
-                    file->flags = 0;
+                    file->flags = MooFileFlags (0);
                 }
             }
 
             errno = 0;
             len = readlink (fullname, buf, 1024);
-            err.value = errno;
+            err.value = mgw_errno_value_t (errno);
 
             if (len == -1)
             {

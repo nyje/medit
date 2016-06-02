@@ -35,7 +35,7 @@
 using namespace moo;
 
 template<typename ...Args>
-static void DEBUG_MESSAGE (const char*, Args&& ...args) G_GNUC_PRINTF (1, 2)
+static void DEBUG_MESSAGE (const char*, Args&& ...args)
 {
 }
 

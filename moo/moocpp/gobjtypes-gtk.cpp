@@ -142,7 +142,7 @@ TreeModel::get_iter_from_string (GtkTreeIter& iter, const char* path_string)
 gstr
 TreeModel::get_string_from_iter (const GtkTreeIter& iter)
 {
-    return wrap_new (gtk_tree_model_get_string_from_iter (gobj (), const_cast<GtkTreeIter*>(&iter)));
+    return gstr::wrap_new (gtk_tree_model_get_string_from_iter (gobj (), const_cast<GtkTreeIter*>(&iter)));
 }
 
 bool
@@ -1154,7 +1154,7 @@ TreeViewColumn::set_title (const char* title)
 gstr
 TreeViewColumn::get_title ()
 {
-    return wrap (gtk_tree_view_column_get_title (gobj ()));
+    return gstr::wrap (gtk_tree_view_column_get_title (gobj ()));
 }
 
 void

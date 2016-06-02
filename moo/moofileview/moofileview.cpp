@@ -5682,7 +5682,7 @@ run_command_on_files (MooFileView *fileview,
     argv[n_args] = NULL;
 
     for (i = 0, l = filenames; l != NULL; l = l->next, i++)
-        argv[n_first_args + i] = l->data;
+        argv[n_first_args + i] = (char*) l->data;
 
     if (!_moo_unix_spawn_async (argv, G_SPAWN_SEARCH_PATH, &error))
     {
@@ -5696,7 +5696,7 @@ run_command_on_files (MooFileView *fileview,
         !strcmp (destdir, _moo_folder_get_path (fileview->priv->current_dir)) &&
         list_len == 1)
     {
-        char *basename = g_path_get_basename (filenames->data);
+        char *basename = g_path_get_basename ((const char*) filenames->data);
 
         if (basename)
             _moo_file_view_select_name (fileview, basename);
