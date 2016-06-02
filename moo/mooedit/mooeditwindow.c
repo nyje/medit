@@ -2118,6 +2118,23 @@ move_to_split_notebook_activated (GtkWidget     *item,
 }
 
 
+static void
+copy_full_path_activated (GtkWidget     *item,
+                          MooEditWindow *window)
+{
+    MooEdit *doc = g_object_get_data(G_OBJECT(item), "moo-edit");
+    GtkClipboard *clipboard = gtk_widget_get_clipboard(item, GDK_SELECTION_CLIPBOARD);
+    gtk_clipboard_set_text(clipboard, moo_edit_get_filename(doc), -1);
+}
+
+
+static void
+open_containing_folder_activated (GtkWidget     *item,
+                                  MooEditWindow *window)
+{
+}
+
+
 /****************************************************************************/
 /* Documents
  */
@@ -2218,6 +2235,34 @@ notebook_switch_page (MooNotebook   *notebook,
 }
 
 
+static void
+add_tab_menu_item (const char       *label,
+                   MooEdit          *doc,
+                   MooEditWindow    *window,
+                   GtkMenu          *menu,
+                   GtkWidget        *child,
+                   GCallback         cb,
+                   gboolean          enabled)
+{
+    /* Item in document tab context menu */
+    GtkWidget* item = gtk_menu_item_new_with_label(label);
+    gtk_widget_show(item);
+    gtk_widget_set_sensitive(item, enabled);
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+    g_object_set_data(G_OBJECT(item), "moo-edit", doc);
+    g_object_set_data(G_OBJECT(item), "moo-edit-tab", child);
+    g_signal_connect(item, "activate", cb, window);
+}
+
+static void
+add_separator (GtkMenu  *menu)
+{
+    gtk_menu_shell_append(GTK_MENU_SHELL(menu),
+                          GTK_WIDGET(g_object_new(GTK_TYPE_SEPARATOR_MENU_ITEM,
+                                                  "visible", TRUE,
+                                                  (const char*) NULL)));
+}
+
 static gboolean
 notebook_populate_popup (MooEditWindow      *window,
                          GtkWidget          *child,
@@ -2225,7 +2270,6 @@ notebook_populate_popup (MooEditWindow      *window,
 {
     MooEdit *doc;
     MooEditView *view;
-    GtkWidget *item;
 
     g_return_val_if_fail (MOO_IS_EDIT_WINDOW (window), TRUE);
     g_return_val_if_fail (MOO_IS_EDIT_TAB (child), TRUE);
@@ -2236,54 +2280,49 @@ notebook_populate_popup (MooEditWindow      *window,
     doc = moo_edit_view_get_doc (view);
 
     /* Item in document tab context menu */
-    item = gtk_menu_item_new_with_label (C_("tab-context-menu", "Close"));
-    gtk_widget_show (item);
-    gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-    g_object_set_data (G_OBJECT (item), "moo-edit", doc);
-    g_object_set_data (G_OBJECT (item), "moo-edit-tab", child);
-    g_signal_connect (item, "activate",
-                      G_CALLBACK (close_activated),
-                      window);
+    add_tab_menu_item(C_("tab-context-menu", "Close"),
+                      doc, window, menu, child,
+                      G_CALLBACK(close_activated),
+                      TRUE);
 
     if (moo_edit_window_get_n_tabs (window) > 1)
     {
         /* Item in document tab context menu */
-        item = gtk_menu_item_new_with_label (C_("tab-context-menu", "Close All Others"));
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-        g_object_set_data (G_OBJECT (item), "moo-edit", doc);
-        g_object_set_data (G_OBJECT (item), "moo-edit-tab", child);
-        g_signal_connect (item, "activate",
-                          G_CALLBACK (close_others_activated),
-                          window);
+        add_tab_menu_item(C_("tab-context-menu", "Close All Others"),
+                          doc, window, menu, child,
+                          G_CALLBACK(close_others_activated),
+                          TRUE);
     }
 
+    add_separator (menu);
+
+    /* Item in document tab context menu */
+    add_tab_menu_item(C_("tab-context-menu", "Copy Full Path"),
+                      doc, window, menu, child,
+                      G_CALLBACK(copy_full_path_activated),
+                      !moo_edit_is_untitled (doc));
+
+    /* Item in document tab context menu */
+    add_tab_menu_item(C_("tab-context-menu", "Open Containing Folder"),
+                      doc, window, menu, child,
+                      G_CALLBACK(open_containing_folder_activated),
+                      !moo_edit_is_untitled(doc));
+
     if (moo_edit_window_get_n_tabs (window) > 1)
     {
-        gtk_menu_shell_append (GTK_MENU_SHELL (menu),
-                               GTK_WIDGET (g_object_new (GTK_TYPE_SEPARATOR_MENU_ITEM,
-                                                         "visible", TRUE,
-                                                         (const char*) NULL)));
+        add_separator (menu);
 
         /* Item in document tab context menu */
-        item = gtk_menu_item_new_with_label (C_("tab-context-menu", "Detach"));
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-        g_object_set_data (G_OBJECT (item), "moo-edit", doc);
-        g_object_set_data (G_OBJECT (item), "moo-edit-tab", child);
-        g_signal_connect (item, "activate",
-                          G_CALLBACK (detach_activated),
-                          window);
+        add_tab_menu_item(C_("tab-context-menu", "Detach"),
+                          doc, window, menu, child,
+                          G_CALLBACK(detach_activated),
+                          TRUE);
 
         /* Item in document tab context menu */
-        item = gtk_menu_item_new_with_label (C_("tab-context-menu", "Move to Split Notebook"));
-        gtk_widget_show (item);
-        gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-        g_object_set_data (G_OBJECT (item), "moo-edit", doc);
-        g_object_set_data (G_OBJECT (item), "moo-edit-tab", child);
-        g_signal_connect (item, "activate",
-                          G_CALLBACK (move_to_split_notebook_activated),
-                          window);
+        add_tab_menu_item(C_("tab-context-menu", "Move to Split Notebook"),
+                          doc, window, menu, child,
+                          G_CALLBACK(move_to_split_notebook_activated),
+                          TRUE);
     }
 
     return FALSE;
