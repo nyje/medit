@@ -213,7 +213,7 @@ template<typename T>
 class cpp_vararg_value_fixer<objp<T>>
 {
 public:
-    static T* apply (objp<T> val) { return val.release (); }
+    static T* apply (const objp<T>& val) { return val.release (); }
 };
 
 
