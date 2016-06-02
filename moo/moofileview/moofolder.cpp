@@ -49,7 +49,7 @@ G_STMT_START {              \
 #define PRINT_TIMES g_print
 #else
 template<typename ...Args>
-static void PRINT_TIMES (const char*, Args&& ...) G_GNUC_PRINTF (1, 2)
+static void PRINT_TIMES (const char*, Args&& ...)
 {
 }
 #endif

@@ -1181,7 +1181,7 @@ try_convert_to_utf8_from_non_utf8_encoding (const char *data,
     if (encoding_is_utf8 (enc))
         return try_convert_to_utf8_from_utf8 (data, len);
 
-    gstr result = wrap_new (g_convert (data, len, "UTF-8", enc, &bytes_read, &bytes_written, NULL));
+    gstr result = gstr::wrap_new (g_convert (data, len, "UTF-8", enc, &bytes_read, &bytes_written, NULL));
 
     if (result.is_null ())
         return gstr::null;

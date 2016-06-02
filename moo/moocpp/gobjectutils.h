@@ -20,6 +20,7 @@
 #include <memory>
 #include <utility>
 #include <moocpp/gobjinfo.h>
+#include <moocpp/gobjptr.h>
 #include <moocpp/utils.h>
 
 namespace moo {
@@ -167,7 +168,7 @@ std::vector<gobj_ptr<CObject>> object_list_to_vector (GList* list)
     {
         CObject* o = reinterpret_cast<CObject*>(l->data);
         g_assert (!o || G_TYPE_CHECK_INSTANCE_TYPE ((o), gobjinfo<CObject>::object_g_type ()));
-        ret.emplace_back (wrap (o));
+        ret.emplace_back (gobj_ptr<CObject>::wrap (o));
     }
 
     return ret;

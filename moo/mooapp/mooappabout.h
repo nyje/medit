@@ -126,7 +126,7 @@ get_system_name (void)
     if (uname (&name) != 0)
     {
         MGW_ERROR_IF_NOT_SHARED_LIBC
-        mgw_errno_t err = { errno };
+        mgw_errno_t err = { mgw_errno_value_t (errno) };
         g_critical ("%s", mgw_strerror (err));
         return g_strdup ("unknown");
     }

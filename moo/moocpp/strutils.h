@@ -222,11 +222,6 @@ inline const char* printf_helper::transform_printf_arg (const gstrp& s)
 }
 
 
-inline gstr wrap (const char *s) { return gstr::wrap (s); }
-inline gstr wrap_new (char *s) { return gstr::wrap_new (s); }
-inline gstr wrap_const (const char *s) { return gstr::wrap_const (s); }
-
-
 using gstrvec = std::vector<gstr>;
 using gstrset = std::unordered_set<gstr>;
 using gstrmap = std::unordered_map<gstr, gstr>;
