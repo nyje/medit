@@ -118,7 +118,7 @@ get_system_name (void)
 
 #elif defined(HAVE_SYS_UTSNAME_H)
 
-static char *
+static gstr
 get_system_name (void)
 {
     struct utsname name;
@@ -128,11 +128,11 @@ get_system_name (void)
         MGW_ERROR_IF_NOT_SHARED_LIBC
         mgw_errno_t err = { mgw_errno_value_t (errno) };
         g_critical ("%s", mgw_strerror (err));
-        return g_strdup ("unknown");
+        return gstr::wrap_const ("unknown");
     }
 
-    return g_strdup_printf ("%s %s (%s), %s", name.sysname,
-                            name.release, name.version, name.machine);
+    return gstr::printf ("%s %s (%s), %s", name.sysname,
+                         name.release, name.version, name.machine);
 }
 
 #else
