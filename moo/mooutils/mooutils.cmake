@@ -173,6 +173,16 @@ LIST(APPEND built_mooutils_sources marshals.c)
 SET(mooutils_win32_sources
     mooutils/mooutils-win32.c
 )
+
+if(MOO_BUILD_FROM_MSVC)
+    LIST(APPEND mooutils_sources
+        mooglib/moo-stat.h
+        mooglib/moo-time.h
+        mooglib/moo-glib.c
+        mooglib/moo-glib.h
+    )
+endif()
+
 SET(mooutils_unittest_sources
     mooutils/moo-test-utils.c
     mooutils/moo-test-utils.h
