@@ -17,7 +17,7 @@
 
 #include <mooutils/mooutils-messages.h>
 #ifdef __cplusplus
-#include <moogpp/strutils.h>
+#include <gpp/strutils.h>
 #endif
 #include <gtk/gtk.h>
 #include <string.h>

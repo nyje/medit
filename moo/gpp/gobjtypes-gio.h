@@ -20,7 +20,7 @@
 #endif
 
 #include <gio/gio.h>
-#include <moogpp/gobjtypes-glib.h>
+#include <gpp/gobjtypes-glib.h>
 
 namespace g {
 
