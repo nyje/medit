@@ -1651,7 +1651,7 @@ moo_text_view_move_cursor (MooTextView *view,
 
         mview = MOO_TEXT_VIEW (view);
         mview->priv->move_cursor_idle =
-            gdk_threads_add_idle_full (G_PRIORITY_HIGH_IDLE + 9, /* between gtktextview's first validate priority and
+            g_idle_add_full (G_PRIORITY_HIGH_IDLE + 9, /* between gtktextview's first validate priority and
                                                           * GTK_PRIORITY_RESIZE */
                                        (GSourceFunc) do_move_cursor,
                                        g_memdup (&scroll, sizeof scroll),
@@ -2529,7 +2529,7 @@ highlight_updated (GtkTextView       *text_view,
 
         if (!view->priv->update_idle)
             view->priv->update_idle =
-                    gdk_threads_add_idle_full (G_PRIORITY_HIGH_IDLE,
+                g_idle_add_full (G_PRIORITY_HIGH_IDLE,
                                                (GSourceFunc) invalidate_rectangle,
                                                view, NULL);
     }
@@ -2895,7 +2895,7 @@ buffer_changed (MooTextView *view)
         !view->priv->update_n_lines_idle)
     {
         view->priv->update_n_lines_idle =
-            gdk_threads_add_idle_full (G_PRIORITY_HIGH,
+            g_idle_add_full (G_PRIORITY_HIGH,
                                        (GSourceFunc) update_n_lines_idle,
                                        view, NULL);
     }

@@ -164,7 +164,7 @@ moo_bookmark_mgr_changed (MooBookmarkMgr *mgr)
     if (!mgr->priv->loading)
         moo_bookmark_mgr_save (mgr);
     if (!mgr->priv->update_idle)
-        mgr->priv->update_idle = gdk_threads_add_idle ((GSourceFunc) mgr_update_menus, mgr);
+        mgr->priv->update_idle = g_add_idle ((GSourceFunc) mgr_update_menus, mgr);
 }
 
 

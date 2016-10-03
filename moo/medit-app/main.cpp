@@ -711,9 +711,7 @@ medit_main (int argc, char *argv[])
 #endif // __WIN32__
 
     init_mem_stuff ();
-#if !GLIB_CHECK_VERSION(2,32,0)
-    g_thread_init (NULL);
-#endif
+    moo_thread_init ();
     g_set_prgname ("medit");
 
     ctx = parse_args (argc, argv);
@@ -799,8 +797,6 @@ medit_main (int argc, char *argv[])
     push_appdir_to_path ();
 
     gtk_init (NULL, NULL);
-    gdk_threads_init ();
-    gdk_threads_enter ();
 
     install_log_handlers ();
 
@@ -848,7 +844,6 @@ medit_main (int argc, char *argv[])
         g_signal_connect (app, "started", G_CALLBACK (run_script_func), NULL);
 
     retval = moo_app_run (app);
-    gdk_threads_leave ();
 
     g_object_unref (app);
 
