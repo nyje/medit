@@ -1,5 +1,5 @@
 /*
- *   moocpp/gobjectutils.h
+ *   moogpp/gobjectutils.h
  *
  *   Copyright (C) 2004-2015 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -15,15 +15,14 @@
 
 #pragma once
 
-#ifdef __cplusplus
+#ifndef __cplusplus
+#error "This is a C++ header"
+#endif
 
 #include <memory>
 #include <utility>
-#include <moocpp/gobjinfo.h>
-#include <moocpp/gobjptr.h>
-#include <moocpp/utils.h>
 
-namespace moo {
+namespace g {
 
 template<typename T>
 inline GType get_g_type();
@@ -64,100 +63,7 @@ inline T* new_object()
     return object_cast<T>(g_object_new(get_g_type<T>(), nullptr));
 }
 
-template<typename T, typename ...Args>
-inline void init_cpp_gobj(T* o, Args&& ...args)
-{
-#ifdef MOO_DEBUG
-    g_assert(g_object_get_data(G_OBJECT(o), "__moo_cpp_object_init__") == nullptr);
-#endif
-
-    new(o) T(std::forward<Args>(args)...);
-
-#ifdef MOO_DEBUG
-    g_object_set_data(G_OBJECT(o), "__moo_cpp_object_init__", GINT_TO_POINTER(true));
-#endif
-}
-
-template<typename T>
-inline void finalize_cpp_gobj(T* o)
-{
-#ifdef MOO_DEBUG
-    g_assert(g_object_get_data(G_OBJECT(o), "__moo_cpp_object_init__") == GINT_TO_POINTER(true));
-#endif
-
-    o->~T();
-
-#ifdef MOO_DEBUG
-    g_object_set_data(G_OBJECT(o), "__moo_cpp_object_init__", nullptr);
-#endif
-}
-
-
-template<typename T, typename TPriv, typename ...Args>
-inline void init_cpp_private(T* owner, TPriv*& p, GType owner_type, Args&& ...args)
-{
-#ifdef MOO_DEBUG
-    g_assert(g_object_get_data(G_OBJECT(owner), "__moo_cpp_private_init__") == nullptr);
-#endif
-
-    p = G_TYPE_INSTANCE_GET_PRIVATE(owner, owner_type, TPriv);
-    new(p) TPriv(std::forward<Args>(args)...);
-
-#ifdef MOO_DEBUG
-    g_object_set_data(G_OBJECT(owner), "__moo_cpp_private_init__", GINT_TO_POINTER(true));
-#endif
-}
-
-template<typename T, typename TPriv, typename ...Args>
-inline void init_cpp_private(T* owner, TPriv*& p, Args&& ...args)
-{
-#ifdef MOO_DEBUG
-    g_assert(g_object_get_data(G_OBJECT(owner), "__moo_cpp_private_init__") == nullptr);
-#endif
-
-    // object_g_type() will produce a compiler error if the type wasn't registered
-    p = G_TYPE_INSTANCE_GET_PRIVATE(owner, gobjinfo<T>::object_g_type(), TPriv);
-    new(p) TPriv(std::forward<Args>(args)...);
-
-#ifdef MOO_DEBUG
-    g_object_set_data(G_OBJECT(owner), "__moo_cpp_private_init__", GINT_TO_POINTER(true));
-#endif
-}
-
-template<typename T, typename TPriv>
-inline void finalize_cpp_private(G_GNUC_UNUSED T* owner, TPriv*& p)
-{
-#ifdef MOO_DEBUG
-    g_assert(g_object_get_data(G_OBJECT(owner), "__moo_cpp_private_init__") == GINT_TO_POINTER(true));
-#endif
-
-    if (p != nullptr)
-    {
-        p->~TPriv();
-        p = nullptr;
-    }
-
-#ifdef MOO_DEBUG
-    g_object_set_data(G_OBJECT(owner), "__moo_cpp_private_init__", nullptr);
-#endif
-}
-
-struct class_helper
-{
-    template<typename X>
-    static size_t address(X* x)
-    {
-        return reinterpret_cast<size_t>(reinterpret_cast<const volatile char*>(x));
-    }
-
-    template<typename Sup, typename Sub>
-    static void verify_g_object_subclass_alignment()
-    {
-        Sup* x = nullptr;
-        Sub* y = static_cast<Sub*>(x);
-        moo_release_assert(class_helper::address(x) == class_helper::address(y));
-    }
-};
+#if 0
 
 template<typename CObject>
 std::vector<gobj_ptr<CObject>> object_list_to_vector (GList* list)
@@ -257,6 +163,6 @@ struct cpp_vararg_dest_fixer<gobj_ptr<T>&>
     static void** apply (gobj_ptr<T>& o) { return reinterpret_cast<void**>(o.pp ()); }
 };
 
-} // namespace moo
+#endif // 0
 
-#endif // __cplusplus
+} // namespace g

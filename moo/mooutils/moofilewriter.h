@@ -16,10 +16,9 @@
 #pragma once
 
 #include <mooutils/mooutils-misc.h>
+#include <moocpp/moocpp.h>
 
 #ifdef __cplusplus
-
-#include <moocpp/moocpp.h>
 
 struct MooFileReader;
 struct MooFileWriter;
@@ -30,14 +29,14 @@ void g_object_ref(MooFileWriter*) = delete;
 void g_object_unref(MooFileWriter*) = delete;
 
 MooFileReader  *moo_file_reader_new             (const char     *filename,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&     error);
 MooFileReader  *moo_text_reader_new             (const char     *filename,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&     error);
 gboolean        moo_file_reader_read            (MooFileReader  *reader,
                                                  char           *buf,
                                                  gsize           buf_size,
                                                  gsize          *size_read,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&     error);
 void            moo_file_reader_close           (MooFileReader  *reader);
 
 typedef enum /*< flags >*/
@@ -52,17 +51,17 @@ MOO_DEFINE_FLAGS(MooFileWriterFlags);
 
 MooFileWriter  *moo_file_writer_new             (const char     *filename,
                                                  MooFileWriterFlags flags,
-                                                 moo::gerrp&     error);
-MooFileWriter  *moo_file_writer_new_for_file    (moo::g::File    file,
+                                                 g::gerrp&       error);
+MooFileWriter  *moo_file_writer_new_for_file    (g::File&        file,
                                                  MooFileWriterFlags flags,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&       error);
 MooFileWriter  *moo_config_writer_new           (const char     *filename,
                                                  gboolean        save_backup,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&       error);
 MooFileWriter  *moo_string_writer_new           (void);
 
 gboolean        moo_file_writer_close           (MooFileWriter  *writer,
-                                                 moo::gerrp&     error);
+                                                 g::gerrp&     error);
 
 
 #endif // __cplusplus
@@ -100,7 +99,7 @@ G_END_DECLS
 template<typename ...Args>
 inline bool moo_file_writer_printf (MooFileWriter *writer, const char* fmt, Args&& ...args)
 {
-    moo::gstr s = moo::gstr::printf (fmt, std::forward<Args> (args)...);
+    g::gstr s = g::gstr::printf(fmt, std::forward<Args>(args)...);
     return moo_file_writer_write (writer, s);
 }
 
@@ -109,7 +108,7 @@ inline bool moo_file_writer_printf_markup (MooFileWriter  *writer,
                                            const char     *fmt,
                                            Args&&... args)
 {
-    moo::gstr s = moo::g::markup_printf_escaped (fmt, std::forward<Args> (args)...);
+    g::gstr s = g::markup_printf_escaped(fmt, std::forward<Args>(args)...);
     return moo_file_writer_write (writer, s);
 }
 

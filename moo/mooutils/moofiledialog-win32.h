@@ -18,5 +18,5 @@
 #include <moocpp/moocpp.h>
 #include <windows.h>
 
-moo::gstrvec moo_show_win32_file_open_dialog(HWND hwnd_parent, const moo::gstr& start_folder);
-moo::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename);
+g::gstrvec moo_show_win32_file_open_dialog(HWND hwnd_parent, const g::gstr& start_folder);
+g::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const g::gstr& start_folder, const g::gstr& basename);

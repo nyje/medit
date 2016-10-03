@@ -16,7 +16,9 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include "moocpp/moocpp.h"
+#ifdef __cplusplus
+#include <moocpp/moocpp.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -106,6 +108,9 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-MOO_DEFINE_GOBJ_TYPE(MooTreeHelper, GObject, MOO_TYPE_TREE_HELPER)
+namespace moo
+{
+MOO_DEFINE_SIMPLE_GOBJ_CLASS(TreeHelper, g::Object, MooTreeHelper, MOO_TYPE_TREE_HELPER);
+}
 
 #endif // __cplusplus

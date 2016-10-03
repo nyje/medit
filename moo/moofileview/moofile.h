@@ -16,7 +16,9 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#include "moocpp/moocpp.h"
+#ifdef __cplusplus
+#include <moocpp/moocpp.h>
+#endif
 
 G_BEGIN_DECLS
 
