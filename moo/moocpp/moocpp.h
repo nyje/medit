@@ -22,7 +22,7 @@
 
 #include <moocpp/gboxed.h>
 
-#include <gpp/moogpp.h>
+#include <moogpp/moogpp.h>
 
 namespace moo {
 

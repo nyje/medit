@@ -18,7 +18,7 @@
 #include <mooutils/mooutils-macros.h>
 #include <stdarg.h>
 #ifdef __cplusplus
-#include <gpp/strutils.h>
+#include <moogpp/strutils.h>
 #endif
 #include <mooglib/moo-glib.h>
 

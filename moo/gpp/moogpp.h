@@ -21,12 +21,12 @@
 
 #include <gtk/gtk.h>
 
-#include <gpp/gparam.h>
-#include <gpp/memutils.h>
-#include <gpp/gutil.h>
-#include <gpp/strutils.h>
-#include <gpp/gobjectutils.h>
+#include <moogpp/gparam.h>
+#include <moogpp/memutils.h>
+#include <moogpp/gutil.h>
+#include <moogpp/strutils.h>
+#include <moogpp/gobjectutils.h>
 
-#include <gpp/gobjtypes-glib.h>
-#include <gpp/gobjtypes-gio.h>
-#include <gpp/gobjtypes-gtk.h>
+#include <moogpp/gobjtypes-glib.h>
+#include <moogpp/gobjtypes-gio.h>
+#include <moogpp/gobjtypes-gtk.h>

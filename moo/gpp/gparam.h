@@ -19,7 +19,7 @@
 #error "This is a C++ header"
 #endif
 
-#include <gpp/strutils.h>
+#include <moogpp/strutils.h>
 #include <memory>
 #include <utility>
 #include <vector>
