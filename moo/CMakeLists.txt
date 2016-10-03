@@ -144,7 +144,7 @@ target_link_libraries(medit
     ${LIBXML2_LIBRARIES}
     ${XLIB_LIBRARIES}
     #${LIBM}
-    ${PYTHON_LIBRARIES}
+    ${PYTHON_LIBRARY}
     ${moo_libadd}
     ${MEDIT_LIBS}
 )
