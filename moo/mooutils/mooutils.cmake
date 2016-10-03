@@ -181,7 +181,7 @@ if(MOO_BUILD_FROM_MSVC)
     LIST(APPEND mooutils_sources
         mooglib/moo-stat.h
         mooglib/moo-time.h
-        mooglib/moo-glib.c
+        mooglib/moo-glib.cpp
         mooglib/moo-glib.h
     )
 endif()

@@ -75,42 +75,29 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
 }
 
 
-#ifndef _MSC_VER
-
-#define _call_with_errno(err__, func__, rtype__, ...)   \
-({                                                      \
-    rtype__ result__;                                   \
-    errno = 0;                                          \
-    result__ = (func__) (__VA_ARGS__);                  \
-    if ((err__) != NULL)                                \
-        (err__)->value = errno;                         \
-    result__;                                           \
-})
-
-#else // _MSC_VER
-
-#define _call_with_errno(what__, result__)                                  \
-    errno = 0;                                                              \
-    result__ = what__;                                                      \
-    if (err != NULL)                                                        \
-        err->value = errno;                                                 \
-
-#endif // _MSC_VER
+template<typename Func>
+void _call_with_errno(const Func& func, mgw_errno_t *err)
+{
+    errno = 0;
+    func();
+    if (err != nullptr)
+        err->value = (mgw_errno_value_t) errno;
+}
 
 #define call_with_errno0(func__, result__)                                  \
-    _call_with_errno((func__)(), result__)
+    _call_with_errno([](){return (func__)();}, err);
 
 #define call_with_errno1(func__, result__, a1__)                            \
-    _call_with_errno((func__)((a1__)), result__)
+    _call_with_errno([&](){result__ = (func__)((a1__));}, err)
 
 #define call_with_errno2(func__, result__, a1__, a2__)                      \
-    _call_with_errno((func__)((a1__), (a2__)), result__)
+    _call_with_errno([&](){result__ = (func__)((a1__), (a2__));}, err);
 
 #define call_with_errno3(func__, result__, a1__, a2__, a3__)                \
-    _call_with_errno((func__)((a1__), (a2__), (a3__)), result__)
+    _call_with_errno([&](){result__ = (func__)((a1__), (a2__), (a3__));}, err);
 
 #define call_with_errno4(func__, result__, a1__, a2__, a3__, a4__)          \
-    _call_with_errno((func__)((a1__), (a2__), (a3__), (a4__)), result__)
+    _call_with_errno([&](){result__ = (func__)((a1__), (a2__), (a3__), (a4__));}, err);
 
 
 const char *
