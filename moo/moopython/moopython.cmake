@@ -8,9 +8,6 @@ include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MOO_PYTHON_LIB_DIR ${CMAKE_INSTALL_PREFIX}/bin/Lib)
 
-
-set(MOO_GTK_DIR /usr)
-
 set(PYGOBJECT_DEFS_DIR ${MOO_GTK_DIR}/share/pygobject/2.0/defs)
 set(PYGTK_DEFS_DIR ${MOO_GTK_DIR}/share/pygtk/2.0/defs)
 set(PYGTK_INCLUDE_DIR "${MOO_GTK_DIR}/include/pygtk-2.0")
