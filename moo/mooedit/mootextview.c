@@ -1651,11 +1651,11 @@ moo_text_view_move_cursor (MooTextView *view,
 
         mview = MOO_TEXT_VIEW (view);
         mview->priv->move_cursor_idle =
-            g_idle_add_full (G_PRIORITY_HIGH_IDLE + 9, /* between gtktextview's first validate priority and
-                                                        * GTK_PRIORITY_RESIZE */
-                             (GSourceFunc) do_move_cursor,
-                             g_memdup (&scroll, sizeof scroll),
-                             g_free);
+            gdk_threads_add_idle_full (G_PRIORITY_HIGH_IDLE + 9, /* between gtktextview's first validate priority and
+                                                          * GTK_PRIORITY_RESIZE */
+                                       (GSourceFunc) do_move_cursor,
+                                       g_memdup (&scroll, sizeof scroll),
+                                       g_free);
     }
 }
 
@@ -2154,7 +2154,7 @@ invalidate_gcs (MooTextView *view)
     for (i = 0; i < MOO_TEXT_VIEW_N_COLORS; ++i)
     {
         if (view->priv->gcs[i])
-            gdk_color_free(view->priv->gcs[i]);
+            g_object_unref (view->priv->gcs[i]);
         view->priv->gcs[i] = NULL;
     }
 }
@@ -2165,6 +2165,7 @@ update_gc (MooTextView     *view,
 {
     GdkColor color;
     GtkWidget *widget = GTK_WIDGET (view);
+    GdkColormap *colormap;
     GdkWindow *window;
 
     if (!GTK_WIDGET_REALIZED (widget))
@@ -2176,7 +2177,7 @@ update_gc (MooTextView     *view,
     {
         if (view->priv->gcs[color_num])
         {
-            gdk_color_free(view->priv->gcs[color_num]);
+            g_object_unref (view->priv->gcs[color_num]);
             view->priv->gcs[color_num] = NULL;
         }
 
@@ -2185,6 +2186,9 @@ update_gc (MooTextView     *view,
 
     if (view->priv->gcs[color_num])
         return;
+
+    colormap = gtk_widget_get_colormap (widget);
+    g_return_if_fail (colormap != NULL);
 
     window = gtk_text_view_get_window (GTK_TEXT_VIEW (view),
                                        GTK_TEXT_WINDOW_TEXT);
@@ -2198,6 +2202,11 @@ update_gc (MooTextView     *view,
                        view->priv->colors[color_num]);
             color = widget->style->bg[GTK_STATE_NORMAL];
         }
+        else if (!gdk_colormap_alloc_color (colormap, &color, FALSE, TRUE))
+        {
+            g_warning ("failed to allocate color");
+            color = widget->style->bg[GTK_STATE_NORMAL];
+        }
     }
     else
     {
@@ -2205,7 +2214,9 @@ update_gc (MooTextView     *view,
     }
 
     if (!view->priv->gcs[color_num])
-        view->priv->gcs[color_num] = gdk_color_copy(&color);
+        view->priv->gcs[color_num] = gdk_gc_new (window);
+
+    gdk_gc_set_foreground (view->priv->gcs[color_num], &color);
 }
 
 static void
@@ -2221,21 +2232,16 @@ moo_text_view_draw_right_margin (GtkTextView    *text_view,
                                  GdkEventExpose *event)
 {
     int x, y;
-    cairo_t *cr;
     MooTextView *view = MOO_TEXT_VIEW (text_view);
 
     update_right_margin (view);
 
-    y = gdk_window_get_height(event->window);
+    gdk_drawable_get_size (event->window, NULL, &y);
     x = view->priv->right_margin_pixel_offset + gtk_text_view_get_left_margin (text_view);
     if (text_view->hadjustment)
         x -= text_view->hadjustment->value;
-
-    cr = gdk_cairo_create(event->window);
-    gdk_cairo_set_source_color(cr, view->priv->gcs[MOO_TEXT_VIEW_COLOR_RIGHT_MARGIN]);
-    cairo_rectangle(cr, x, 0, 1, y);
-    cairo_fill(cr);
-    cairo_destroy(cr);
+    gdk_draw_rectangle (event->window, view->priv->gcs[MOO_TEXT_VIEW_COLOR_RIGHT_MARGIN],
+                        TRUE, x, 0, 1, y);
 }
 
 static void
@@ -2267,7 +2273,6 @@ moo_text_view_draw_current_line (GtkTextView    *text_view,
     int y, height;
     int win_y;
     int margin;
-    cairo_t *cr;
 
     gtk_text_buffer_get_iter_at_mark (text_view->buffer,
                                       &cur,
@@ -2299,15 +2304,13 @@ moo_text_view_draw_current_line (GtkTextView    *text_view,
     else
     	margin = gtk_text_view_get_left_margin (text_view);
 
-    cr = gdk_cairo_create (event->window);
-    cairo_set_source_rgb(cr, 0.1, 0.1, 0.1);
-    gdk_cairo_set_source_color(cr, MOO_TEXT_VIEW(text_view)->priv->gcs[MOO_TEXT_VIEW_COLOR_CURRENT_LINE]);
-    cairo_rectangle(cr, redraw_rect.x + MAX(0, margin - 1),
-                    win_y,
-                    redraw_rect.width,
-                    height);
-    cairo_fill(cr);
-    cairo_destroy(cr);
+    gdk_draw_rectangle (event->window,
+                        MOO_TEXT_VIEW(text_view)->priv->gcs[MOO_TEXT_VIEW_COLOR_CURRENT_LINE],
+                        TRUE,
+                        redraw_rect.x + MAX (0, margin - 1),
+                        win_y,
+                        redraw_rect.width,
+                        height);
 }
 
 
@@ -2526,9 +2529,9 @@ highlight_updated (GtkTextView       *text_view,
 
         if (!view->priv->update_idle)
             view->priv->update_idle =
-                g_idle_add_full (G_PRIORITY_HIGH_IDLE,
-                                 (GSourceFunc) invalidate_rectangle,
-                                 view, NULL);
+                    gdk_threads_add_idle_full (G_PRIORITY_HIGH_IDLE,
+                                               (GSourceFunc) invalidate_rectangle,
+                                               view, NULL);
     }
     else
     {
@@ -2892,9 +2895,9 @@ buffer_changed (MooTextView *view)
         !view->priv->update_n_lines_idle)
     {
         view->priv->update_n_lines_idle =
-            g_idle_add_full (G_PRIORITY_HIGH,
-                             (GSourceFunc) update_n_lines_idle,
-                             view, NULL);
+            gdk_threads_add_idle_full (G_PRIORITY_HIGH,
+                                       (GSourceFunc) update_n_lines_idle,
+                                       view, NULL);
     }
 }
 
@@ -2993,7 +2996,7 @@ draw_left_margin (MooTextView    *view,
 
     text_view = GTK_TEXT_VIEW (view);
     buffer = gtk_text_view_get_buffer (text_view);
-    window_width = gdk_window_get_width (event->window);
+    gdk_drawable_get_size (event->window, &window_width, NULL);
     text_width = 0;
     mark_icon_width = 0;
 
@@ -3103,7 +3106,6 @@ draw_marks_background (MooTextView    *view,
     int line, window_width;
     GdkRectangle area;
     GtkTextIter iter;
-    cairo_t* cr = NULL;
 
     text_view = GTK_TEXT_VIEW (view);
 
@@ -3113,7 +3115,7 @@ draw_marks_background (MooTextView    *view,
                                            area.x, area.y,
                                            &area.x, &area.y);
 
-    window_width = gdk_window_get_width (event->window);
+    gdk_drawable_get_size (event->window, &window_width, NULL);
     window_width -= gtk_text_view_get_left_margin (text_view);
 
     gtk_text_view_get_line_at_y (text_view, &iter, area.y, NULL);
@@ -3142,7 +3144,7 @@ draw_marks_background (MooTextView    *view,
         if (TRUE)
         {
             MooLineMark *mark;
-            const GdkColor *color = NULL;
+            GdkGC *gc = NULL;
             GSList *marks = moo_text_buffer_get_line_marks_at_line (get_moo_buffer (view), line);
 
             if (marks)
@@ -3152,26 +3154,25 @@ draw_marks_background (MooTextView    *view,
                     mark = marks->data;
 
                     if (_moo_line_mark_get_pretty (mark))
-                        color = moo_line_mark_get_background (mark);
+                        gc = moo_line_mark_get_background_gc (mark);
 
-                    if (!color)
+                    if (!gc)
                         marks = g_slist_delete_link (marks, marks);
                     else
                         break;
                 }
 
                 /* XXX compose colors */
-                if (color)
+                if (gc)
                 {
-                    if (!cr)
-                        cr = gdk_cairo_create(event->window);
-
-                    gdk_cairo_set_source_color (cr, color);
-                    cairo_rectangle(cr, gtk_text_view_get_left_margin(text_view),
-                                    y,
-                                    window_width,
-                                    height);
-                    cairo_fill (cr);
+                    gdk_gc_set_clip_rectangle (gc, &event->area);
+                    gdk_draw_rectangle (event->window,
+                                        gc,
+                                        TRUE,
+                                        gtk_text_view_get_left_margin (text_view),
+                                        y,
+                                        window_width,
+                                        height);
                 }
             }
 
@@ -3181,9 +3182,6 @@ draw_marks_background (MooTextView    *view,
         if (!text_iter_forward_visible_line (view, &iter, &line))
             break;
     }
-
-    if (cr)
-        cairo_destroy(cr);
 }
 
 
@@ -3429,7 +3427,7 @@ invalidate_line (MooTextView *view,
                                                       GTK_TEXT_WINDOW_LEFT);
         if (window)
         {
-            rect.width = gdk_window_get_width (window);
+            gdk_drawable_get_size (window, &rect.width, NULL);
             gdk_window_invalidate_rect (window, &rect, FALSE);
         }
     }
@@ -3440,7 +3438,7 @@ invalidate_line (MooTextView *view,
                                                       GTK_TEXT_WINDOW_TEXT);
         if (window)
         {
-            rect.width = gdk_window_get_width (window);
+            gdk_drawable_get_size (window, &rect.width, NULL);
             gdk_window_invalidate_rect (window, &rect, FALSE);
         }
     }

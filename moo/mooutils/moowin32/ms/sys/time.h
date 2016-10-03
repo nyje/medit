@@ -1,12 +1,11 @@
-#pragma once
+#ifndef MOO_SYS_TIME_H
+#define MOO_SYS_TIME_H
 
 /* for struct timeval */
 #include <winsock.h>
-
-G_BEGIN_DECLS
 
 #define gettimeofday _moo_win32_gettimeofday
 int _moo_win32_gettimeofday (struct timeval *tp,
                              void           *tzp);
 
-G_END_DECLS
+#endif /* MOO_SYS_TIME_H */

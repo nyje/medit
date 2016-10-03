@@ -1,7 +1,7 @@
 /*
  *   mooutils-misc.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,13 +13,11 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_UTILS_MISC_H
+#define MOO_UTILS_MISC_H
 
-#include <mooutils/mooutils-messages.h>
-#ifdef __cplusplus
-#include <moogpp/strutils.h>
-#endif
 #include <gtk/gtk.h>
+#include <mooutils/mooutils-messages.h>
 #include <string.h>
 
 G_BEGIN_DECLS
@@ -44,6 +42,7 @@ void        moo_log_window_hide             (void);
 void        moo_set_log_func_window         (gboolean        show_now);
 void        moo_set_log_func_file           (const char     *log_file);
 void        moo_set_log_func_silent         (void);
+void        moo_reset_log_func              (void);
 
 void MOO_NORETURN moo_segfault              (void);
 void MOO_NORETURN moo_abort                 (void);
@@ -76,18 +75,8 @@ gboolean    moo_save_user_data_file         (const char     *basename,
                                              const char     *content,
                                              gssize          len,
                                              GError        **error);
-
+char       *moo_get_user_cache_dir          (void);
 char       *moo_get_user_cache_file         (const char     *basename);
-
-G_END_DECLS
-#ifdef __cplusplus
-
-g::gstr     moo_get_user_cache_dir          ();
-g::gstr     moo_get_user_cache_file         (const g::gstr& basename);
-
-#endif // __cplusplus
-G_BEGIN_DECLS
-
 gboolean    moo_save_user_cache_file        (const char     *basename,
                                              const char     *content,
                                              gssize          len,
@@ -205,15 +194,28 @@ moo_assign_obj (void** dest, void* src)
 
 const char *_moo_get_pid_string             (void);
 
+guint       _moo_io_add_watch               (GIOChannel     *channel,
+                                             GIOCondition    condition,
+                                             GIOFunc         func,
+                                             gpointer        data);
+guint       _moo_io_add_watch_full          (GIOChannel     *channel,
+                                             int             priority,
+                                             GIOCondition    condition,
+                                             GIOFunc         func,
+                                             gpointer        data,
+                                             GDestroyNotify  notify);
+
+
+gboolean    _moo_regex_escape               (const char *string,
+                                             gssize      bytes,
+                                             GString    *dest);
+
 const char  *moo_error_message              (GError *error);
 
-gboolean     moo_signal_accumulator_continue_cancel (GSignalInvocationHint *ihint,
-                                                     GValue                *return_accu,
-                                                     const GValue          *handler_return,
-                                                     gpointer               val_continue);
-
-void         moo_thread_init                (void);
-gboolean     moo_is_main_thread             (void);
+gboolean    moo_signal_accumulator_continue_cancel (GSignalInvocationHint *ihint,
+                                                    GValue                *return_accu,
+                                                    const GValue          *handler_return,
+                                                    gpointer               val_continue);
 
 G_END_DECLS
 
@@ -222,19 +224,23 @@ G_END_DECLS
 #include <gtk/gtk.h>
 #include <string.h>
 
-#ifdef __cplusplus
+G_BEGIN_DECLS
 
-g::gstr     moo_win32_get_app_dir(void);
-g::gstr     moo_win32_get_dll_dir(const char* dll);
 
-void        _moo_win32_add_data_dirs(g::gstrvec&  list,
-                                     const char*    prefix);
+char        *moo_win32_get_app_dir          (void);
+char        *moo_win32_get_dll_dir          (const char     *dll);
 
-g::gstr     _moo_win32_get_locale_dir(void);
+void        _moo_win32_add_data_dirs        (GPtrArray      *list,
+                                             const char     *prefix);
+
+const char *_moo_win32_get_locale_dir       (void);
 
 gboolean    _moo_win32_open_uri             (const char     *uri);
 void        _moo_win32_show_fatal_error     (const char     *domain,
                                              const char     *logmsg);
+
+char      **_moo_win32_lame_parse_cmd_line  (const char     *cmd_line,
+                                             GError        **error);
 
 int         _moo_win32_message_box          (GtkWidget      *parent,
                                              guint           type,
@@ -242,12 +248,6 @@ int         _moo_win32_message_box          (GtkWidget      *parent,
                                              const char     *format,
                                              ...) G_GNUC_PRINTF (4, 5);
 
-#endif // __cplusplus
-
-G_BEGIN_DECLS
-
-char      **_moo_win32_lame_parse_cmd_line(const char     *cmd_line,
-                                           GError        **error);
 
 G_END_DECLS
 
@@ -263,68 +263,4 @@ moo_os_win32 (void)
 #endif
 }
 
-#ifdef __cplusplus
-
-g::gstrvec moo_get_data_subdirs(const g::gstr& subdir);
-g::gstr moo_error_message(const g::gerrp& err);
-
-#endif // __cplusplus
-
-G_BEGIN_DECLS
-
-GQuark moo_error_quark (void) G_GNUC_CONST;
-
-#define MOO_ERROR (moo_error_quark ())
-
-enum {
-    MOO_ERROR_UNEXPECTED = 1
-};
-
-G_END_DECLS
-
-#ifdef __cplusplus
-
-#define moo_err_false_ret__ false
-#define moo_err_null_ret__ nullptr
-
-inline void moo_err_set_unexpected_error(GError** error)
-{
-    g_set_error (error, MOO_ERROR, MOO_ERROR_UNEXPECTED, "unexpected error");
-}
-
-inline void moo_err_set_unexpected_error(g::gerrp& error)
-{
-    moo_err_set_unexpected_error(&error);
-}
-
-#else // !__cplusplus
-
-#define moo_err_false_ret__ FALSE
-#define moo_err_null_ret__ NULL
-
-#define moo_err_set_unexpected_error(error)                 \
-    g_set_error (error,                                     \
-                 MOO_ERROR,                                 \
-                 MOO_ERROR_UNEXPECTED,                      \
-                 "unexpected error")
-
-#endif // !__cplusplus
-
-#define moo_return_error_if_fail_val(cond, val)             \
-MOO_STMT_START {                                            \
-    if (cond)                                               \
-    {                                                       \
-    }                                                       \
-    else                                                    \
-    {                                                       \
-        moo_critical("Condition '%s' failed", #cond);       \
-        moo_err_set_unexpected_error(error);                \
-        return val;                                         \
-    }                                                       \
-} MOO_STMT_END
-
-#define moo_return_error_if_fail(cond)                      \
-    moo_return_error_if_fail_val (cond, moo_err_false_ret__)
-
-#define moo_return_error_if_fail_p(cond)                    \
-    moo_return_error_if_fail_val (cond, moo_err_null_ret__)
+#endif /* MOO_UTILS_MISC_H */

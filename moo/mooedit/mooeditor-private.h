@@ -1,7 +1,7 @@
 /*
  *   mooeditor-private.h
  *
- *   Copyright (C) 2004-2015 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,37 +13,46 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_EDITOR_PRIVATE_H
+#define MOO_EDITOR_PRIVATE_H
 
-#include <vector>
 #include "mooedit/mooeditor-impl.h"
 #include "mooedit/moolangmgr.h"
-#include "moocpp/moocpp.h"
 
-enum MooEditorOptions {
-    MOO_EDITOR_OPTIONS_NONE = 0,
+G_BEGIN_DECLS
+
+typedef enum {
     OPEN_SINGLE         = 1 << 0,
     ALLOW_EMPTY_WINDOW  = 1 << 1,
     SINGLE_WINDOW       = 1 << 2,
     SAVE_BACKUPS        = 1 << 3,
     STRIP_WHITESPACE    = 1 << 4,
+    EMBEDDED            = 1 << 5
+} MooEditorOptions;
+
+struct MooEditorPrivate {
+    MooEditArray        *windowless;
+    MooEditWindowArray  *windows;
+    MooUiXml            *doc_ui_xml;
+    MooUiXml            *ui_xml;
+    MooHistoryMgr       *history;
+    MooFileWatch        *file_watch;
+    MooEditorOptions     opts;
+
+    GType                window_type;
+    GType                doc_type;
+
+    MooLangMgr          *lang_mgr;
 };
+
+G_END_DECLS
+
+#ifdef __cplusplus
+
+#include "mooutils/mooutils-cpp.h"
 
 MOO_DEFINE_FLAGS(MooEditorOptions);
 
-struct MooEditorPrivate {
-    std::vector<MooEditWindow*>  windows;
-    moo::gobj_ptr<MooUiXml>      doc_ui_xml;
-    moo::gobj_ptr<MooUiXml>      ui_xml;
-    moo::gobj_ptr<MooHistoryMgr> history;
-    moo::gref_ptr<MooFileWatch>  file_watch;
-    MooEditorOptions             opts;
+#endif // __cplusplus
 
-    GType                        window_type;
-    GType                        doc_type;
-
-    moo::gobj_ptr<MooLangMgr>    lang_mgr;
-
-    MooEditorPrivate();
-    ~MooEditorPrivate();
-};
+#endif /* MOO_EDITOR_PRIVATE_H */

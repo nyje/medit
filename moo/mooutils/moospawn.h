@@ -13,12 +13,10 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_SPAWN_H
+#define MOO_SPAWN_H
 
 #include <glib-object.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -69,7 +67,7 @@ struct _MooCmdClass
 #ifdef MOO_PATCHED_G_SPAWN_WIN32_HIDDEN_CONSOLE
 #define MOO_SPAWN_WIN32_HIDDEN_CONSOLE G_SPAWN_WIN32_HIDDEN_CONSOLE
 #else
-#define MOO_SPAWN_WIN32_HIDDEN_CONSOLE ((GSpawnFlags)0)
+#define MOO_SPAWN_WIN32_HIDDEN_CONSOLE 0
 #endif
 
 GType       _moo_cmd_get_type       (void) G_GNUC_CONST;
@@ -96,9 +94,4 @@ gboolean     moo_spawn_command_line_async_with_flags    (const gchar *command_li
 
 G_END_DECLS
 
-#ifdef __cplusplus
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(Cmd, g::Object, MooCmd, MOO_TYPE_CMD);
-}
-#endif // __cplusplus
+#endif /* MOO_SPAWN_H */

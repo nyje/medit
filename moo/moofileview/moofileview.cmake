@@ -1,35 +1,35 @@
 SET(moofileview_sources
     moofileview/moofileview.cmake
-    moofileview/moobookmarkmgr.cpp
+    moofileview/moobookmarkmgr.c
     moofileview/moobookmarkmgr.h
-    moofileview/moobookmarkview.cpp
+    moofileview/moobookmarkview.c
     moofileview/moobookmarkview.h
-    moofileview/moofile.cpp
+    moofileview/moofile.c
     moofileview/moofile.h
     moofileview/moofile-private.h
-    moofileview/moofileentry.cpp
+    moofileview/moofileentry.c
     moofileview/moofileentry.h
-    moofileview/moofilesystem.cpp
+    moofileview/moofilesystem.c
     moofileview/moofilesystem.h
-    moofileview/moofileview.cpp
+    moofileview/moofileview.c
     moofileview/moofileview.h
     moofileview/moofileview-accels.h
     moofileview/moofileview-aux.h
-    moofileview/moofileview-dialogs.cpp
+    moofileview/moofileview-dialogs.c
     moofileview/moofileview-dialogs.h
     moofileview/moofileview-impl.h
     moofileview/moofileview-private.h
-    moofileview/moofileview-tools.cpp
+    moofileview/moofileview-tools.c
     moofileview/moofileview-tools.h
     moofileview/moofolder-private.h
-    moofileview/moofolder.cpp
+    moofileview/moofolder.c
     moofileview/moofolder.h
-    moofileview/moofoldermodel.cpp
+    moofileview/moofoldermodel.c
     moofileview/moofoldermodel.h
     moofileview/moofoldermodel-private.h
-    moofileview/mooiconview.cpp
+    moofileview/mooiconview.c
     moofileview/mooiconview.h
-    moofileview/mootreeview.cpp
+    moofileview/mootreeview.c
     moofileview/mootreeview.h
 )
 

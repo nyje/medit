@@ -25,20 +25,16 @@
 #endif
 
 #ifdef __WIN32__
-#include <VersionHelpers.h>
 #include <windows.h>
 #endif
 
-#include <moocpp/moocpp.h>
 #include <mooglib/moo-glib.h>
 #include <errno.h>
 #include <gtk/gtk.h>
 
-using namespace moo;
-
 #ifdef __WIN32__
 
-static gstr
+static char *
 get_system_name (void)
 {
     OSVERSIONINFOEXW ver;
@@ -47,36 +43,55 @@ get_system_name (void)
     ver.dwOSVersionInfoSize = sizeof (OSVERSIONINFOW);
 
     if (!GetVersionExW ((OSVERSIONINFOW*) &ver))
-        return gstr::wrap_const ("Windows");
+        return g_strdup ("Windows");
 
     switch (ver.dwMajorVersion)
     {
+        case 4: /* Windows NT 4.0, Windows Me, Windows 98, or Windows 95 */
+            switch (ver.dwMinorVersion)
+            {
+                case 0: /* Windows NT 4.0 or Windows95 */
+                    if (ver.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+                        return g_strdup ("Windows 95");
+                    else
+                        return g_strdup ("Windows NT 4.0");
+
+                case 10:
+                    return g_strdup ("Windows 98");
+
+                case 90:
+                    return g_strdup ("Windows 98");
+            }
+
+            break;
+
         case 5: /* Windows Server 2003 R2, Windows Server 2003, Windows XP, or Windows 2000 */
             switch (ver.dwMinorVersion)
             {
                 case 0:
-                    return gstr::wrap_const ("Windows 2000");
+                    return g_strdup ("Windows 2000");
                 case 1:
-                    return gstr::wrap_const ("Windows XP");
+                    return g_strdup ("Windows XP");
                 case 2:
-                    return gstr::wrap_const ("Windows Server 2003");
+                    return g_strdup ("Windows Server 2003");
             }
 
             break;
 
         case 6:
-            if (!IsWindowsServer())
+            memset (&ver, 0, sizeof (ver));
+            ver.dwOSVersionInfoSize = sizeof (OSVERSIONINFOEXW);
+
+            if (!GetVersionExW ((OSVERSIONINFOW*) &ver) || ver.wProductType == VER_NT_WORKSTATION)
             {
                 switch (ver.dwMinorVersion)
                 {
                     case 0:
-                        return gstr::wrap_const ("Windows Vista");
+                        return g_strdup ("Windows Vista");
                     case 1:
-                        return gstr::wrap_const ("Windows 7");
+                        return g_strdup ("Windows 7");
                     case 2:
-                        return gstr::wrap_const ("Windows 8");
-                    case 3:
-                        return gstr::wrap_const("Windows 8.1");
+                        return g_strdup ("Windows 8");
                 }
             }
             else
@@ -84,45 +99,23 @@ get_system_name (void)
                 switch (ver.dwMinorVersion)
                 {
                     case 0:
-                        return gstr::wrap_const ("Windows Server 2008");
+                        return g_strdup ("Windows Server 2008");
                     case 1:
-                        return gstr::wrap_const ("Windows Server 2008 R2");
+                        return g_strdup ("Windows Server 2008 R2");
                     case 2:
-                        return gstr::wrap_const("Windows Server 2012");
-                    case 3:
-                        return gstr::wrap_const("Windows Server 2012 R2");
-                }
-            }
-
-            break;
-
-        case 10:
-            if (!IsWindowsServer())
-            {
-                switch (ver.dwMinorVersion)
-                {
-                case 0:
-                    return gstr::wrap_const("Windows 10");
-                }
-            }
-            else
-            {
-                switch (ver.dwMinorVersion)
-                {
-                case 0:
-                    return gstr::wrap_const("Windows Server 2016");
+                        return g_strdup ("Windows Server 2012");
                 }
             }
 
             break;
     }
 
-    return IsWindowsServer() ? gstr::wrap_const("Windows Server") : gstr::wrap_const("Windows");
+    return g_strdup ("Windows");
 }
 
 #elif defined(HAVE_SYS_UTSNAME_H)
 
-static gstr
+static char *
 get_system_name (void)
 {
     struct utsname name;
@@ -130,13 +123,13 @@ get_system_name (void)
     if (uname (&name) != 0)
     {
         MGW_ERROR_IF_NOT_SHARED_LIBC
-        mgw_errno_t err = { mgw_errno_value_t (errno) };
+        mgw_errno_t err = { errno };
         g_critical ("%s", mgw_strerror (err));
-        return gstr::wrap_const ("unknown");
+        return g_strdup ("unknown");
     }
 
-    return gstr::printf ("%s %s (%s), %s", name.sysname,
-                         name.release, name.version, name.machine);
+    return g_strdup_printf ("%s %s (%s), %s", name.sysname,
+                            name.release, name.version, name.machine);
 }
 
 #else

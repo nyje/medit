@@ -29,7 +29,7 @@ GtkWidget  *moo_edit_prefs_page_new_3   (MooEditor  *editor);
 GtkWidget  *moo_edit_prefs_page_new_4   (MooEditor  *editor);
 GtkWidget  *moo_edit_prefs_page_new_5   (MooEditor  *editor);
 
-/* defined in mooeditprefs.cpp */
+/* defined in mooeditprefs.c */
 const char *moo_edit_setting            (const char *setting_name);
 
 #define MOO_EDIT_PREFS_TITLE_FORMAT             "window_title"

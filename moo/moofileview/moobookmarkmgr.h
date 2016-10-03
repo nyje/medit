@@ -1,7 +1,7 @@
 /*
  *   moobookmarkmgr.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,27 +13,17 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_BOOKMARK_MGR_H
+#define MOO_BOOKMARK_MGR_H
 
 #include <gtk/gtk.h>
 #include <mooutils/moouixml.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
-typedef struct MooBookmarkMgr MooBookmarkMgr;
-
-MooBookmarkMgr *_moo_bookmark_mgr_new (void);
-
-G_END_DECLS
-
-#ifdef __cplusplus
 
 #define MOO_TYPE_BOOKMARK_MGR                (_moo_bookmark_mgr_get_type ())
 #define MOO_BOOKMARK_MGR(object)             (G_TYPE_CHECK_INSTANCE_CAST ((object), MOO_TYPE_BOOKMARK_MGR, MooBookmarkMgr))
-#define MOO_BOOKMARK_MGR_OPT(object)         (moo::object_cast_opt<MooBookmarkMgr> (object))
 #define MOO_BOOKMARK_MGR_CLASS(klass)        (G_TYPE_CHECK_CLASS_CAST ((klass), MOO_TYPE_BOOKMARK_MGR, MooBookmarkMgrClass))
 #define MOO_IS_BOOKMARK_MGR(object)          (G_TYPE_CHECK_INSTANCE_TYPE ((object), MOO_TYPE_BOOKMARK_MGR))
 #define MOO_IS_BOOKMARK_MGR_CLASS(klass)     (G_TYPE_CHECK_CLASS_TYPE ((klass), MOO_TYPE_BOOKMARK_MGR))
@@ -46,34 +36,26 @@ typedef enum {
     MOO_BOOKMARK_MGR_NUM_COLUMNS
 } MooBookmarkMgrModelColumn;
 
-struct MooBookmark
-{
-    MooBookmark (const char* label,
-                 const char* path,
-                 const char* icon);
-    ~MooBookmark ();
+typedef struct _MooBookmark             MooBookmark;
+typedef struct _MooBookmarkMgr          MooBookmarkMgr;
+typedef struct _MooBookmarkMgrPrivate   MooBookmarkMgrPrivate;
+typedef struct _MooBookmarkMgrClass     MooBookmarkMgrClass;
 
-    MooBookmark (const MooBookmark&) = default;
-    MooBookmark& operator=(const MooBookmark&) = delete;
-    MooBookmark (MooBookmark&&);
-    MooBookmark& operator=(MooBookmark&&);
-
-    g::gstr path;
-    g::gstr display_path;
-    g::gstr label;
-    g::gstr icon_stock_id;
-    moo::gobj_ptr<GdkPixbuf> pixbuf;
+struct _MooBookmark {
+    char *path;
+    char *display_path;
+    char *label;
+    char *icon_stock_id;
+    GdkPixbuf *pixbuf;
 };
 
-struct MooBookmarkMgrPrivate;
-
-struct MooBookmarkMgr
+struct _MooBookmarkMgr
 {
     GObject parent;
     MooBookmarkMgrPrivate *priv;
 };
 
-struct MooBookmarkMgrClass
+struct _MooBookmarkMgrClass
 {
     GObjectClass parent_class;
 
@@ -88,10 +70,16 @@ struct MooBookmarkMgrClass
 GType           _moo_bookmark_get_type      (void) G_GNUC_CONST;
 GType           _moo_bookmark_mgr_get_type  (void) G_GNUC_CONST;
 
-moo::gtk::TreeModelPtr _moo_bookmark_mgr_get_model (MooBookmarkMgr *mgr);
+MooBookmark    *_moo_bookmark_new           (const char     *name,
+                                             const char     *path,
+                                             const char     *icon);
+void            _moo_bookmark_free          (MooBookmark    *bookmark);
+
+MooBookmarkMgr *_moo_bookmark_mgr_new       (void);
+GtkTreeModel   *_moo_bookmark_mgr_get_model (MooBookmarkMgr *mgr);
 
 void            _moo_bookmark_mgr_add       (MooBookmarkMgr *mgr,
-                                             moo::objp<MooBookmark> bookmark);
+                                             MooBookmark    *bookmark);
 
 GtkWidget      *_moo_bookmark_mgr_get_editor(MooBookmarkMgr *mgr);
 
@@ -103,8 +91,7 @@ void            _moo_bookmark_mgr_add_user  (MooBookmarkMgr *mgr,
 void            _moo_bookmark_mgr_remove_user(MooBookmarkMgr *mgr,
                                              gpointer        user); /* GObject* */
 
-namespace moo {
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(BookmarkMgr, g::Object, MooBookmarkMgr, MOO_TYPE_BOOKMARK_MGR);
-}
 
-#endif // __cplusplus
+G_END_DECLS
+
+#endif /* MOO_BOOKMARK_MGR_H */

@@ -13,12 +13,10 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_UTILS_TREE_VIEW_H
+#define MOO_UTILS_TREE_VIEW_H
 
 #include <gtk/gtk.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -106,11 +104,4 @@ void             _moo_tree_view_setup_expander      (GtkTreeView        *tree_vi
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(TreeHelper, g::Object, MooTreeHelper, MOO_TYPE_TREE_HELPER);
-}
-
-#endif // __cplusplus
+#endif /* MOO_UTILS_TREE_VIEW_H */

@@ -41,11 +41,6 @@ int          _moo_pyobject_to_object_array  (PyObject       *obj,
 int          _moo_pyobject_to_object_array_no_null (PyObject *obj,
                                              MooObjectArray **dest);
 
-int          _moo_pyobject_to_boxed_array   (PyObject       *obj,
-                                             MooPtrArray   **dest);
-int          _moo_pyobject_to_boxed_array_no_null (PyObject *obj,
-                                             MooPtrArray   **dest);
-
 PyObject    *_moo_object_slist_to_pyobject  (GSList         *list);
 PyObject    *_moo_string_slist_to_pyobject  (GSList         *list);
 PyObject    *_moo_boxed_slist_to_pyobject   (GSList         *list,
@@ -79,6 +74,26 @@ void          moo_python_remove_path        (const char     *dir);
 #define return_RuntimeErrorInt(msg) return PyErr_SetString (PyExc_RuntimeError, msg), -1
 #define return_ValueError(msg)      return PyErr_SetString (PyExc_ValueError, msg), NULL
 #define return_ValueErrorInt(msg)   return PyErr_SetString (PyExc_ValueError, msg), -1
+
+
+#if PY_MINOR_VERSION < 4
+#define Py_InitializeEx(arg) Py_Initialize()
+
+#define Py_IncRef _moo_Py_IncRef
+#define Py_DecRef _moo_Py_DecRef
+inline static void
+Py_IncRef (PyObject *obj)
+{
+    Py_XINCREF (obj);
+}
+
+inline static void
+Py_DecRef (PyObject *obj)
+{
+    Py_XDECREF (obj);
+}
+#endif
+
 
 G_END_DECLS
 

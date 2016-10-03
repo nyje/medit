@@ -1,7 +1,7 @@
 /*
  *   mooedit-fileops.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,21 +13,16 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#ifndef __cplusplus
-#error "This is a C++ header"
-#endif
+#ifndef MOO_EDIT_FILE_OPS_H
+#define MOO_EDIT_FILE_OPS_H
 
 #include "mooedit/mooedit.h"
 #include <gio/gio.h>
-#include "moocpp/utils.h"
-#include "moogpp/strutils.h"
-#include "mooutils/mooutils-misc.h"
 
 G_BEGIN_DECLS
+
+
 const char *_moo_get_default_encodings (void);
-G_END_DECLS
 
 typedef enum {
     MOO_EDIT_SAVE_FLAGS_NONE = 0,
@@ -43,28 +38,40 @@ enum {
     MOO_EDIT_FILE_ERROR_NOENT,
     MOO_EDIT_FILE_ERROR_CANCELLED
 };
-MOO_DEFINE_FLAGS(MooEditSaveFlags)
 
 GQuark           _moo_edit_file_error_quark     (void) G_GNUC_CONST;
 
-bool             _moo_is_file_error_cancelled   (const g::gerrp&        error);
+gboolean         _moo_is_file_error_cancelled   (GError         *error);
 
-bool             _moo_edit_file_is_new          (g::File&               file);
-bool             _moo_edit_load_file            (Edit                   edit,
-                                                 g::File&               file,
-                                                 const g::gstr&          init_encoding,
-                                                 const g::gstr&          init_cached_encoding,
-                                                 g::gerrp&              error);
-bool             _moo_edit_reload_file          (Edit                   edit,
-                                                 const char*            encoding,
-                                                 g::gerrp&              error);
-bool             _moo_edit_save_file            (Edit                   edit,
-                                                 g::File&               floc,
-                                                 const char*            encoding,
-                                                 MooEditSaveFlags       flags,
-                                                 g::gerrp&              error);
-bool             _moo_edit_save_file_copy       (Edit                   edit,
-                                                 g::File&               file,
-                                                 const char*            encoding,
-                                                 MooEditSaveFlags       flags,
-                                                 g::gerrp&              error);
+gboolean         _moo_edit_file_is_new          (GFile          *file);
+gboolean         _moo_edit_load_file            (MooEdit        *edit,
+                                                 GFile          *file,
+                                                 const char     *encoding,
+                                                 const char     *cached_encoding,
+                                                 GError        **error);
+gboolean         _moo_edit_reload_file          (MooEdit        *edit,
+                                                 const char     *encoding,
+                                                 GError        **error);
+gboolean         _moo_edit_save_file            (MooEdit        *edit,
+                                                 GFile          *floc,
+                                                 const char     *encoding,
+                                                 MooEditSaveFlags flags,
+                                                 GError        **error);
+gboolean         _moo_edit_save_file_copy       (MooEdit        *edit,
+                                                 GFile          *file,
+                                                 const char     *encoding,
+                                                 MooEditSaveFlags flags,
+                                                 GError        **error);
+
+
+G_END_DECLS
+
+#ifdef __cplusplus
+
+#include "mooutils/mooutils-cpp.h"
+
+MOO_DEFINE_FLAGS(MooEditSaveFlags)
+
+#endif // __cplusplus
+
+#endif /* MOO_EDIT_FILE_OPS_H */

@@ -85,8 +85,10 @@ if test x$MOO_DEV_MODE = "xyes" -a "x$XSLTPROC" = "x"; then
 fi
 
 AC_CONFIG_HEADERS([config.h])
-AH_TOP([#pragma once])
-AH_BOTTOM([#include <moo-config.h>])
+AH_TOP([#ifndef __CONFIG_H__
+#define __CONFIG_H__])
+AH_BOTTOM([#include <moo-config.h>
+#endif // __CONFIG_H__])
 
 MOO_LT_LIB_M
 
@@ -122,6 +124,13 @@ if $MOO_BUILD_MODULE; then
   elif test "$enable_shared" != "yes"; then
     AC_MSG_ERROR([Python module can't be built without --enable-shared option])
   fi
+fi
+
+if $MOO_BUILD_APP; then
+  AC_DEFINE(MOO_BUILD_APP, 1, [build medit application])
+fi
+if $MOO_BUILD_MODULE; then
+  AC_DEFINE(MOO_BUILD_MODULE, 1, [build standalone python module])
 fi
 
 AM_CONDITIONAL(MOO_BUILD_APP, [$MOO_BUILD_APP])

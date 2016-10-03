@@ -24,48 +24,48 @@ SET(mooedit_sources
     mooedit/mootextiter.h
     mooedit/mootextsearch.h
     mooedit/mootextstylescheme.h
-    mooedit/mooeditview.cpp
+    mooedit/mooeditview.c
     mooedit/mooeditview-priv.h
     mooedit/mooeditview-impl.h
     mooedit/mooeditview-script.c
     mooedit/mooeditview-script.h
     mooedit/mooedit-accels.h
     mooedit/mooeditaction.c	
-    mooedit/mooeditaction-factory.cpp
+    mooedit/mooeditaction-factory.c
     mooedit/mooeditaction-factory.h
-    mooedit/mooeditbookmark.cpp
-    mooedit/mooedit.cpp
+    mooedit/mooeditbookmark.c
+    mooedit/mooedit.c
     mooedit/mooeditconfig.c	
-    mooedit/mooeditdialogs.cpp
+    mooedit/mooeditdialogs.c
     mooedit/mooedit-enum-types.c
     mooedit/mooedit-enum-types.h
     mooedit/mooedit-enums.h	
-    mooedit/mooedit-fileops.cpp
+    mooedit/mooedit-fileops.c
     mooedit/mooedit-fileops.h
     mooedit/mooeditfiltersettings.c
     mooedit/mooedithistoryitem.c
     mooedit/mooedit-impl.h	
     mooedit/mooedit-script.c
     mooedit/mooedit-script.h
-    mooedit/mooeditprefs.cpp
+    mooedit/mooeditprefs.c	
     mooedit/mooeditprefspage.c
     mooedit/mooedit-private.h
     mooedit/mooeditprogress.h
-    mooedit/mooeditprogress.cpp
-    mooedit/mooedittab.cpp
+    mooedit/mooeditprogress.c
+    mooedit/mooedittab.c	
     mooedit/mooedittab.h	
     mooedit/mooedittab-impl.h
     mooedit/mooeditwindow.c
     mooedit/mooeditwindow-impl.h
     mooedit/mooeditfileinfo-impl.h
-    mooedit/mooeditfileinfo.cpp
+    mooedit/mooeditfileinfo.c
     mooedit/moofold.c	
     mooedit/moofold.h	
     mooedit/mooindenter.c	
     mooedit/mooindenter.h	
     mooedit/moolang.c	
     mooedit/moolang.h	
-    mooedit/moolangmgr.cpp	
+    mooedit/moolangmgr.c	
     mooedit/moolangmgr.h	
     mooedit/moolangmgr-private.h
     mooedit/moolang-private.h

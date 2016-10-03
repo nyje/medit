@@ -1,6 +1,5 @@
 #include <errno.h>
 #include <mooedit/mooeditfileinfo.h>
-#include "moocpp/moocpp.h"
 
 static MooOpenInfo *
 parse_filename (const char *filename)
@@ -29,7 +28,7 @@ parse_filename (const char *filename)
     {
         GError *error = NULL;
         GRegex *re = g_regex_new ("((?P<path>.*):(?P<line>\\d+)?|(?P<path>.*)\\((?P<line>\\d+)\\))$",
-                                  G_REGEX_OPTIMIZE | G_REGEX_DUPNAMES, GRegexMatchFlags(0), &error);
+                                  G_REGEX_OPTIMIZE | G_REGEX_DUPNAMES, 0, &error);
         if (!re)
         {
             g_critical ("could not compile regex: %s", error->message);
@@ -39,7 +38,7 @@ parse_filename (const char *filename)
         {
             GMatchInfo *match_info = NULL;
 
-            if (g_regex_match (re, filename, GRegexMatchFlags(0), &match_info))
+            if (g_regex_match (re, filename, 0, &match_info))
             {
                 char *path = g_match_info_fetch_named (match_info, "path");
                 char *line_string = g_match_info_fetch_named (match_info, "line");
@@ -73,7 +72,7 @@ parse_filename (const char *filename)
         return NULL;
     }
 
-    info = moo_open_info_new_uri (uri, NULL, line - 1, MOO_OPEN_FLAGS_NONE);
+    info = moo_open_info_new_uri (uri, NULL, line - 1, 0);
 
     g_free (uri);
     g_free (freeme1);
@@ -124,7 +123,7 @@ parse_uri (const char *scheme,
     char *real_uri;
 
     if (strcmp (scheme, "file") != 0)
-        return moo_open_info_new_uri (uri, NULL, -1, MOO_OPEN_FLAGS_NONE);
+        return moo_open_info_new_uri (uri, NULL, -1, 0);
 
     question_mark = strchr (uri, '?');
 
@@ -138,7 +137,7 @@ parse_uri (const char *scheme,
         real_uri = g_strdup (uri);
     }
 
-    info = moo_open_info_new_uri (real_uri, NULL, -1, MOO_OPEN_FLAGS_NONE);
+    info = moo_open_info_new_uri (real_uri, NULL, -1, 0);
 
     if (optstring)
         parse_options_from_uri (optstring, info);

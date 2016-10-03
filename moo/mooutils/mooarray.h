@@ -14,7 +14,6 @@ struct ArrayType {                                                      \
                                                                         \
 ArrayType *array_type##_new (void);                                     \
 void array_type##_free (ArrayType *ar);                                 \
-void array_type##_reserve (ArrayType *ar, gsize n);                     \
 void array_type##_append (ArrayType *ar, ElmType *elm);                 \
 void array_type##_take (ArrayType *ar, ElmType *elm);                   \
 void array_type##_append_array (ArrayType *ar, ArrayType *ar2);         \
@@ -76,13 +75,6 @@ array_type##_free (ArrayType *ar)                                       \
         MOO_IP_ARRAY_DESTROY (ar, elms);                                \
         g_slice_free (ArrayType, ar);                                   \
     }                                                                   \
-}                                                                       \
-                                                                        \
-void                                                                    \
-array_type##_reserve (ArrayType *ar, gsize n)                           \
-{                                                                       \
-    g_return_if_fail (ar != NULL);                                      \
-    MOO_IP_ARRAY_RESERVE_EXACT (ElmType*, ar, elms, n);                 \
 }                                                                       \
                                                                         \
 void                                                                    \
@@ -189,7 +181,7 @@ array_type##_sort (ArrayType *ar, GCompareFunc func)                    \
                                                                         \
     g_qsort_with_data (ar->elms, ar->n_elms, sizeof (*ar->elms),        \
                        array_type##_gcompare_data_func,                 \
-                       (gpointer) func);                                \
+                       func);                                           \
 }                                                                       \
                                                                         \
 gssize array_type##_find (const ArrayType *ar, ElmType *elm)            \
@@ -234,9 +226,7 @@ gssize array_type##_find (const ArrayType *ar, ElmType *elm)            \
 G_BEGIN_DECLS
 
 MOO_DECLARE_OBJECT_ARRAY_FULL (MooObjectArray, moo_object_array, GObject)
-MOO_DECLARE_PTR_ARRAY_FULL (MooPtrArray, moo_ptr_array, void)
-
-void moo_boxed_array_free(MooPtrArray* ar, GType elm_type);
+MOO_DECLARE_PTR_ARRAY_FULL (MooPtrArray, moo_ptr_array, gpointer)
 
 G_END_DECLS
 

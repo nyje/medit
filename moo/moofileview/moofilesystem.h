@@ -19,20 +19,19 @@
  *  from gtk/gtkfilesystem.h).
  */
 
-#pragma once
+#ifndef MOO_FILE_SYSTEM_H
+#define MOO_FILE_SYSTEM_H
 
 #include "moofileview/moofolder.h"
-#include "mooutils/moofilewatch.h"
+#include <mooutils/moofilewatch.h>
 #include <gtk/gtk.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
+
 
 G_BEGIN_DECLS
 
+
 #define MOO_TYPE_FILE_SYSTEM              (_moo_file_system_get_type ())
 #define MOO_FILE_SYSTEM(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), MOO_TYPE_FILE_SYSTEM, MooFileSystem))
-#define MOO_FILE_SYSTEM_OPT(object)       (moo::object_cast_opt<MooFileSystem> (object))
 #define MOO_FILE_SYSTEM_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), MOO_TYPE_FILE_SYSTEM, MooFileSystemClass))
 #define MOO_IS_FILE_SYSTEM(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), MOO_TYPE_FILE_SYSTEM))
 #define MOO_IS_FILE_SYSTEM_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), MOO_TYPE_FILE_SYSTEM))
@@ -46,10 +45,6 @@ typedef enum {
     MOO_DELETE_RECURSIVE = 1 << 0,
     MOO_DELETE_TO_TRASH  = 1 << 1
 } MooDeleteFileFlags;
-
-#ifdef __cplusplus
-MOO_DEFINE_FLAGS (MooDeleteFileFlags);
-#endif // __cplusplus
 
 struct _MooFileSystem
 {
@@ -145,15 +140,9 @@ char        *_moo_file_system_get_absolute_path (MooFileSystem  *fs,
 
 MooFileSystem *_moo_folder_get_file_system      (MooFolder      *folder);
 
+MooFileWatch *_moo_file_system_get_file_watch   (MooFileSystem  *fs);
+
+
 G_END_DECLS
 
-#ifdef __cplusplus
-
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(FileSystem, g::Object, MooFileSystem, MOO_TYPE_FILE_SYSTEM);
-}
-
-MooFileWatchPtr _moo_file_system_get_file_watch(MooFileSystem  *fs);
-
-#endif // __cplusplus
+#endif /* MOO_FILE_SYSTEM_H */

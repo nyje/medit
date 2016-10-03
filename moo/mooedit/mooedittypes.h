@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOO_EDIT_TYPES_H
+#define MOO_EDIT_TYPES_H
 
 #include <gtk/gtk.h>
 #include <mooutils/mooarray.h>
@@ -8,27 +9,23 @@
 
 G_BEGIN_DECLS
 
-#define MOO_DECLARE_C_CLASS(Object, object)             \
-    typedef struct Object Object;                       \
-    GType object##_get_type(void) G_GNUC_CONST;
+typedef struct MooOpenInfo MooOpenInfo;
+typedef struct MooSaveInfo MooSaveInfo;
+typedef struct MooReloadInfo MooReloadInfo;
 
-MOO_DECLARE_C_CLASS(MooEdit, moo_edit);
-MOO_DECLARE_C_CLASS(MooEditor, moo_editor);
-MOO_DECLARE_C_CLASS(MooEditView, moo_edit_view);
-MOO_DECLARE_C_CLASS(MooEditWindow, moo_edit_window);
-MOO_DECLARE_C_CLASS(MooEditor, moo_editor);
-MOO_DECLARE_C_CLASS(MooEditTab, moo_edit_tab);
-MOO_DECLARE_C_CLASS(MooTextView, moo_text_view);
-MOO_DECLARE_C_CLASS(MooOpenInfo, moo_open_info);
-MOO_DECLARE_C_CLASS(MooSaveInfo, moo_save_info);
-MOO_DECLARE_C_CLASS(MooReloadInfo, moo_reload_info);
+typedef struct MooEdit MooEdit;
+typedef struct MooEditView MooEditView;
+typedef struct MooEditWindow MooEditWindow;
+typedef struct MooEditor MooEditor;
+typedef struct MooEditTab MooEditTab;
 
 MOO_DECLARE_OBJECT_ARRAY (MooEdit, moo_edit)
 MOO_DECLARE_OBJECT_ARRAY (MooEditView, moo_edit_view)
 MOO_DECLARE_OBJECT_ARRAY (MooEditTab, moo_edit_tab)
 MOO_DECLARE_OBJECT_ARRAY (MooEditWindow, moo_edit_window)
+MOO_DEFINE_SLIST (MooEditList, moo_edit_list, MooEdit)
 
-MOO_DECLARE_PTR_ARRAY(MooOpenInfo, moo_open_info)
+MOO_DECLARE_OBJECT_ARRAY (MooOpenInfo, moo_open_info)
 
 #define MOO_TYPE_LINE_END (moo_type_line_end ())
 GType   moo_type_line_end   (void) G_GNUC_CONST;
@@ -41,38 +38,4 @@ MOO_DECLARE_QUARK (moo-edit-save-error, moo_edit_save_error_quark)
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-#include <moocpp/moocpp.h>
-
-namespace moo {
-
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(TextView, gtk::TextView, MooTextView, moo_text_view_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditTab, gtk::Widget, MooEditTab, moo_edit_tab_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditWindow, gtk::Window, MooEditWindow, moo_edit_window_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditView, moo::TextView, MooEditView, moo_edit_view_get_type());
-
-} // namespace moo
-
-MOO_DECLARE_CUSTOM_GOBJ_TYPE(MooEdit);
-MOO_DECLARE_CUSTOM_GOBJ_TYPE(MooEditView);
-
-MOO_GOBJ_TYPEDEFS(TextView, MooTextView);
-MOO_GOBJ_TYPEDEFS(Edit, MooEdit);
-MOO_GOBJ_TYPEDEFS(EditTab, MooEditTab);
-MOO_GOBJ_TYPEDEFS(EditView, MooEditView);
-MOO_GOBJ_TYPEDEFS(EditWindow, MooEditWindow);
-
-void g_object_unref(MooOpenInfo*) = delete;
-void g_object_unref(MooReloadInfo*) = delete;
-void g_object_unref(MooSaveInfo*) = delete;
-
-void g_free(MooOpenInfo*) = delete;
-void g_free(MooReloadInfo*) = delete;
-void g_free(MooSaveInfo*) = delete;
-
-MOO_DEFINE_NON_GOBJ_TYPE(MooOpenInfo);
-MOO_DEFINE_NON_GOBJ_TYPE(MooReloadInfo);
-MOO_DEFINE_NON_GOBJ_TYPE(MooSaveInfo);
-
-#endif // __cplusplus
+#endif /* MOO_EDIT_TYPES_H */

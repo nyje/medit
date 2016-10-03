@@ -21,8 +21,7 @@ const mgw_errno_t MGW_E_EXIST   = { MGW_EEXIST };
 
 static mgw_time_t convert_time_t (time_t t)
 {
-    mgw_time_t result;
-    result.value = t;
+    mgw_time_t result = { t };
     return result;
 }
 
@@ -35,13 +34,8 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
 
     mbuf->size = gbuf->st_size;
 
-#ifdef _MSC_VER
-    mbuf->isreg = (gbuf->st_mode & _S_IFREG) != 0;
-    mbuf->isdir = (gbuf->st_mode & _S_IFDIR) != 0;
-#else
     mbuf->isreg = S_ISREG (gbuf->st_mode);
     mbuf->isdir = S_ISDIR (gbuf->st_mode);
-#endif
 
 #ifdef S_ISLNK
     mbuf->islnk = S_ISLNK (gbuf->st_mode);
@@ -75,7 +69,6 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
 }
 
 
-#ifndef _MSC_VER
 #define call_with_errno(err__, func__, rtype__, ...)    \
 ({                                                      \
     rtype__ result__;                                   \
@@ -85,30 +78,6 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
         (err__)->value = errno;                         \
     result__;                                           \
 })
-#else // _MSC_VER
-
-#define _call_with_errno(what__, result__)                                  \
-    errno = 0;                                                              \
-    result__ = what__;                                                      \
-    if (err != NULL)                                                        \
-        err->value = errno;                                                 \
-
-#define call_with_errno0(func__, result__)                                  \
-    _call_with_errno((func__)(), result__)
-
-#define call_with_errno1(func__, result__, a1__)                            \
-    _call_with_errno((func__)((a1__)), result__)
-
-#define call_with_errno2(func__, result__, a1__, a2__)                      \
-    _call_with_errno((func__)((a1__), (a2__)), result__)
-
-#define call_with_errno3(func__, result__, a1__, a2__, a3__)                \
-    _call_with_errno((func__)((a1__), (a2__), (a3__)), result__)
-
-#define call_with_errno4(func__, result__, a1__, a2__, a3__, a4__)          \
-    _call_with_errno((func__)((a1__), (a2__), (a3__), (a4__)), result__)
-
-#endif // _MSC_VER
 
 
 const char *
@@ -128,8 +97,7 @@ int
 mgw_stat (const gchar *filename, MgwStatBuf *buf, mgw_errno_t *err)
 {
     GStatBuf gbuf = { 0 };
-    int result;
-    call_with_errno2 (g_stat, result, filename, &gbuf);
+    int result = call_with_errno (err, g_stat, int, filename, &gbuf);
     convert_g_stat_buf (&gbuf, buf);
     return result;
 }
@@ -138,8 +106,7 @@ int
 mgw_lstat (const gchar *filename, MgwStatBuf *buf, mgw_errno_t *err)
 {
     GStatBuf gbuf = { 0 };
-    int result;
-    call_with_errno2 (g_lstat, result, filename, &gbuf);
+    int result = call_with_errno (err, g_lstat, int, filename, &gbuf);
     convert_g_stat_buf (&gbuf, buf);
     return result;
 }
@@ -169,17 +136,14 @@ const struct tm *
 mgw_localtime_r (const mgw_time_t *timep, struct tm *result, mgw_errno_t *err)
 {
     time_t t = timep->value;
-    struct tm *ret;
-    call_with_errno2 (localtime_r, ret, &t, result);
-    return ret;
+    return call_with_errno (err, localtime_r, struct tm*, &t, result);
 }
 
 mgw_time_t
 mgw_time (mgw_time_t *t, mgw_errno_t *err)
 {
     time_t t1;
-    mgw_time_t result;
-    call_with_errno1 (time, result.value, &t1);
+    mgw_time_t result = { call_with_errno (err, time, time_t, &t1) };
     if (t != NULL)
         t->value = t1;
     return result;
@@ -189,26 +153,20 @@ mgw_time (mgw_time_t *t, mgw_errno_t *err)
 guint64
 mgw_ascii_strtoull (const gchar *nptr, gchar **endptr, guint base, mgw_errno_t *err)
 {
-    guint64 result;
-    call_with_errno3 (g_ascii_strtoull, result, nptr, endptr, base);
-    return result;
+    return call_with_errno (err, g_ascii_strtoull, guint64, nptr, endptr, base);
 }
 
 gdouble
 mgw_ascii_strtod (const gchar *nptr, gchar **endptr, mgw_errno_t *err)
 {
-    double result;
-    call_with_errno2 (g_ascii_strtod, result, nptr, endptr);
-    return result;
+    return call_with_errno (err, g_ascii_strtod, double, nptr, endptr);
 }
 
 
 MGW_FILE *
 mgw_fopen (const char *filename, const char *mode, mgw_errno_t *err)
 {
-    FILE* result;
-    call_with_errno2 (g_fopen, result, filename, mode);
-    return (MGW_FILE*) result;
+    return (MGW_FILE*) call_with_errno (err, g_fopen, FILE*, filename, mode);
 }
 
 int mgw_fclose (MGW_FILE *file)
@@ -219,9 +177,7 @@ int mgw_fclose (MGW_FILE *file)
 gsize
 mgw_fread(void *ptr, gsize size, gsize nmemb, MGW_FILE *stream, mgw_errno_t *err)
 {
-    gsize result;
-    call_with_errno4 (fread, result, ptr, size, nmemb, (FILE*) stream);
-    return result;
+    return call_with_errno (err, fread, gsize, ptr, size, nmemb, (FILE*) stream);
 }
 
 gsize
@@ -246,8 +202,7 @@ mgw_fgets(char *s, int size, MGW_FILE *stream)
 MgwFd
 mgw_open (const char *filename, int flags, int mode)
 {
-    MgwFd fd;
-    fd.value = g_open (filename, flags, mode);
+    MgwFd fd = { g_open (filename, flags, mode) };
     return fd;
 }
 
@@ -289,41 +244,31 @@ mgw_perror (const char *s)
 int
 mgw_unlink (const char *path, mgw_errno_t *err)
 {
-    int result;
-    call_with_errno1 (g_unlink, result, path);
-    return result;
+    return call_with_errno (err, g_unlink, int, path);
 }
 
 int
 mgw_remove (const char *path, mgw_errno_t *err)
 {
-    int result;
-    call_with_errno1 (g_remove, result, path);
-    return result;
+    return call_with_errno (err, g_remove, int, path);
 }
 
 int
 mgw_rename (const char *oldpath, const char *newpath, mgw_errno_t *err)
 {
-    int result;
-    call_with_errno2 (g_rename, result, oldpath, newpath);
-    return result;
+    return call_with_errno (err, g_rename, int, oldpath, newpath);
 }
 
 int
 mgw_mkdir (const gchar *filename, int mode, mgw_errno_t *err)
 {
-    int result;
-    call_with_errno2 (g_mkdir, result, filename, mode);
-    return result;
+    return call_with_errno (err, g_mkdir, int, filename, mode);
 }
 
 int
 mgw_mkdir_with_parents (const gchar *pathname, gint mode, mgw_errno_t *err)
 {
-    int result;
-    call_with_errno2 (g_mkdir_with_parents, result, pathname, mode);
-    return result;
+    return call_with_errno (err, g_mkdir_with_parents, int, pathname, mode);
 }
 
 int

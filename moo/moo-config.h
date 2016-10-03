@@ -1,9 +1,5 @@
-#pragma once
-
-#if (defined(DEBUG) && ((!DEBUG) || !(MOO_DEBUG) || !(ENABLE_DEBUG))) || \
-    (!defined(DEBUG) && (defined(MOO_DEBUG) || defined(ENABLE_DEBUG)))
-#  error "DEBUG, MOO_DEBUG, and ENABLE_DEBUG must either be all defined to non-zero or all undefined"
-#endif
+#ifndef MOO_CONFIG_H
+#define MOO_CONFIG_H
 
 #undef MOO_CL_GCC
 #undef MOO_CL_MINGW
@@ -63,3 +59,5 @@
 #  define MOO_CDECL __cdecl
 #  define MOO_STDCALL __stdcall
 #endif
+
+#endif /* MOO_CONFIG_H */

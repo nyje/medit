@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MOO_UTILS_FILE_H
+#define MOO_UTILS_FILE_H
 
 #include <gio/gio.h>
 #include <mooutils/mooarray.h>
@@ -14,15 +15,10 @@ moo_file_free (GFile *file)
         g_object_unref (file);
 }
 
-gboolean     moo_file_fnmatch           (GFile*       file,
-                                         const char*  glob);
+gboolean     moo_file_fnmatch           (GFile      *file,
+                                         const char *glob);
+char        *moo_file_get_display_name  (GFile *file);
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-#include <moocpp/moocpp.h>
-
-g::gstr      moo_file_get_display_name  (g::File&   file);
-
-#endif // __cplusplus
+#endif /* MOO_UTILS_FILE_H */

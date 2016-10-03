@@ -204,29 +204,17 @@ class Writer(object):
                                         'moo_lua_get_arg_enum (L, %(arg_idx)s, "%(param_name)s", ' + \
                                         '%(gtype_id)s);') % dic)
         elif isinstance(param.type, ArrayType):
+            assert isinstance(param.type.elm_type, Class)
             dic['gtype_id'] = param.type.elm_type.gtype_id
-            if isinstance(param.type.elm_type, Class):
-                if param.default_value is not None:
-                    func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
-                						    'moo_lua_get_arg_object_array_opt (L, %(arg_idx)s, "%(param_name)s", ' + \
-                						    '%(gtype_id)s);') % dic)
-                else:
-                    func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
-                						    'moo_lua_get_arg_object_array (L, %(arg_idx)s, "%(param_name)s", ' + \
-                						    '%(gtype_id)s);') % dic)
-                func_body.end.append('moo_object_array_free ((MooObjectArray*) arg%(narg)d);' % dic)
-            elif isinstance(param.type.elm_type, Boxed):
-                if param.default_value is not None:
-                    func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
-                						    'moo_lua_get_arg_boxed_array_opt (L, %(arg_idx)s, "%(param_name)s", ' + \
-                						    '%(gtype_id)s);') % dic)
-                else:
-                    func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
-                						    'moo_lua_get_arg_boxed_array (L, %(arg_idx)s, "%(param_name)s", ' + \
-                						    '%(gtype_id)s);') % dic)
-                func_body.end.append('moo_boxed_array_free ((MooPtrArray*) arg%(narg)d, %(gtype_id)s);' % dic)
+            if param.default_value is not None:
+                func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
+                                        'moo_lua_get_arg_object_array_opt (L, %(arg_idx)s, "%(param_name)s", ' + \
+                                        '%(gtype_id)s);') % dic)
             else:
-                raise "Arrays are not implemented for this type"
+                func_body.start.append(('%(TypeName)s arg%(narg)d = (%(TypeName)s) ' + \
+                                        'moo_lua_get_arg_object_array (L, %(arg_idx)s, "%(param_name)s", ' + \
+                                        '%(gtype_id)s);') % dic)
+            func_body.end.append('moo_object_array_free ((MooObjectArray*) arg%(narg)d);' % dic)
         elif param.type.name == 'strv':
             assert param.default_value is None or param.default_value == 'NULL'
             if param.default_value is not None:
@@ -339,15 +327,10 @@ class Writer(object):
                 func_call = '%s ret = ' % meth.retval.type.name
                 push_ret = 'moo_lua_push_int (L, ret);' % dic
             elif isinstance(meth.retval.type, ArrayType):
+                assert isinstance(meth.retval.type.elm_type, Class)
                 dic['gtype_id'] = meth.retval.type.elm_type.gtype_id
-                if isinstance(meth.retval.type.elm_type, Class):
-                    func_call = 'MooObjectArray *ret = (MooObjectArray*) '
-                    push_ret = 'moo_lua_push_object_array (L, ret, %(make_copy)s);' % dic
-                elif isinstance(meth.retval.type.elm_type, Boxed):
-                    func_call = 'MooPtrArray *ret = (MooPtrArray*) '
-                    push_ret = 'moo_lua_push_boxed_array (L, ret, %(gtype_id)s, %(make_copy)s);' % dic
-                else:
-                    raise "Arrays of this type are not implemented"
+                func_call = 'MooObjectArray *ret = (MooObjectArray*) '
+                push_ret = 'moo_lua_push_object_array (L, ret, %(make_copy)s);' % dic
             elif meth.retval.type.name == 'strv':
                 assert meth.retval.transfer_mode == 'full'
                 func_call = 'char **ret = '

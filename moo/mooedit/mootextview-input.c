@@ -457,7 +457,7 @@ _moo_text_view_update_text_cursor (MooTextView *view,
 static void
 set_invisible_cursor (GdkWindow *window)
 {
-    GdkDisplay *display = gdk_window_get_display (window);
+    GdkDisplay *display = gdk_drawable_get_display (window);
     GdkCursor *cursor = gdk_cursor_new_for_display (display, GDK_BLANK_CURSOR);
     gdk_window_set_cursor (window, cursor);
     gdk_cursor_unref (cursor);
@@ -550,7 +550,7 @@ left_window_click (GtkTextView    *text_view,
     MooTextView *view = MOO_TEXT_VIEW (text_view);
 
     *line_numbers = FALSE;
-    window_width = gdk_window_get_width (event->window);
+    gdk_drawable_get_size (event->window, &window_width, NULL);
 
     if (view->priv->lm.show_icons && event->x >= 0 && event->x < view->priv->lm.icon_width)
     {
@@ -1136,9 +1136,9 @@ start_drag_scroll (MooTextView *view)
 {
     if (!view->priv->dnd.scroll_timeout)
         view->priv->dnd.scroll_timeout =
-            g_timeout_add (SCROLL_TIMEOUT,
-                           (GSourceFunc)drag_scroll_timeout_func,
-                           view);
+            gdk_threads_add_timeout (SCROLL_TIMEOUT,
+                                     (GSourceFunc)drag_scroll_timeout_func,
+                                     view);
     drag_scroll_timeout_func (view);
 }
 
@@ -1163,8 +1163,8 @@ drag_scroll_timeout_func (MooTextView *view)
     GtkTextBuffer *buffer;
     GtkTextWindowType win_type;
 
-    g_return_val_if_fail (view->priv->dnd.type == MOO_TEXT_VIEW_DRAG_SELECT ||
-                          view->priv->dnd.type == MOO_TEXT_VIEW_DRAG_SELECT_LINES, FALSE);
+    g_assert (view->priv->dnd.type == MOO_TEXT_VIEW_DRAG_SELECT ||
+              view->priv->dnd.type == MOO_TEXT_VIEW_DRAG_SELECT_LINES);
 
     text_view = GTK_TEXT_VIEW (view);
     buffer = gtk_text_view_get_buffer (text_view);

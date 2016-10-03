@@ -18,9 +18,6 @@
 
 #include <mooedit/mooedit.h>
 #include <mooedit/moolinemark.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -39,12 +36,6 @@ struct MooEditBookmark
 {
     MooLineMark mark;
     guint no;
-
-#ifdef __cplusplus
-    static void set_enable_bookmarks    (Edit           edit,
-                                         bool           enable);
-    static bool get_enable_bookmarks    (const Edit&    edit);
-#endif // __cplusplus
 };
 
 struct MooEditBookmarkClass
@@ -52,13 +43,12 @@ struct MooEditBookmarkClass
     MooLineMarkClass mark_class;
 };
 
-#ifdef __cplusplus
-using EditBookmarkPtr = moo::gobj_ptr<MooEditBookmark>;
-using EditBookmark    = moo::gobj_ref<MooEditBookmark>;
-#endif
 
 GType            moo_edit_bookmark_get_type     (void) G_GNUC_CONST;
 
+void             moo_edit_set_enable_bookmarks  (MooEdit        *edit,
+                                                 gboolean        enable);
+gboolean         moo_edit_get_enable_bookmarks  (MooEdit        *edit);
 /* list must not be modified */
 const GSList    *moo_edit_list_bookmarks        (MooEdit        *edit);
 void             moo_edit_toggle_bookmark       (MooEdit        *edit,

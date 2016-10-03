@@ -1,74 +1,49 @@
-#pragma once
+#ifndef MOO_EDIT_FILE_INFO_IMPL_H
+#define MOO_EDIT_FILE_INFO_IMPL_H
 
 #include "mooeditfileinfo.h"
-#include "moocpp/moocpp.h"
 
-using namespace moo;
+G_BEGIN_DECLS
 
 struct MooOpenInfo
 {
-    g::FilePtr file;
-    gstr encoding;
+    GObject parent;
+
+    GFile *file;
+    char *encoding;
     int line;
     MooOpenFlags flags;
-
-    MooOpenInfo(GFile* file, const char* encoding, int line, MooOpenFlags flags)
-        : file(wrap_new(g_file_dup(file)))
-        , encoding(gstr::wrap(encoding))
-        , line(line)
-        , flags(flags)
-    {
-    }
-
-    MooOpenInfo(const MooOpenInfo& other)
-        : file(other.file->dup())
-        , encoding(other.encoding)
-        , line(other.line)
-        , flags(other.flags)
-    {
-    }
-
-    MooOpenInfo& operator=(const MooOpenInfo&) = delete;
-    MooOpenInfo(MooOpenInfo&&) = delete;
-    MooOpenInfo& operator=(MooOpenInfo&&) = delete;
 };
 
-struct MooReloadInfo : public GObject
+struct MooOpenInfoClass
 {
-    MooReloadInfo(const char* encoding, int line)
-        : encoding(gstr::wrap(encoding))
-        , line(line)
-    {
-    }
+    GObjectClass parent_class;
+};
 
-    MooReloadInfo(const MooReloadInfo& other)
-        : encoding(other.encoding)
-        , line(other.line)
-    {
-    }
+struct MooReloadInfo {
+    GObject parent;
 
-    gstr encoding;
+    char *encoding;
     int line;
-
-    MooReloadInfo(MooReloadInfo&&) = delete;
 };
 
-struct MooSaveInfo : public GObject
+struct MooReloadInfoClass
 {
-    g::FilePtr file;
-    gstr encoding;
-
-    MooSaveInfo(GFile* file, const char* encoding)
-        : file(wrap_new(g_file_dup(file)))
-        , encoding(gstr::wrap(encoding))
-    {
-    }
-
-    MooSaveInfo(const MooSaveInfo& other)
-        : file(other.file->dup())
-        , encoding(other.encoding)
-    {
-    }
-
-    MooSaveInfo(MooSaveInfo&&) = delete;
+    GObjectClass parent_class;
 };
+
+struct MooSaveInfo {
+    GObject parent;
+
+    GFile *file;
+    char *encoding;
+};
+
+struct MooSaveInfoClass
+{
+    GObjectClass parent_class;
+};
+
+G_END_DECLS
+
+#endif /* MOO_EDIT_FILE_INFO_IMPL_H */
