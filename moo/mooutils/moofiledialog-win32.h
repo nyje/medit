@@ -15,8 +15,9 @@
 
 #pragma once
 
-#include <moocpp/strutils.h>
 #include <windows.h>
+#include <string>
+#include <vector>
 
-moo::gstrvec moo_show_win32_file_open_dialog(HWND hwnd_parent, const moo::gstr& start_folder);
-moo::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename);
+std::vector<std::string> moo_show_win32_file_open_dialog(HWND hwnd_parent, const std::string& start_folder);
+std::string moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const std::string& start_folder, const std::string& basename);

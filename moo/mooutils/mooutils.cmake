@@ -9,7 +9,7 @@ SET(mooutils_sources
 	mooutils/mooutils.cmake
 	${moo_utils_enum_headers}
 	mooutils/mooarray.h
-	mooutils/mooutils-thread.c
+	mooutils/mooutils-thread.cpp
 	mooutils/mooutils-thread.h
 	mooutils/moohistorymgr.c
 	mooutils/moohistorymgr.h
@@ -37,7 +37,6 @@ SET(mooutils_sources
 	mooutils/mooappinput-common.c
 	mooutils/mooappinput-priv.h
 	mooutils/mooappinput.h
-	mooutils/mooappinput-win32.c
 	mooutils/mooatom.h
 	mooutils/moobigpaned.c
 	mooutils/moobigpaned.h
@@ -52,7 +51,7 @@ SET(mooutils_sources
 	mooutils/mooencodings-data.h
 	mooutils/mooencodings.c
 	mooutils/mooencodings.h
-	mooutils/mooentry.c
+	mooutils/mooentry.cpp
 	mooutils/mooentry.h
 	mooutils/moofiledialog.c
 	mooutils/moofileicon.c
@@ -124,7 +123,7 @@ SET(mooutils_sources
 	mooutils/mooutils-macros.h
 	mooutils/mooutils-mem.h
 	mooutils/mooutils-messages.h
-	mooutils/mooutils-misc.c
+	mooutils/mooutils-misc.cpp
 	mooutils/mooutils-misc.h
 	mooutils/mooutils-script.c
 	mooutils/mooutils-script.h
@@ -172,6 +171,10 @@ LIST(APPEND built_mooutils_sources marshals.c)
 
 SET(mooutils_win32_sources
     mooutils/mooutils-win32.c
+    mooutils/mooutils-dialog-win32.cpp
+    mooutils/moofiledialog-win32.h
+    mooutils/moofiledialog-win32.cpp
+    mooutils/mooappinput-win32.cpp
 )
 
 if(MOO_BUILD_FROM_MSVC)

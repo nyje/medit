@@ -887,7 +887,7 @@ moo_app_run (MooApp *app)
     app->priv->quit_handler_id =
             gtk_quit_add (1, (GtkFunction) on_gtk_main_quit, app);
 
-    g_add_timeout (100, (GSourceFunc) check_signal, NULL);
+    g_timeout_add (100, (GSourceFunc) check_signal, NULL);
 
 #ifndef __WIN32__
     app->priv->sm_client = egg_sm_client_get ();
@@ -902,7 +902,7 @@ moo_app_run (MooApp *app)
         EGG_SM_CLIENT_GET_CLASS (app->priv->sm_client)->startup (app->priv->sm_client, NULL);
 #endif // __WIN32__
 
-    g_add_idle_full (G_PRIORITY_DEFAULT_IDLE + 1, (GSourceFunc) emit_started, app, NULL);
+    g_idle_add_full(G_PRIORITY_DEFAULT_IDLE + 1, (GSourceFunc) emit_started, app, NULL);
 
     gtk_main ();
 

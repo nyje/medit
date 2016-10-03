@@ -158,29 +158,43 @@ _moo_edit_save_as_dialog (MooEdit    *doc,
 
 #else // __WIN32__
 
+static std::string
+get_folder_from_document(MooEdit* doc)
+{
+    GFile* file = moo_edit_get_file (doc);
+
+    if (!file)
+        return std::string();
+
+    GFile* parent = g_file_get_parent(file);
+    char *parent_path = g_file_get_path(parent);
+    std::string start_folder (parent_path);
+
+    g_free(parent_path);
+    g_object_unref(parent);
+    g_object_unref(file);
+
+    return start_folder;
+}
+
 MooOpenInfoArray *
 _moo_edit_open_dialog(GtkWidget* parent,
                       MooEdit*   current_doc)
 {
-    gstr start_folder;
+    std::string start_folder;
 
     if (current_doc && moo_prefs_get_bool(moo_edit_setting(MOO_EDIT_PREFS_DIALOGS_OPEN_FOLLOWS_DOC)))
-    {
-        g::FilePtr file(moo_edit_get_file(current_doc), ref_transfer::take_ownership);
-
-        if (file)
-            start_folder = file->get_parent()->get_path();
-    }
+        start_folder = get_folder_from_document(current_doc);
 
     GtkWidget* toplevel = parent ? gtk_widget_get_toplevel(parent) : nullptr;
     HWND hwnd = toplevel ? reinterpret_cast<HWND> (GDK_WINDOW_HWND(toplevel->window)) : nullptr;
-    moo::gstrvec files = moo_show_win32_file_open_dialog(hwnd, start_folder);
+    std::vector<std::string> files = moo_show_win32_file_open_dialog (hwnd, start_folder);
     if (files.empty())
         return nullptr;
 
     MooOpenInfoArray *result = moo_open_info_array_new();
-    for (const gstr& path : files)
-        moo_open_info_array_take(result, moo_open_info_new(path, MOO_ENCODING_AUTO, -1, MOO_OPEN_FLAGS_NONE));
+    for (const auto& path : files)
+        moo_open_info_array_take(result, moo_open_info_new(path.c_str(), MOO_ENCODING_AUTO, -1, MOO_OPEN_FLAGS_NONE));
     return result;
 }
 
@@ -193,20 +207,16 @@ _moo_edit_save_as_dialog(MooEdit*    doc,
     GtkWidget* toplevel = view ? gtk_widget_get_toplevel(GTK_WIDGET(view)) : nullptr;
     HWND hwnd = toplevel ? reinterpret_cast<HWND> (GDK_WINDOW_HWND(toplevel->window)) : nullptr;
 
-    gstr start_folder;
+    std::string start_folder;
 
     if (moo_prefs_get_bool(moo_edit_setting(MOO_EDIT_PREFS_DIALOGS_OPEN_FOLLOWS_DOC)))
-    {
-        g::FilePtr file = wrap_new(moo_edit_get_file(doc));
-        if (file)
-            start_folder = file->get_parent()->get_path();
-    }
+        start_folder = get_folder_from_document (doc);
 
-    gstr save_as = moo_show_win32_file_save_as_dialog(hwnd, start_folder, gstr::wrap(display_basename));
+    std::string save_as = moo_show_win32_file_save_as_dialog(hwnd, start_folder, display_basename);
     if (save_as.empty())
         return nullptr;
 
-    return moo_save_info_new(save_as, nullptr);
+    return moo_save_info_new (save_as.c_str(), nullptr);
 }
 
 #endif // __WIN32__
@@ -274,7 +284,7 @@ save_toggled (GtkCellRendererToggle *cell,
 
     gtk_tree_path_free (tree_path);
 
-    dialog = g_object_get_data (G_OBJECT (model), "moo-dialog");
+    dialog = GTK_DIALOG (g_object_get_data (G_OBJECT (model), "moo-dialog"));
     g_return_if_fail (dialog != NULL);
 
     if (!save)
@@ -387,7 +397,7 @@ find_widget_for_response (GtkDialog *dialog,
 
     for (l = children; ret == NULL && l != NULL; l = l->next)
     {
-        GtkWidget *widget = l->data;
+        GtkWidget *widget = GTK_WIDGET (l->data);
         int response_here = gtk_dialog_get_response_for_widget (dialog, widget);
         if (response_here == response)
             ret = widget;

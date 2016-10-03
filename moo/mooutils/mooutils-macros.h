@@ -103,11 +103,11 @@
 #define NORETURN MOO_NORETURN
 #define NOTHROW MOO_NOTHROW
 
-#define MOO_STMT_START do
+#define MOO_STMT_START G_STMT_START
 
 #define MOO_STMT_END                    \
     MOO_MSVC_WARNING_PUSH_DISABLE(4127) \
-        while (0)                       \
+    G_STMT_END                          \
     MOO_MSVC_WARNING_POP
 
 #if defined(MOO_CL_GCC)

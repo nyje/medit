@@ -2642,7 +2642,7 @@ drag_scroll_start (MooNotebook *nb,
     }
 
     nb->priv->drag_scroll_right = right;
-    nb->priv->drag_scroll_id = g_add_timeout (SCROLL_TIMEOUT,
+    nb->priv->drag_scroll_id = g_timeout_add (SCROLL_TIMEOUT,
                                               (GSourceFunc) drag_scroll,
                                               nb);
 }

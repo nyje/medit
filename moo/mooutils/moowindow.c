@@ -756,7 +756,7 @@ accels_changed (MooWindow *window)
 {
     if (!window->priv->update_accels_idle)
         window->priv->update_accels_idle =
-            g_add_idle ((GSourceFunc) update_accels, window);
+            g_idle_add ((GSourceFunc) update_accels, window);
 }
 
 static gboolean
@@ -859,7 +859,7 @@ moo_window_save_size (MooWindow *window)
 {
     if (!window->priv->save_size_id)
         window->priv->save_size_id =
-                g_add_idle ((GSourceFunc)save_size, window);
+                g_idle_add ((GSourceFunc)save_size, window);
     return FALSE;
 }
 

@@ -1430,7 +1430,7 @@ moo_convert_file_data_to_utf8 (const char  *data,
     {
         encoding = bom_enc;
         result = try_convert_to_utf8_from_encoding (data, len, encoding);
-        used_enc.set(bom_enc);
+        *used_enc = g_strdup (bom_enc);
     }
     else if (!encoding)
     {

@@ -277,7 +277,7 @@ moo_edit_init (MooEdit *edit)
     edit->priv = G_TYPE_INSTANCE_GET_PRIVATE (edit, MOO_TYPE_EDIT, MooEditPrivate);
 
     edit->priv->views = moo_edit_view_array_new ();
-    edit->priv->buffer = g_object_new (MOO_TYPE_TEXT_BUFFER, NULL);
+    edit->priv->buffer = GTK_TEXT_BUFFER (g_object_new (MOO_TYPE_TEXT_BUFFER, NULL));
 
     edit->config = moo_edit_config_new ();
     g_signal_connect_swapped (edit->config, "notify",
@@ -1366,7 +1366,7 @@ _moo_edit_queue_recheck_config (MooEdit *doc)
     g_return_if_fail (!doc->priv->in_recheck_config);
     if (!doc->priv->apply_config_idle)
         doc->priv->apply_config_idle =
-                g_add_idle_full (G_PRIORITY_HIGH,
+                g_idle_add_full (G_PRIORITY_HIGH,
                                  (GSourceFunc) moo_edit_recheck_config_in_idle,
                                  doc, NULL);
 }

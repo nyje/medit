@@ -183,7 +183,7 @@ moo_entry_class_init (MooEntryClass *klass)
     klass->redo = moo_entry_redo;
 
     moo_entry_parent_class = g_type_class_peek_parent (klass);
-    parent_editable_iface = g_type_interface_peek (moo_entry_parent_class, GTK_TYPE_EDITABLE);
+    parent_editable_iface = reinterpret_cast<GtkEditableClass*> (g_type_interface_peek(moo_entry_parent_class, GTK_TYPE_EDITABLE));
 
     g_object_class_install_property (gobject_class,
                                      PROP_ENABLE_UNDO,
