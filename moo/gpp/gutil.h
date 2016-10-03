@@ -21,7 +21,7 @@
 
 #include <memory>
 #include <utility>
-#include <moogpp/strutils.h>
+#include <gpp/strutils.h>
 
 namespace g {
 

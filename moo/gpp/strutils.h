@@ -19,7 +19,7 @@
 #error "This is a C++ header"
 #endif
 
-#include <moogpp/memutils.h>
+#include <gpp/memutils.h>
 
 #include <algorithm>
 #include <utility>

@@ -19,8 +19,8 @@
 #error "This is a C++ header"
 #endif
 
-#include <moogpp/gobj.h>
-#include <moogpp/utils.h>
+#include <gpp/gobj.h>
+#include <gpp/utils.h>
 
 namespace g {
 
