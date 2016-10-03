@@ -16,7 +16,9 @@
 #pragma once
 
 #include <glib-object.h>
+#ifdef __cplusplus
 #include <moocpp/moocpp.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -95,5 +97,8 @@ gboolean     moo_spawn_command_line_async_with_flags    (const gchar *command_li
 G_END_DECLS
 
 #ifdef __cplusplus
-MOO_DEFINE_GOBJ_TYPE(MooCmd, GObject, MOO_TYPE_CMD)
+namespace moo
+{
+MOO_DEFINE_SIMPLE_GOBJ_CLASS(Cmd, g::Object, MooCmd, MOO_TYPE_CMD);
+}
 #endif // __cplusplus

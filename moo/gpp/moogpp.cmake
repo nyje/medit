@@ -1,0 +1,20 @@
+SET(moogpp_sources
+	moogpp/moogpp.cmake
+	moogpp/gobjectutils.h
+	moogpp/gobj.h
+	moogpp/gobj.cpp
+	moogpp/gobjtypes-gio.h
+	moogpp/gobjtypes-gio.cpp
+	moogpp/gobjtypes-glib.h
+	moogpp/gobjtypes-glib.cpp
+	moogpp/gobjtypes-gtk.h
+	moogpp/gobjtypes-gtk.cpp
+	moogpp/gparam.h
+	moogpp/moogpp.h
+	moogpp/gutil.h
+	moogpp/gutil.cpp
+	moogpp/memutils.h
+	moogpp/strutils.h
+	moogpp/strutils.cpp
+	moogpp/utils.h
+)

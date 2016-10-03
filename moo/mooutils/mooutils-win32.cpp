@@ -147,7 +147,7 @@ add_win32_data_dirs_for_dll (gstrvec&    list,
 }
 
 void
-_moo_win32_add_data_dirs (moo::gstrvec& list,
+_moo_win32_add_data_dirs(g::gstrvec& list,
                           const char*   prefix)
 {
     gstr subdir = gstr::printf ("%s\\" MOO_PACKAGE_NAME, prefix);

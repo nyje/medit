@@ -56,17 +56,17 @@ G_END_DECLS
 
 #include <moocpp/moocpp.h>
 
-MooEditTryEncodingResponse      _moo_edit_try_encoding_dialog           (moo::g::File        file,
+MooEditTryEncodingResponse      _moo_edit_try_encoding_dialog           (g::File&            file,
                                                                          const char*         encoding,
-                                                                         /*out*/ moo::gstr&  new_encoding);
+                                                                         /*out*/ g::gstr&     new_encoding);
 bool                            _moo_edit_save_error_enc_dialog         (Edit&               doc,
-                                                                         moo::g::File        file,
+                                                                         g::File&            file,
                                                                          const char*         encoding);
 void                            _moo_edit_save_error_dialog             (Edit&               doc,
-                                                                         moo::g::File        file,
+                                                                         g::File&            file,
                                                                          GError*             error);
 void                            _moo_edit_open_error_dialog             (GtkWidget*          widget,
-                                                                         moo::g::File*       file,
+                                                                         g::File&            file,
                                                                          GError*             error);
 
 #endif // __cplusplus
