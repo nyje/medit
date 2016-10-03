@@ -155,9 +155,9 @@ input_channel_start_io (int           fd,
     *io_channel = g_io_channel_unix_new (fd);
     g_io_channel_set_encoding (*io_channel, NULL, NULL);
 
-    *io_watch = _moo_io_add_watch (*io_channel,
-                                   G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR,
-                                   io_func, data);
+    *io_watch = g_io_add_watch (*io_channel,
+                                G_IO_IN | G_IO_PRI | G_IO_HUP | G_IO_ERR,
+                                io_func, data);
 
     source = g_main_context_find_source_by_id (NULL, *io_watch);
     g_source_set_can_recurse (source, TRUE);
