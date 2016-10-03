@@ -1,7 +1,7 @@
 /*
  *   mooeditdialogs.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,7 +13,8 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_EDIT_DIALOGS_H
+#define MOO_EDIT_DIALOGS_H
 
 #include "mooutils/moodialogs.h"
 #include "mooedit/mooedittypes.h"
@@ -38,8 +39,20 @@ MooSaveChangesResponse          _moo_edit_save_multiple_changes_dialog  (MooEdit
 gboolean                        _moo_edit_reload_modified_dialog        (MooEdit        *doc);
 gboolean                        _moo_edit_overwrite_modified_dialog     (MooEdit        *doc);
 
+void                            _moo_edit_save_error_dialog             (MooEdit        *doc,
+                                                                         GFile          *file,
+                                                                         GError         *error);
+gboolean                        _moo_edit_save_error_enc_dialog         (MooEdit        *doc,
+                                                                         GFile          *file,
+                                                                         const char     *encoding);
+void                            _moo_edit_open_error_dialog             (GtkWidget      *widget,
+                                                                         GFile          *file,
+                                                                         GError         *error);
 void                            _moo_edit_reload_error_dialog           (MooEdit        *doc,
                                                                          GError         *error);
+MooEditTryEncodingResponse      _moo_edit_try_encoding_dialog           (GFile          *file,
+                                                                         const char     *encoding,
+                                                                         char          **new_encoding);
 
 gboolean                        _moo_text_search_from_start_dialog      (GtkWidget      *parent,
                                                                          gboolean        backwards);
@@ -52,21 +65,4 @@ GtkWidget                      *_moo_text_prompt_on_replace_dialog      (GtkWidg
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-#include <moocpp/moocpp.h>
-
-MooEditTryEncodingResponse      _moo_edit_try_encoding_dialog           (g::File&            file,
-                                                                         const char*         encoding,
-                                                                         /*out*/ g::gstr&     new_encoding);
-bool                            _moo_edit_save_error_enc_dialog         (Edit&               doc,
-                                                                         g::File&            file,
-                                                                         const char*         encoding);
-void                            _moo_edit_save_error_dialog             (Edit&               doc,
-                                                                         g::File&            file,
-                                                                         GError*             error);
-void                            _moo_edit_open_error_dialog             (GtkWidget*          widget,
-                                                                         g::File&            file,
-                                                                         GError*             error);
-
-#endif // __cplusplus
+#endif /* MOO_EDIT_DIALOGS_H */

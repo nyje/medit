@@ -13,12 +13,10 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_MARKUP_H
+#define MOO_MARKUP_H
 
 #include <mooutils/moofilewriter.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -215,18 +213,4 @@ gboolean            _moo_markup_get_modified        (MooMarkupDoc       *doc);
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-namespace moo {
-
-//template<>
-//class obj_ref_unref<MooMarkupDoc>
-//{
-//public:
-//    static void ref(MooMarkupDoc* doc) { moo_markup_doc_ref(doc); }
-//    static void unref(MooMarkupDoc* doc) { moo_markup_doc_unref(doc); }
-//};
-
-} // namespace moo
-
-#endif // __cplusplus
+#endif /* MOO_MARKUP_H */

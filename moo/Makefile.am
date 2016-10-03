@@ -40,7 +40,6 @@ marshals.h: marshals.list
 include mooedit/Makefile.incl
 include xdgmime/Makefile.incl
 include mooutils/Makefile.incl
-include moocpp/Makefile.incl
 include moofileview/Makefile.incl
 include gtksourceview/Makefile.incl
 include eggsmclient/Makefile.incl

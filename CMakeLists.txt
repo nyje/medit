@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0048 NEW)
 
-include(cmake/PrecompiledHeader.cmake)
-
 list(APPEND EXTRA_DIST
     tools/genenums.py
     tools/glade2c.py
@@ -75,7 +73,7 @@ set(MOO_PYTHON_PLUGIN_DIR "${MOO_DATA_DIR}/plugins")
 set(MOO_PYTHON_LIB_DIR "${MOO_DATA_DIR}/python")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 if(WIN32 AND CMAKE_CONFIGURATION_TYPES)
@@ -93,10 +91,9 @@ else()
     set(MOO_OS_UNIX TRUE)
 endif()
 
-set(MOO_BUILD_FROM_MSVC FALSE CACHE BOOL "Create a win32 build from MSVC gtk build")
 set(MOO_BUILD_FROM_MINGW ${MOO_OS_WIN32} CACHE BOOL "Create a win32 build from mingw gtk build")
 
-if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
+if(NOT MOO_BUILD_FROM_MINGW)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GTK REQUIRED gtk+-2.0)
     pkg_check_modules(GMODULE REQUIRED gmodule-2.0)
@@ -120,24 +117,8 @@ if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
     pkg_check_modules(XLIB x11 xext xrender ice sm)
     pkg_check_modules(LIBXML2 REQUIRED libxml-2.0)
 else()
-
-    if(MOO_BUILD_FROM_MINGW)
-        set(MOO_GTK_DIR "C:/Projects/gtk/release/target" CACHE PATH "Gtk root dir")
-        set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
-
-        set(GTK_LIBRARIES libgtk-win32-2.0-0 libatk-1.0-0 libgdk-win32-2.0-0 libgdk_pixbuf-2.0-0
-		    libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
-		    libgio-2.0-0 libgobject-2.0-0 libgmodule-2.0-0 libgthread-2.0-0 libglib-2.0-0 libintl-8
-            libmooglib-0)
-        set(LIBXML2_LIBRARIES "libxml2-2")
-    else()
-        set(MOO_GTK_DIR "C:/gtk-build/gtk/Win32/release" CACHE PATH "Gtk root dir")
-        set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/bdist" CACHE PATH "Gtk binary dir")
-
-        set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0
-            gthread-2.0 gtk-win32-2.0 iconv intl libffi libpng16 pango-1.0 pangocairo-1.0 pixman-1 zlib1)
-        set(LIBXML2_LIBRARIES libxml2)
-    endif()
+    set(MOO_GTK_DIR "C:/Projects/gtk/release/target" CACHE PATH "Gtk root dir")
+    set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
 
     set(CMAKE_INSTALL_PREFIX ${MOO_GTK_DIR} CACHE PATH "CMake install prefix" FORCE)
 
@@ -153,10 +134,20 @@ else()
     include_directories(SYSTEM "${MOO_GTK_DIR}/include/libxml2")
 
     set(GTK_LIBRARY_DIRS "${MOO_GTK_DIR}/lib")
+    set(GTK_LIBRARIES libgtk-win32-2.0-0 libatk-1.0-0 libgdk-win32-2.0-0 libgdk_pixbuf-2.0-0
+		libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
+		libgio-2.0-0 libgobject-2.0-0 libgmodule-2.0-0 libgthread-2.0-0 libglib-2.0-0 libintl-8)
+    set(LIBXML2_LIBRARIES "libxml2-2")
 
     set(ENV{PATH} "ENV{PATH};${MOO_GTK_DIR}/bin")
 
     include_directories(SYSTEM "${CMAKE_SOURCE_DIR}/moo/mooutils/moowin32/ms")
+
+    set(PYGTK_DEFS_DIR ${MOO_GTK_DIR}/share/pygtk/2.0/defs)
+    set(PYGOBJECT_DEFS_DIR ${MOO_GTK_DIR}/share/pygobject/2.0/defs)
+
+    set(PYGTK_INCLUDE_DIR "${MOO_GTK_DIR}/include/pygtk-2.0")
+    include_directories(SYSTEM "${PYGTK_INCLUDE_DIR}")
 
     foreach(var CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
         set(${var} "${${var}} /MP /Zo /wd4996")
@@ -168,21 +159,9 @@ else()
 
         set(${var}_RELEASE "${${var}_RELEASE} /Zi")
         string(REPLACE "/Ob1" "/Ob2" ${var}_RELWITHDEBINFO "${${var}_RELWITHDEBINFO}")
-
-        if (true)
-		    # /MDd means link with the debug crt library, which we don't want; and /D_DEBUG forces
-		    # that as well because of some includes; turn them off.
-            string(REPLACE "/MDd" "/MD" ${var}_DEBUG "${${var}_DEBUG}")
-            string(REPLACE "/D_DEBUG" "/DENABLE_DEBUG=1 /DDEBUG=1 /DMOO_DEBUG=1" ${var}_DEBUG "${${var}_DEBUG}")
-        else()
-            string(REPLACE "/D_DEBUG" "/DENABLE_DEBUG=1 /DDEBUG=1 /DMOO_DEBUG=1 /D_DEBUG" ${var}_DEBUG "${${var}_DEBUG}")
-        endif()
+        string(REPLACE "/MDd" "/MD" ${var}_DEBUG "${${var}_DEBUG}")
+        string(REPLACE "/D_DEBUG" "" ${var}_DEBUG "${${var}_DEBUG}")
     endforeach()
-
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG /INCREMENTAL")
-    set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS_RELEASE} /DEBUG /INCREMENTAL")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /INCREMENTAL")
-
 endif()
 
 find_program(GLIB_GENMARSHAL glib-genmarshal)
@@ -202,30 +181,19 @@ set(MOO_PYTHON "${PYTHON_EXECUTABLE}")
 
 set(MOO_ENABLE_PYTHON TRUE CACHE BOOL "Use python")
 
-add_definitions(-DHAVE_CONFIG_H=1 -DXDG_PREFIX=_moo_edit_xdg -DG_LOG_DOMAIN=\"Moo\")
-#add_definitions(-DGDK_DISABLE_DEPRECATED=1)
-#add_definitions(-DGTK_DISABLE_DEPRECATED=1)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+add_definitions(-DMOO_COMPILATION=1 -DHAVE_CONFIG_H=1 -DXDG_PREFIX=_moo_edit_xdg -DG_LOG_DOMAIN=\"Moo\")
 
 if(WIN32)
     add_definitions(-DUNICODE=1 -D_UNICODE=1 -D__WIN32__=1 -DSTRICT=1 -D_CRT_SECURE_NO_WARNINGS=1 -D_CRT_NONSTDC_NO_WARNINGS=1)
-    set(MOO_NEED_GETTIMEOFDAY TRUE)
-    set(HAVE_UNISTD_H TRUE)
-    set(HAVE_BIND_TEXTDOMAIN_CODESET TRUE)
-    list(APPEND MEDIT_LIBS Shlwapi.lib)
+    add_definitions(-DMOO_NEED_GETTIMEOFDAY=1)
+    add_definitions(-DHAVE_UNISTD_H=1 -DENABLE_NLS=1 -DHAVE_BIND_TEXTDOMAIN_CODESET=1)
 endif(WIN32)
 
 # zzz SUBDIRS = po po-gsv api doc moo
 add_subdirectory(api)
 # add_subdirectory(doc)
-
-#set(ENABLE_NLS TRUE)
 #add_subdirectory(po)
 #add_subdirectory(po-gsv)
 
 add_subdirectory(moo)
-
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-
-if(WIN32)
-    install(DIRECTORY plat/win32/medit-data/bin plat/win32/medit-data/etc DESTINATION "${CMAKE_INSTALL_PREFIX}")
-endif(WIN32)

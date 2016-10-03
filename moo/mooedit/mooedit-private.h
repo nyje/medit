@@ -13,62 +13,67 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_EDIT_PRIVATE_H
+#define MOO_EDIT_PRIVATE_H
 
 #include "mooedit/mooedit-impl.h"
 #include "mooedit/mooeditprogress.h"
-#include "mooedit/mooeditbookmark.h"
-#include "mooedit/mooeditview-impl.h"
-#include "moocpp/moocpp.h"
+
+G_BEGIN_DECLS
+
+#define MOO_EDIT_IS_UNTITLED(edit) (!(edit)->priv->file)
 
 struct MooEditPrivate {
-    MooEditPrivate();
-    ~MooEditPrivate();
+    MooEditor *editor;
 
-    MooEditor*                              editor;
+    GtkTextBuffer *buffer;
+    MooEditViewArray *views;
+    MooEditView *active_view;
+    gboolean dead_active_view;
 
-    moo::gobj_ptr<GtkTextBuffer>            buffer;
-    std::vector<EditViewPtr>                views;
-    EditViewRawPtr                          active_view;
-    bool                                    dead_active_view;
-
-    gulong                                  changed_handler_id;
-    gulong                                  modified_changed_handler_id;
-    guint                                   apply_config_idle;
-    bool                                    in_recheck_config;
+    gulong changed_handler_id;
+    gulong modified_changed_handler_id;
+    guint apply_config_idle;
+    gboolean in_recheck_config;
 
     /***********************************************************************/
     /* Document
      */
-    moo::gobj_ptr<GFile>                    file;
-    g::gstr                                  filename;
-    g::gstr                                  norm_name;
-    g::gstr                                  display_filename;
-    g::gstr                                  display_basename;
+    GFile *file;
+    char *filename;
+    char *norm_name;
+    char *display_filename;
+    char *display_basename;
 
-    g::gstr                                  encoding;
-    MooLineEndType                          line_end_type;
-    MooEditStatus                           status;
+    char *encoding;
+    MooLineEndType line_end_type;
+    MooEditStatus status;
 
-    guint                                   file_monitor_id;
-    bool                                    modified_on_disk;
-    bool                                    deleted_from_disk;
+    guint file_monitor_id;
+    gboolean modified_on_disk;
+    gboolean deleted_from_disk;
 
     // file sync event source ID
-    guint                                   sync_timeout_id;
+    guint sync_timeout_id;
 
-    MooEditState                            state;
-    moo::gobj_ptr<MooEditProgress>          progress;
+    MooEditState state;
+    MooEditProgress *progress;
 
     /***********************************************************************/
     /* Bookmarks
      */
-    GSList*                                 bookmarks; /* sorted by line number */
-    guint                                   update_bookmarks_idle;
-    bool                                    enable_bookmarks;
+    gboolean enable_bookmarks;
+    GSList *bookmarks; /* sorted by line number */
+    guint update_bookmarks_idle;
 
     /***********************************************************************/
     /* Actions
      */
-    moo::gobj_ptr<MooActionCollection>      actions;
+    MooActionCollection *actions;
 };
+
+void    _moo_edit_remove_untitled   (MooEdit    *doc);
+
+G_END_DECLS
+
+#endif /* MOO_EDIT_PRIVATE_H */

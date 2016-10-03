@@ -1,7 +1,7 @@
 /*
  *   mooapp/mooapp.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -13,7 +13,8 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_APP_H
+#define MOO_APP_H
 
 #include <mooedit/mooeditor.h>
 
@@ -28,15 +29,17 @@ G_BEGIN_DECLS
 #define MOO_APP_GET_CLASS(obj)      (G_TYPE_INSTANCE_GET_CLASS ((obj), MOO_TYPE_APP, MooAppClass))
 
 
-typedef struct MooApp       MooApp;
-typedef struct MooAppClass  MooAppClass;
+typedef struct _MooApp        MooApp;
+typedef struct _MooAppPrivate MooAppPrivate;
+typedef struct _MooAppClass   MooAppClass;
 
-struct MooApp
+struct _MooApp
 {
-    GObject     object;
+    GObject          parent;
+    MooAppPrivate   *priv;
 };
 
-struct MooAppClass
+struct _MooAppClass
 {
     GObjectClass parent_class;
 
@@ -57,62 +60,41 @@ struct MooAppClass
 GType            moo_app_get_type               (void) G_GNUC_CONST;
 
 MooApp          *moo_app_instance               (void);
+
+gboolean         moo_app_init                   (MooApp                 *app);
+int              moo_app_run                    (MooApp                 *app);
 gboolean         moo_app_quit                   (MooApp                 *app);
+
+void             moo_app_set_exit_status        (MooApp                 *app,
+                                                 int                     value);
+
+void             moo_app_load_session           (MooApp                 *app);
+
 MooEditor       *moo_app_get_editor             (MooApp                 *app);
+
+void             moo_app_prefs_dialog           (GtkWidget              *parent);
+void             moo_app_about_dialog           (GtkWidget              *parent);
+
+char            *moo_app_get_system_info        (MooApp                 *app);
+
+MooUiXml        *moo_app_get_ui_xml             (MooApp                 *app);
+void             moo_app_set_ui_xml             (MooApp                 *app,
+                                                 MooUiXml               *xml);
+
+gboolean         moo_app_send_msg               (const char             *pid,
+                                                 const char             *data,
+                                                 gssize                  len);
+
+gboolean         moo_app_send_files             (MooOpenInfoArray       *files,
+                                                 guint32                 stamp,
+                                                 const char             *pid);
+void             moo_app_open_files             (MooApp                 *app,
+                                                 MooOpenInfoArray       *files,
+                                                 guint32                 stamp);
+void             moo_app_run_script             (MooApp                 *app,
+                                                 const char             *script);
 
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-#include <moogpp/moogpp.h>
-
-namespace moo {
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(App, g::Object, MooApp, MOO_TYPE_APP);
-}
-
-struct MeditApp : public moo::App
-{
-    MOO_CUSTOM_GOBJ_CLASS_DECL(MeditApp, moo::App)
-
-public:
-    struct StartupOptions
-    {
-        bool run_input = false;
-        int use_session = -1;
-        g::gstr instance_name;
-    };
-
-    MeditApp(const StartupOptions& opts);
-    ~MeditApp();
-
-    static MeditApp& instance();
-
-    bool init();
-    int run();
-
-    bool quit();
-    void set_exit_status(int value);
-
-    void load_session();
-
-    MooEditor* get_editor();
-
-    static g::gstr get_system_info();
-    static void about_dialog(GtkWidget* parent);
-
-    static bool send_msg(const char* pid, const char* data, gssize len);
-    static bool send_files(MooOpenInfoArray* files, guint32 stamp, const char* pid);
-
-    void open_files(MooOpenInfoArray* files, guint32 stamp);
-    void run_script(const char* script);
-
-protected:
-    virtual void init_plugins() {}
-
-private:
-    struct Private;
-    Private* p;
-};
-
-#endif // __cplusplus
+#endif /* MOO_APP_H */

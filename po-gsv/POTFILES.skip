@@ -13,7 +13,9 @@ moo/moopython/
 moo/mooutils/
 moo/eggsmclient/
 moo/mooedit/medit.xml
-moo/mooedit/mooeditaction-factory.cpp
+moo/mooedit/mooedit-fileops.c
+moo/mooedit/mooeditaction-factory.c
+moo/mooedit/mooeditdialogs.c
 moo/mooedit/mooeditor.c
 moo/mooedit/mooeditprefs.c
 moo/mooedit/mooeditprefspage.c

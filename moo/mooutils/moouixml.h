@@ -13,13 +13,11 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_UI_XML_H
+#define MOO_UI_XML_H
 
 #include <mooutils/moomarkup.h>
 #include <mooutils/mooactioncollection.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -127,7 +125,7 @@ char       *moo_ui_node_get_path            (MooUiNode      *node);
 MooUiNode  *moo_ui_node_get_child           (MooUiNode      *node,
                                              const char     *path);
 
-GtkWidget  *moo_ui_xml_create_widget        (MooUiXml       *xml,
+gpointer    moo_ui_xml_create_widget        (MooUiXml       *xml,
                                              MooUiWidgetType type,
                                              const char     *path,
                                              MooActionCollection *actions,
@@ -186,11 +184,4 @@ void        moo_ui_xml_remove_node          (MooUiXml       *xml,
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(UiXml, g::Object, MooUiXml, MOO_TYPE_UI_XML);
-}
-
-#endif // __cplusplus
+#endif /* MOO_UI_XML_H */

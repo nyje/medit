@@ -1,7 +1,7 @@
 /*
  *   moofilewatch.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -16,79 +16,64 @@
 /* Files and directory monitor. Uses stat().
    On win32 does FindFirstChangeNotification and ReadDirectoryChangesW. */
 
-#pragma once
-
-#ifndef __cplusplus
-#error "This is a C++ header"
-#endif // __cplusplus
+#ifndef MOO_FILE_WATCH_H
+#define MOO_FILE_WATCH_H
 
 #include <glib-object.h>
-#include <moocpp/moocpp.h>
-#include <memory>
 
-enum MooFileEventCode {
+G_BEGIN_DECLS
+
+
+#define MOO_TYPE_FILE_WATCH         (moo_file_watch_get_type ())
+#define MOO_TYPE_FILE_EVENT         (moo_file_event_get_type ())
+
+typedef enum {
     MOO_FILE_EVENT_CHANGED,
     MOO_FILE_EVENT_CREATED,
     MOO_FILE_EVENT_DELETED,
     MOO_FILE_EVENT_ERROR
-};
+} MooFileEventCode;
 
-struct MooFileEvent {
+struct _MooFileEvent {
     MooFileEventCode code;
     guint            monitor_id;
     char            *filename;
     GError          *error;
 };
 
-class MooFileWatch;
+typedef struct _MooFileWatch          MooFileWatch;
+typedef struct _MooFileEvent          MooFileEvent;
 
-typedef void (*MooFileWatchCallback) (MooFileWatch& watch,
-                                      MooFileEvent* event,
+typedef void (*MooFileWatchCallback) (MooFileWatch *watch,
+                                      MooFileEvent *event,
                                       gpointer      user_data);
 
-using MooFileWatchPtr = moo::gref_ptr<MooFileWatch>;
 
-class MooFileWatch
-{
-public:
-    ~MooFileWatch();
+GType           moo_file_watch_get_type             (void) G_GNUC_CONST;
+GType           moo_file_event_get_type             (void) G_GNUC_CONST;
 
-    static MooFileWatchPtr      create          (GError        **error);
+/* FAMOpen */
+MooFileWatch   *moo_file_watch_new                  (GError        **error);
 
-    bool                        close           (GError        **error);
+MooFileWatch   *moo_file_watch_ref                  (MooFileWatch   *watch);
+void            moo_file_watch_unref                (MooFileWatch   *watch);
 
-    guint                       create_monitor  (const char     *filename,
-                                                 MooFileWatchCallback callback,
-                                                 gpointer        data,
-                                                 GDestroyNotify  notify,
-                                                 GError        **error);
+/* FAMClose */
+gboolean        moo_file_watch_close                (MooFileWatch   *watch,
+                                                     GError        **error);
 
-    void                        cancel_monitor  (guint           monitor_id);
+/* FAMMonitorDirectory, FAMMonitorFile */
+guint           moo_file_watch_create_monitor       (MooFileWatch   *watch,
+                                                     const char     *filename,
+                                                     MooFileWatchCallback callback,
+                                                     gpointer        data,
+                                                     GDestroyNotify  notify,
+                                                     GError        **error);
+/* FAMCancelMonitor */
+void            moo_file_watch_cancel_monitor       (MooFileWatch   *watch,
+                                                     guint           monitor_id);
 
-    struct Impl;
-    Impl&                       impl            () { return *m_impl; }
 
-    void                        ref             ();
-    void                        unref           ();
+G_END_DECLS
 
-    MooFileWatch(const MooFileWatch&) = delete;
-    MooFileWatch& operator=(const MooFileWatch&) = delete;
-
-private:
-    MooFileWatch();
-
-    int m_ref;
-    std::unique_ptr<Impl> m_impl;
-};
-
-namespace moo {
-
-template<>
-class obj_ref_unref<MooFileWatch>
-{
-public:
-    static void ref(MooFileWatch* w) { w->ref(); }
-    static void unref(MooFileWatch* w) { w->unref(); }
-};
-
-} // namespace moo
+#endif /* MOO_FILE_WATCH_H */

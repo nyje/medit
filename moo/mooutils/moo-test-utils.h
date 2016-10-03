@@ -13,7 +13,8 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef MOO_TEST_UTILS_H
+#define MOO_TEST_UTILS_H
 
 #include <mooglib/moo-glib.h>
 #include <string.h>
@@ -30,10 +31,9 @@ typedef struct {
 } MooTestEnv;
 
 typedef enum {
-    MOO_TEST_OPTIONS_NONE   = 0,
-    MOO_TEST_LIST_ONLY      = 1 << 0,
-    MOO_TEST_FATAL_ERROR    = 1 << 1,
-    MOO_TEST_INSTALLED      = 1 << 2
+    MOO_TEST_LIST_ONLY   = 1 << 0,
+    MOO_TEST_FATAL_ERROR = 1 << 1,
+    MOO_TEST_INSTALLED   = 1 << 2
 } MooTestOptions;
 
 typedef struct MooTestSuite MooTestSuite;
@@ -90,10 +90,4 @@ gboolean         moo_test_set_silent_messages   (gboolean        silent);
 
 G_END_DECLS
 
-#ifdef __cplusplus
-
-#include <moocpp/moocpp.h>
-
-MOO_DEFINE_FLAGS(MooTestOptions);
-
-#endif // __cplusplus
+#endif /* MOO_TEST_UTILS_H */

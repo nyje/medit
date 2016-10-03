@@ -137,7 +137,7 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-#include "moocpp/utils.h"
+#include "mooutils/mooutils-cpp.h"
 
 MOO_DEFINE_FLAGS(MooEditStatus)
 MOO_DEFINE_FLAGS(MooOpenFlags)

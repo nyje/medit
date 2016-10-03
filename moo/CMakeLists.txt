@@ -52,19 +52,8 @@ file(MAKE_DIRECTORY
     ${CMAKE_CURRENT_BINARY_DIR}/medit-app
 )
 
-include_directories(${PROJECT_SOURCE_DIR}/moo/mooutils/moowin32/ms)
-
-include_directories(
-    ${PROJECT_BINARY_DIR}
-    ${GTK_INCLUDE_DIRS}
-    ${LIBXML2_INCLUDE_DIRS}
-)
-link_directories(${GTK_LIBRARY_DIRS} ${GMODULE_LIBRARY_DIRS})
-
 include(xdgmime/xdgmime.cmake)
 include(mooutils/mooutils.cmake)
-include(moocpp/moocpp.cmake)
-#include(moogpp/moogpp.cmake)
 include(mooedit/mooedit.cmake)
 include(moofileview/moofileview.cmake)
 include(gtksourceview/gtksourceview.cmake)
@@ -104,51 +93,37 @@ ADD_MODULE(mooedit)
 ADD_MODULE(mooapp)
 ADD_MODULE(plugins)
 ADD_MODULE(moolua)
-ADD_MODULE(moocpp)
-ADD_MODULE(moogpp)
 if(MOO_ENABLE_PYTHON)
     ADD_MODULE(moopython)
 endif()
 ADD_MODULE(medit-app)
 
-source_group(moo REGULAR_EXPRESSION .*)
+include_directories(${PROJECT_SOURCE_DIR}/moo/mooutils/moowin32/ms)
+
+include_directories(
+    ${PROJECT_BINARY_DIR}
+    ${GTK_INCLUDE_DIRS}
+    ${LIBXML2_INCLUDE_DIRS}
+)
+link_directories(${GTK_LIBRARY_DIRS} ${GMODULE_LIBRARY_DIRS})
+
+source_group(misc REGULAR_EXPRESSION .*)
 source_group("generated\\sources" REGULAR_EXPRESSION ".*\\.c(pp)?$")
 source_group("generated\\headers" REGULAR_EXPRESSION ".*\\.h$")
-source_group("moo\\glade" REGULAR_EXPRESSION ".*\\.glade$")
-
-set(MOO_USE_PCH TRUE)
-if(MOO_USE_PCH)
-    set(MEDIT_PCH_SOURCES
-        moo-pch.c
-        moo-pch.cpp
-        moo-pch.h
-    )
-endif()
+source_group("misc\\glade" REGULAR_EXPRESSION ".*\\.glade$")
 
 add_executable(medit WIN32
     ${MEDIT_SOURCES}
-    ${MEDIT_PCH_SOURCES}
 )
 
-if(MOO_USE_PCH)
-    add_precompiled_header(medit
-        moo-pch.h
-        FORCEINCLUDE
-        SOURCE_C moo-pch.c
-        SOURCE_CXX moo-pch.cpp)
-endif()
-
-if(MOO_BUILD_FROM_MINGW)
-    LIST(APPEND MEDIT_LIBS libmooglib-0)
-endif()
-
 target_link_libraries(medit
+    libmooglib-0
     ${GTK_LIBRARIES}
     ${GMODULE_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${XLIB_LIBRARIES}
     #${LIBM}
-    ${PYTHON_LIBRARY}
+    ${PYTHON_LIBRARIES}
     ${moo_libadd}
     ${MEDIT_LIBS}
 )
@@ -156,14 +131,10 @@ target_link_libraries(medit
 install(TARGETS medit RUNTIME DESTINATION bin)
 
 if(MOO_BUILD_FROM_MINGW)
-    # xxx this is wrong, doing it temporarily so it doesn't install python lib every time
-    if(NOT EXISTS "${MOO_GTK_DIST_DIR}/bin/libglib-2.0-0.dll")
-        install(DIRECTORY ${MOO_GTK_DIST_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
-        install(DIRECTORY ${MOO_GTK_DIST_DIR}/etc DESTINATION ${CMAKE_INSTALL_PREFIX})
-        install(DIRECTORY ${MOO_GTK_DIST_DIR}/lib DESTINATION ${CMAKE_INSTALL_PREFIX})
-        install(DIRECTORY ${MOO_GTK_DIST_DIR}/share DESTINATION ${CMAKE_INSTALL_PREFIX})
-    endif()
-
+    install(DIRECTORY ${MOO_GTK_DIST_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY ${MOO_GTK_DIST_DIR}/etc DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY ${MOO_GTK_DIST_DIR}/lib DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(DIRECTORY ${MOO_GTK_DIST_DIR}/share DESTINATION ${CMAKE_INSTALL_PREFIX})
     #install(DIRECTORY ${CMAKE_SOURCE_DIR}/plat/win32/gtk-win/extra/medit-data/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
     #install(DIRECTORY ${CMAKE_SOURCE_DIR}/plat/win32/gtk-win/extra/medit-data/etc DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()

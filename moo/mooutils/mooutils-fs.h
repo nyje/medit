@@ -18,9 +18,6 @@
 
 #include <mooglib/moo-glib.h>
 #include <gtk/gtk.h>
-#ifdef __cplusplus
-#include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -61,16 +58,10 @@ gboolean        _moo_rename_file            (const char *path,
                                              const char *new_path,
                                              GError    **error);
 
-G_END_DECLS
-#ifdef __cplusplus
-
-g::gstrvec      moo_filenames_from_locale   (g::gstrvec files);
-
-g::gstr         _moo_filename_to_uri        (const char* file);
-g::gstr         _moo_normalize_file_path(const g::gstr& filename);
-
-#endif // __cplusplus
-G_BEGIN_DECLS
+char           **moo_filenames_from_locale  (char      **files);
+char            *moo_filename_from_locale   (const char *file);
+char           *_moo_filename_to_uri        (const char *file,
+                                             GError    **error);
 
 char           *_moo_normalize_file_path    (const char *filename);
 gboolean        _moo_path_is_absolute       (const char *path);

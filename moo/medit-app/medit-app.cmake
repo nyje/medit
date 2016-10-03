@@ -3,7 +3,7 @@ set(medit_app_sources
     medit-app/mem-debug.h
     medit-app/run-tests.h
     medit-app/parse.h
-    medit-app/main.cpp
+    medit-app/main.c
 )
 
 set(built_medit_app_sources)
