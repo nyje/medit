@@ -281,8 +281,8 @@ out:
 
 private:
     HWND m_hwnd_parent;
-    moo::gstr m_start_folder;
-    moo::gstr m_start_name;
+    g::gstr m_start_folder;
+    g::gstr m_start_name;
 };
 
 class OpenFilesDialog : public FileDialog
@@ -365,7 +365,7 @@ private:
 class SaveFileDialog : public FileDialog
 {
 public:
-    SaveFileDialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename)
+    SaveFileDialog(HWND hwnd_parent, const g::gstr& start_folder, const g::gstr& basename)
         : FileDialog(hwnd_parent, start_folder, basename)
     {
     }
@@ -430,7 +430,7 @@ std::vector<gstr> moo_show_win32_file_open_dialog(HWND hwnd_parent, const gstr& 
     return dlg.run();
 }
 
-moo::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename)
+g::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const g::gstr& start_folder, const g::gstr& basename)
 {
     SaveFileDialog dlg(hwnd_parent, start_folder, basename);
     return dlg.run();

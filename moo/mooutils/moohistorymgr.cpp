@@ -796,7 +796,7 @@ static void
 moo_history_mgr_save (MooHistoryMgr *mgr)
 {
     const char *filename;
-    gerrp error;
+    g::gerrp error;
     MooFileWriter *writer;
 
     g_return_if_fail (MOO_IS_HISTORY_MGR (mgr));

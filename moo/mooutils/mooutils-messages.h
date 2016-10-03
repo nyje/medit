@@ -17,7 +17,9 @@
 
 #include <mooutils/mooutils-macros.h>
 #include <stdarg.h>
-#include <moocpp/strutils.h>
+#ifdef __cplusplus
+#include <gpp/strutils.h>
+#endif
 #include <mooglib/moo-glib.h>
 
 G_BEGIN_DECLS
@@ -118,20 +120,20 @@ void MOO_NORETURN _moo_errorv (MooCodeLoc loc, const char *format, va_list args)
 
 G_END_DECLS
 
-void _moo_log_impl (MooCodeLoc loc, GLogLevelFlags flags, moo::gstr message);
-void MOO_NORETURN _moo_error_impl (MooCodeLoc loc, moo::gstr message);
+void _moo_log_impl(MooCodeLoc loc, GLogLevelFlags flags, g::gstr message);
+void MOO_NORETURN _moo_error_impl(MooCodeLoc loc, g::gstr message);
 
 template<typename ...Args>
 inline void _moo_log (MooCodeLoc loc, GLogLevelFlags flags, const char *format, Args&& ...args)
 {
-    moo::gstr message = moo::gstr::printf (format, std::forward<Args> (args)...);
+    g::gstr message = g::gstr::printf(format, std::forward<Args>(args)...);
     _moo_log_impl (loc, flags, std::move (message));
 }
 
 template<typename ...Args>
 inline void MOO_NORETURN _moo_error (MooCodeLoc loc, const char *format, Args&& ...args)
 {
-    moo::gstr message = moo::gstr::printf (format, std::forward<Args> (args)...);
+    g::gstr message = g::gstr::printf(format, std::forward<Args>(args)...);
     _moo_error_impl (loc, std::move (message));
 }
 

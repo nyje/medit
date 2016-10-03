@@ -1,5 +1,5 @@
 /*
- *   moocpp/strutils.cpp
+ *   moogpp/strutils.cpp
  *
  *   Copyright (C) 2004-2015 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -13,11 +13,10 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "moocpp/strutils.h"
-#include "mooutils/mooutils-messages.h"
+#include "moogpp/strutils.h"
 #include <string.h>
 
-using namespace moo;
+using namespace g;
 
 static bool str_equal(const char* s1, const char* s2)
 {
@@ -29,32 +28,32 @@ static bool str_equal(const char* s1, const char* s2)
         return strcmp(s1, s2) == 0;
 }
 
-bool moo::operator==(const gstr& s1, const char* s2)
+bool g::operator==(const gstr& s1, const char* s2)
 {
     return str_equal(s1, s2);
 }
 
-bool moo::operator==(const char* s1, const gstr& s2)
+bool g::operator==(const char* s1, const gstr& s2)
 {
     return str_equal(s1, s2);
 }
 
-bool moo::operator==(const gstr& s1, const gstr& s2)
+bool g::operator==(const gstr& s1, const gstr& s2)
 {
     return str_equal(s1, s2);
 }
 
-bool moo::operator!=(const gstr& s1, const gstr& s2)
+bool g::operator!=(const gstr& s1, const gstr& s2)
 {
     return !(s1 == s2);
 }
 
-bool moo::operator!=(const gstr& s1, const char* s2)
+bool g::operator!=(const gstr& s1, const char* s2)
 {
     return !(s1 == s2);
 }
 
-bool moo::operator!=(const char* s1, const gstr& s2)
+bool g::operator!=(const char* s1, const gstr& s2)
 {
     return !(s1 == s2);
 }
@@ -164,15 +163,15 @@ gstr::gstr(const gstr& other)
 
     if (other.m_is_const)
     {
-        moo_assert(other.m_is_inline);
+        g_assert(other.m_is_inline);
         m_p = other.m_p;
         m_is_const = true;
         m_is_inline = true;
     }
     else
     {
-        moo_assert(other.m_p != nullptr);
-        moo_assert(!other.m_is_const);
+        g_assert(other.m_p != nullptr);
+        g_assert(!other.m_is_const);
 
         StringData* d;
 
@@ -236,8 +235,8 @@ gstr::~gstr()
 bool gstr::is_null() const
 {
     bool ret = (m_p == nullptr);
-    moo_assert(!ret || m_is_const == true);
-    moo_assert(!ret || m_is_inline == true);
+    g_assert(!ret || m_is_const == true);
+    g_assert(!ret || m_is_inline == true);
     return ret;
 }
 
@@ -262,7 +261,7 @@ void gstr::clear()
 
     if (!m_is_const)
     {
-        moo_assert(m_p != nullptr);
+        g_assert(m_p != nullptr);
 
         if (m_is_inline)
             ::g_free(m_p);
@@ -289,8 +288,8 @@ char* gstr::get_mutable()
         if (*s != 0)
         {
             set(s);
-            moo_assert(!m_is_const);
-            moo_assert(m_is_inline);
+            g_assert(!m_is_const);
+            g_assert(m_is_inline);
         }
 
         return reinterpret_cast<char*>(m_p);
@@ -302,7 +301,7 @@ char* gstr::get_mutable()
     else
     {
         StringData* d = reinterpret_cast<StringData*>(m_p);
-        moo_assert(d->get() && *d->get());
+        g_assert(d->get() && *d->get());
 
         if (d->ref_count() == 1)
         {
@@ -336,7 +335,7 @@ char* gstr::release_owned()
     }
 
     StringData* d = reinterpret_cast<StringData*>(m_p);
-    moo_assert(d->get() && *d->get());
+    g_assert(d->get() && *d->get());
 
     char* p = d->ref_count() == 1 ? d->release() : g_strdup(d->get());
 
@@ -354,13 +353,13 @@ gstr gstr::vprintf(const char* format, va_list args)
 }
 
 
-size_t std::hash<moo::gstr>::operator()(const moo::gstr& s) const
+size_t std::hash<g::gstr>::operator()(const g::gstr& s) const
 {
     return g_str_hash (s.is_null () ? "" : s.get ());
 }
 
 
-gstrvec moo::convert(gstrv v)
+gstrvec g::convert(gstrv v)
 {
     char** pv = v.release();
 

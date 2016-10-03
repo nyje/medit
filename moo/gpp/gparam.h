@@ -1,5 +1,5 @@
 /*
- *   moocpp/gparam.h
+ *   moogpp/gparam.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -16,16 +16,15 @@
 #pragma once
 
 #ifndef __cplusplus
-#error "This is a C++-only header"
+#error "This is a C++ header"
 #endif
 
-#include <mooglib/moo-glib.h>
-#include <moocpp/strutils.h>
+#include <gpp/strutils.h>
 #include <memory>
 #include <utility>
 #include <vector>
 
-namespace moo {
+namespace g {
 
 // Bit-compatible with GValue
 class Value : public GValue
@@ -60,4 +59,4 @@ public:
 using ValueArray = std::vector<Value>;
 using ParameterArray = std::vector<Parameter>;
 
-} // namespace moo
+} // namespace g

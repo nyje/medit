@@ -16,7 +16,9 @@
 #pragma once
 
 #include <mooutils/mooutils-messages.h>
-#include <moocpp/strutils.h>
+#ifdef __cplusplus
+#include <gpp/strutils.h>
+#endif
 #include <gtk/gtk.h>
 #include <string.h>
 
@@ -76,10 +78,15 @@ gboolean    moo_save_user_data_file         (const char     *basename,
                                              GError        **error);
 
 char       *moo_get_user_cache_file         (const char     *basename);
-MOO_CPP_DECLS(
-moo::gstr   moo_get_user_cache_dir          ();
-moo::gstr   moo_get_user_cache_file         (const moo::gstr& basename);
-)
+
+G_END_DECLS
+#ifdef __cplusplus
+
+g::gstr     moo_get_user_cache_dir          ();
+g::gstr     moo_get_user_cache_file         (const g::gstr& basename);
+
+#endif // __cplusplus
+G_BEGIN_DECLS
 
 gboolean    moo_save_user_cache_file        (const char     *basename,
                                              const char     *content,
@@ -217,15 +224,13 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-#include <moocpp/strutils.h>
+g::gstr     moo_win32_get_app_dir(void);
+g::gstr     moo_win32_get_dll_dir(const char* dll);
 
-moo::gstr   moo_win32_get_app_dir           (void);
-moo::gstr   moo_win32_get_dll_dir           (const char*    dll);
+void        _moo_win32_add_data_dirs(g::gstrvec&  list,
+                                     const char*    prefix);
 
-void        _moo_win32_add_data_dirs        (moo::gstrvec&  list,
-                                             const char*    prefix);
-
-moo::gstr   _moo_win32_get_locale_dir       (void);
+g::gstr     _moo_win32_get_locale_dir(void);
 
 gboolean    _moo_win32_open_uri             (const char     *uri);
 void        _moo_win32_show_fatal_error     (const char     *domain,
@@ -260,8 +265,8 @@ moo_os_win32 (void)
 
 #ifdef __cplusplus
 
-moo::gstrvec moo_get_data_subdirs(const moo::gstr& subdir);
-moo::gstr moo_error_message(const moo::gerrp& err);
+g::gstrvec moo_get_data_subdirs(const g::gstr& subdir);
+g::gstr moo_error_message(const g::gerrp& err);
 
 #endif // __cplusplus
 
@@ -287,7 +292,7 @@ inline void moo_err_set_unexpected_error(GError** error)
     g_set_error (error, MOO_ERROR, MOO_ERROR_UNEXPECTED, "unexpected error");
 }
 
-inline void moo_err_set_unexpected_error(moo::gerrp& error)
+inline void moo_err_set_unexpected_error(g::gerrp& error)
 {
     moo_err_set_unexpected_error(&error);
 }
