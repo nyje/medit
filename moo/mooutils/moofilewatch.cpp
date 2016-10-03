@@ -43,7 +43,6 @@
 #include <memory>
 #include <moocpp/moocpp.h>
 
-using namespace g;
 using namespace moo;
 
 #if 1

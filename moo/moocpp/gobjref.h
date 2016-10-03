@@ -1,5 +1,5 @@
 /*
- *   moocpp/gobjref.h
+ *   moocpp/gobjptr.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -103,7 +103,7 @@ protected:                                                                      
 public:                                                                                 \
     gobj_ref(object_type& gobj)                                                         \
     {                                                                                   \
-        super::_set_gobj(&gobj);							\
+        _set_gobj(&gobj);                                                               \
     }                                                                                   \
                                                                                         \
     object_type* gobj() const                                                           \

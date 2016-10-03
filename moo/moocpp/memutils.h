@@ -1,5 +1,5 @@
 /*
- *   moogpp/memutils.h
+ *   moocpp/memutils.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -16,21 +16,21 @@
 #pragma once
 
 #ifndef __cplusplus
-#error "This is a C++ header"
+#error "This is a C++ file"
 #endif
 
 #include <algorithm>
 #include <memory>
 #include <vector>
 #include <utility>
-
-#include <glib.h>
+#include <moocpp/utils.h>
+#include <mooglib/moo-glib.h>
 
 void extern_g_free(gpointer);
 void extern_g_object_unref(gpointer);
 void extern_g_strfreev(char**);
 
-namespace g {
+namespace moo {
 
 enum class mem_transfer
 {
@@ -57,8 +57,7 @@ public:
 
     T* release() { T* p = m_p; m_p = nullptr; return p; }
 
-    gbuf(const gbuf&) = delete;
-    gbuf& operator=(const gbuf&) = delete;
+    MOO_DISABLE_COPY_OPS(gbuf);
 
     gbuf(gbuf&& other) : gbuf() { std::swap(m_p, other.m_p); }
     gbuf& operator=(gbuf&& other) { std::swap(m_p, other.m_p); return *this; }
@@ -141,8 +140,7 @@ public:
     operator T*() const = delete;
     T** operator&() = delete;
 
-    objp(const objp&) = delete;
-    objp& operator=(const objp&) = delete;
+    MOO_DISABLE_COPY_OPS (objp);
 
     void set (T* p) { if (m_p != p) { delete m_p; m_p = p; } }
     void reset (T* p = nullptr) { set (p); }
@@ -158,9 +156,10 @@ private:
     T* m_p;
 };
 
-} // namespace g
+
+} // namespace moo
 
 template<typename T>
-void g_free(const g::gbuf<T>&) = delete;
+void g_free(const moo::gbuf<T>&) = delete;
 template<typename T>
-void g_free (const g::objp<T>&) = delete;
+void g_free (const moo::objp<T>&) = delete;

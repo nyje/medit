@@ -41,12 +41,12 @@ struct MooEditPrivate {
     /* Document
      */
     moo::gobj_ptr<GFile>                    file;
-    g::gstr                                  filename;
-    g::gstr                                  norm_name;
-    g::gstr                                  display_filename;
-    g::gstr                                  display_basename;
+    moo::gstr                               filename;
+    moo::gstr                               norm_name;
+    moo::gstr                               display_filename;
+    moo::gstr                               display_basename;
 
-    g::gstr                                  encoding;
+    moo::gstr                               encoding;
     MooLineEndType                          line_end_type;
     MooEditStatus                           status;
 

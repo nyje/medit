@@ -17,9 +17,7 @@
 
 #include <mooutils/moomarkup.h>
 #include <mooutils/mooactioncollection.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -188,9 +186,6 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(UiXml, g::Object, MooUiXml, MOO_TYPE_UI_XML);
-}
+MOO_DEFINE_GOBJ_TYPE(MooUiXml, GObject, MOO_TYPE_UI_XML);
 
 #endif // __cplusplus

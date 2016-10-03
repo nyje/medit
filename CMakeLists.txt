@@ -131,7 +131,7 @@ else()
             libmooglib-0)
         set(LIBXML2_LIBRARIES "libxml2-2")
     else()
-        set(MOO_GTK_DIR "C:/gtk-build/gtk/Win32/release" CACHE PATH "Gtk root dir")
+        set(MOO_GTK_DIR "C:/gtk-build/gtk/Win32" CACHE PATH "Gtk root dir")
         set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/bdist" CACHE PATH "Gtk binary dir")
 
         set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0

@@ -23,6 +23,6 @@ G_END_DECLS
 
 #include <moocpp/moocpp.h>
 
-g::gstr      moo_file_get_display_name  (g::File&   file);
+moo::gstr   moo_file_get_display_name   (moo::g::File file);
 
 #endif // __cplusplus

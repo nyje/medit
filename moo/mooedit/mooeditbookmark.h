@@ -18,9 +18,7 @@
 
 #include <mooedit/mooedit.h>
 #include <mooedit/moolinemark.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 

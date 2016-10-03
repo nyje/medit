@@ -1,5 +1,5 @@
 /*
- *   moocpp/gobjrawptr.h
+ *   moocpp/gobjptr.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *

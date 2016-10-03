@@ -1,7 +1,7 @@
 /*
- *   moogpp/strutils.h
+ *   moocpp/strutils.h
  *
- *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2015 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -15,12 +15,12 @@
 
 #pragma once
 
-#ifndef __cplusplus
-#error "This is a C++ header"
-#endif
+#include <moocpp/utils.h>
 
-#include <gpp/memutils.h>
+#ifdef __cplusplus
 
+#include <mooglib/moo-glib.h>
+#include <moocpp/memutils.h>
 #include <algorithm>
 #include <utility>
 #include <functional>
@@ -30,7 +30,7 @@
 #include <type_traits>
 #include <stdarg.h>
 
-namespace g {
+namespace moo {
 
 class gstr;
 class gstrp;
@@ -47,8 +47,7 @@ public:
     char*& p() { return _get(); }
     char** pp() { return &_get(); }
 
-    gstrp(const gstrp&) = delete;
-    gstrp& operator=(const gstrp&) = delete;
+    MOO_DISABLE_COPY_OPS(gstrp);
 
     bool operator==(const char* p) const { return get() == p; }
     bool operator!=(const char* p) const { return get() != p; }
@@ -73,8 +72,8 @@ struct printf_helper
 
     template<typename T>
     static const T& transform_printf_arg (const T& arg);
-    static const char* transform_printf_arg(const gstr& s);
-    static const char* transform_printf_arg(const gstrp& s);
+    static const char* transform_printf_arg (const gstr& s);
+    static const char* transform_printf_arg (const gstrp& s);
 
     // gcc seems to actually evaluate what's inside decltype(), and it can't cope with literals or va_list()
     static const char* dummy_format_string;
@@ -148,8 +147,8 @@ public:
     gstr(nullptr_t) : gstr() {}
     gstr& operator=(nullptr_t) { clear(); return *this; }
 
-    gstr(const gstr&, mem_transfer) = delete;
-    void set(const gstr& s) = delete;
+    gstr (const gstr&, mem_transfer) = delete;
+    void set (const gstr& s) = delete;
     void set_const(const gstr& s) = delete;
     void set_new(const gstr& s) = delete;
     static gstr wrap(const gstr& s) = delete;
@@ -159,9 +158,9 @@ public:
     void set(const char *s)                 { assign(s, mem_transfer::make_copy); }
     void set_new(char *s)                   { assign(s, mem_transfer::take_ownership); }
     void set_const(const char *s)           { assign(s, mem_transfer::borrow); }
-    static gstr wrap(const char *s) { return gstr(s, mem_transfer::make_copy); }
-    static gstr wrap_new(char *s) { return gstr(s, mem_transfer::take_ownership); }
-    static gstr wrap_const(const char *s) { return gstr(s, mem_transfer::borrow); }
+    static gstr wrap(const char *s)         { return gstr(s, mem_transfer::make_copy); }
+    static gstr wrap_new(char *s)           { return gstr(s, mem_transfer::take_ownership); }
+    static gstr wrap_const(const char *s)   { return gstr(s, mem_transfer::borrow); }
 
     bool is_null() const;
 
@@ -181,7 +180,7 @@ public:
     operator bool() const = delete;
     bool operator!() const = delete;
 
-    static gstr vprintf(const char* format, va_list args) G_GNUC_PRINTF(1, 0);
+    static gstr vprintf(const char* format, va_list args) G_GNUC_PRINTF (1, 0);
 
     template<typename ...Args>
     static gstr printf(const char* format, Args&& ...args)
@@ -212,12 +211,12 @@ inline const T& printf_helper::transform_printf_arg (const T& arg)
     return arg;
 }
 
-inline const char* printf_helper::transform_printf_arg(const gstr& s)
+inline const char* printf_helper::transform_printf_arg (const gstr& s)
 {
     return s.get ();
 }
 
-inline const char* printf_helper::transform_printf_arg(const gstrp& s)
+inline const char* printf_helper::transform_printf_arg (const gstrp& s)
 {
     return s.get ();
 }
@@ -238,17 +237,17 @@ bool operator==(const gstr&, nullptr_t) = delete;
 bool operator==(nullptr_t, const gstr&) = delete;
 
 
-class strv
+class gstrv
 {
 public:
-    strv(char** p = nullptr) : m_p(p) {}
-    ~strv() { ::g_strfreev(m_p); }
+    gstrv(char** p = nullptr) : m_p(p) {}
+    ~gstrv() { ::g_strfreev(m_p); }
 
     void set(char** p) { if (m_p != p) { ::g_strfreev(m_p); m_p = p; } }
     void reset(char** p = nullptr) { set(p); }
     char** get() const { return m_p; }
 
-    static strv convert(gstrvec v);
+    static gstrv convert(gstrvec v);
 
     gsize size() const { return m_p ? g_strv_length (m_p) : 0; }
 
@@ -259,13 +258,12 @@ public:
 
     const char* operator[] (gsize i) const { return m_p[i]; }
 
-    strv(const strv&) = delete;
-    strv& operator=(const strv&) = delete;
+    MOO_DISABLE_COPY_OPS(gstrv);
 
-    strv(strv&& other) : strv() { *this = std::move(other); }
-    strv& operator=(strv&& other) { std::swap(m_p, other.m_p); return *this; }
+    gstrv(gstrv&& other) : gstrv() { *this = std::move(other); }
+    gstrv& operator=(gstrv&& other) { std::swap(m_p, other.m_p); return *this; }
 
-    strv& operator=(char** p) { set(p); return *this; }
+    gstrv& operator=(char** p) { set(p); return *this; }
 
     bool operator==(nullptr_t) const { return m_p == nullptr; }
     bool operator!=(nullptr_t) const { return m_p != nullptr; }
@@ -276,7 +274,7 @@ private:
     char** m_p;
 };
 
-gstrvec convert(strv v);
+gstrvec convert(gstrv v);
 
 class gerrp
 {
@@ -299,8 +297,7 @@ public:
     //void propagate(GError** dest) { g_propagate_error(dest, m_err); m_err = nullptr; }
     void clear() { if (*m_errp) g_error_free(*m_errp); *m_errp = nullptr; m_local = nullptr; }
 
-    gerrp(const gerrp&) = delete;
-    gerrp& operator=(const gerrp&) = delete;
+    MOO_DISABLE_COPY_OPS(gerrp);
 
     gerrp(gerrp&& other) = delete;
 
@@ -330,8 +327,7 @@ public:
     gstr release();
     const char* get() const;
 
-    strbuilder(const strbuilder&) = delete;
-    strbuilder& operator=(const strbuilder&) = delete;
+    MOO_DISABLE_COPY_OPS(strbuilder);
 
     void truncate(gsize len);
     void set_size(gsize len);
@@ -376,21 +372,21 @@ private:
     mutable gstrp m_result;
 };
 
-//gstrvec convert(strv v);
+//gstrvec convert(gstrv v);
 
 void g_free(const gstr&) = delete;
 void g_free(const gstrp&) = delete;
-void g_free(const strv&) = delete;
-void g_strfreev(const strv&) = delete;
+void g_free(const gstrv&) = delete;
+void g_strfreev(const gstrv&) = delete;
 
-} // namespace g
+} // namespace moo
 
 namespace std {
 
 template<>
-struct hash<::g::gstr>
+struct hash<::moo::gstr>
 {
-    size_t operator()(const ::g::gstr& s) const;
+    size_t operator()(const ::moo::gstr& s) const;
 };
 
 } // namespace std
@@ -398,14 +394,14 @@ struct hash<::g::gstr>
 template<typename ...Args>
 inline void moo_g_print(const char* format, Args&& ...args)
 {
-    static_assert(g::printf_helper::is_valid_arg<Args...>::value, "Passed an object to g_strdup_printf");
+    static_assert(moo::printf_helper::is_valid_arg<Args...>::value, "Passed an object to g_strdup_printf");
     g_print (format, std::forward<Args> (args)...);
 }
 
 template<typename ...Args>
 inline char* moo_g_strdup_printf (const char* format, Args&& ...args)
 {
-    static_assert(g::printf_helper::is_valid_arg<Args...>::value, "Passed an object to g_strdup_printf");
+    static_assert(moo::printf_helper::is_valid_arg<Args...>::value, "Passed an object to g_strdup_printf");
     return g_strdup_printf (format, std::forward<Args> (args)...);
 }
 
@@ -413,3 +409,5 @@ inline char* moo_g_strdup_printf (const char* format, Args&& ...args)
 #undef g_print
 #define g_strdup_printf moo_g_strdup_printf
 #define g_print moo_g_print
+
+#endif // __cplusplus

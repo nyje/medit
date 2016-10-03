@@ -25,7 +25,6 @@
 #endif
 
 #ifdef __WIN32__
-#include <VersionHelpers.h>
 #include <windows.h>
 #endif
 
@@ -51,6 +50,24 @@ get_system_name (void)
 
     switch (ver.dwMajorVersion)
     {
+        case 4: /* Windows NT 4.0, Windows Me, Windows 98, or Windows 95 */
+            switch (ver.dwMinorVersion)
+            {
+                case 0: /* Windows NT 4.0 or Windows95 */
+                    if (ver.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS)
+                        return gstr::wrap_const ("Windows 95");
+                    else
+                        return gstr::wrap_const ("Windows NT 4.0");
+
+                case 10:
+                    return gstr::wrap_const ("Windows 98");
+
+                case 90:
+                    return gstr::wrap_const ("Windows 98");
+            }
+
+            break;
+
         case 5: /* Windows Server 2003 R2, Windows Server 2003, Windows XP, or Windows 2000 */
             switch (ver.dwMinorVersion)
             {
@@ -65,7 +82,10 @@ get_system_name (void)
             break;
 
         case 6:
-            if (!IsWindowsServer())
+            memset (&ver, 0, sizeof (ver));
+            ver.dwOSVersionInfoSize = sizeof (OSVERSIONINFOEXW);
+
+            if (!GetVersionExW ((OSVERSIONINFOW*) &ver) || ver.wProductType == VER_NT_WORKSTATION)
             {
                 switch (ver.dwMinorVersion)
                 {
@@ -75,8 +95,6 @@ get_system_name (void)
                         return gstr::wrap_const ("Windows 7");
                     case 2:
                         return gstr::wrap_const ("Windows 8");
-                    case 3:
-                        return gstr::wrap_const("Windows 8.1");
                 }
             }
             else
@@ -88,41 +106,19 @@ get_system_name (void)
                     case 1:
                         return gstr::wrap_const ("Windows Server 2008 R2");
                     case 2:
-                        return gstr::wrap_const("Windows Server 2012");
-                    case 3:
-                        return gstr::wrap_const("Windows Server 2012 R2");
-                }
-            }
-
-            break;
-
-        case 10:
-            if (!IsWindowsServer())
-            {
-                switch (ver.dwMinorVersion)
-                {
-                case 0:
-                    return gstr::wrap_const("Windows 10");
-                }
-            }
-            else
-            {
-                switch (ver.dwMinorVersion)
-                {
-                case 0:
-                    return gstr::wrap_const("Windows Server 2016");
+                        return gstr::wrap_const ("Windows Server 2012");
                 }
             }
 
             break;
     }
 
-    return IsWindowsServer() ? gstr::wrap_const("Windows Server") : gstr::wrap_const("Windows");
+    return gstr::wrap_const ("Windows");
 }
 
 #elif defined(HAVE_SYS_UTSNAME_H)
 
-static gstr
+static char *
 get_system_name (void)
 {
     struct utsname name;
@@ -132,11 +128,11 @@ get_system_name (void)
         MGW_ERROR_IF_NOT_SHARED_LIBC
         mgw_errno_t err = { mgw_errno_value_t (errno) };
         g_critical ("%s", mgw_strerror (err));
-        return gstr::wrap_const ("unknown");
+        return g_strdup ("unknown");
     }
 
-    return gstr::printf ("%s %s (%s), %s", name.sysname,
-                         name.release, name.version, name.machine);
+    return g_strdup_printf ("%s %s (%s), %s", name.sysname,
+                            name.release, name.version, name.machine);
 }
 
 #else

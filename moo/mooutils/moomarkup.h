@@ -16,9 +16,7 @@
 #pragma once
 
 #include <mooutils/moofilewriter.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -219,13 +217,13 @@ G_END_DECLS
 
 namespace moo {
 
-//template<>
-//class obj_ref_unref<MooMarkupDoc>
-//{
-//public:
-//    static void ref(MooMarkupDoc* doc) { moo_markup_doc_ref(doc); }
-//    static void unref(MooMarkupDoc* doc) { moo_markup_doc_unref(doc); }
-//};
+template<>
+class obj_ref_unref<MooMarkupDoc>
+{
+public:
+    static void ref(MooMarkupDoc* doc) { moo_markup_doc_ref(doc); }
+    static void unref(MooMarkupDoc* doc) { moo_markup_doc_unref(doc); }
+};
 
 } // namespace moo
 

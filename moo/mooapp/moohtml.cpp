@@ -1778,7 +1778,7 @@ static void
 add_func__ (const char *static_elm_name,
             ProcessElm  func)
 {
-    g_hash_table_insert (proc_elm_funcs__, (char*) static_elm_name, (void*) func);
+    g_hash_table_insert (proc_elm_funcs__, (char*) static_elm_name, func);
 }
 
 static void
