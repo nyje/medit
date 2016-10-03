@@ -93,6 +93,10 @@ static const struct {
     // Label of an encoding menu item, remove the part before and including |
     { "UTF-16-BOM",     NULL, N_("encoding label|UTF-16-BOM"),                            ENCODING_GROUP_UNICODE },
     // Label of an encoding menu item, remove the part before and including |
+    { "UTF-32-BOM",     NULL, N_("encoding label|UTF-32-BOM"),                            ENCODING_GROUP_UNICODE },
+    // Label of an encoding menu item, remove the part before and including |
+    { "UTF-16-BOM",     NULL, N_("encoding label|UTF-16-BOM"),                            ENCODING_GROUP_UNICODE },
+    // Label of an encoding menu item, remove the part before and including |
     { "UTF-32",         NULL, N_("encoding label|UTF-32"),                                ENCODING_GROUP_UNICODE },
     // Label of an encoding menu item, remove the part before and including |
     { "UTF-16",         NULL, N_("encoding label|UTF-16"),                                ENCODING_GROUP_UNICODE },
