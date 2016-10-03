@@ -22,14 +22,6 @@
 
 G_BEGIN_DECLS
 
-#define MOO_STMT_START                  \
-    G_STMT_START
-
-#define MOO_STMT_END                    \
-    MOO_MSVC_WARNING_PUSH_DISABLE(4127) \
-    G_STMT_END                          \
-    MOO_MSVC_WARNING_POP
-
 #ifdef __COUNTER__
 #define _MOO_CODE_LOC_COUNTER (__COUNTER__ + 1)
 #else

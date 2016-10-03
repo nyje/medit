@@ -17,6 +17,8 @@
 
 #include "mooutils/mooappinput.h"
 
+G_BEGIN_DECLS
+
 typedef struct MooAppInput MooAppInput;
 typedef struct InputChannel InputChannel;
 
@@ -43,3 +45,5 @@ char         *_moo_app_input_channel_get_path   (InputChannel   *ch);
 const char   *_moo_app_input_channel_get_name   (InputChannel   *ch);
 
 void          _moo_app_input_channel_commit     (GString **buffer);
+
+G_END_DECLS

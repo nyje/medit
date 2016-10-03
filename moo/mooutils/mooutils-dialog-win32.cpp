@@ -16,7 +16,6 @@
 #include "config.h"
 
 #include "mooutils/mooutils-dialog-win32.h"
-#include "moocpp/utils.h"
 
 #include <gdk/gdkwin32.h>
 #include <gtk/gtk.h>
@@ -27,8 +26,6 @@
 #include <windowsx.h>
 #include <shobjidl.h> 
 #include <shlwapi.h>
-
-using namespace moo;
 
 MooWinDialogHelper::MooWinDialogHelper()
     : m_got_gdk_events_message(RegisterWindowMessage(L"GDK_WIN32_GOT_EVENTS"))
@@ -77,18 +74,15 @@ LRESULT CALLBACK MooWinDialogHelper::hook_proc(int code, WPARAM wParam, LPARAM l
     if (GetCurrentThreadId() != m_instance->m_thread_id)
         return CallNextHookEx(m_instance->m_hook, code, wParam, lParam);
 
-    if (m_instance->m_in_hook_proc)
-        return CallNextHookEx(m_instance->m_hook, code, wParam, lParam);
-
-    raii on_exit([] ()
+    if (!m_instance->m_in_hook_proc)
     {
+        m_instance->m_in_hook_proc = true;
+
+        while (gtk_events_pending())
+            gtk_main_iteration();
+
         m_instance->m_in_hook_proc = false;
-    });
-
-    m_instance->m_in_hook_proc = true;
-
-    while (gtk_events_pending())
-        gtk_main_iteration();
+    }
 
     return CallNextHookEx(m_instance->m_hook, code, wParam, lParam);
 }

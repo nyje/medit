@@ -17,8 +17,6 @@
 #include <mooutils/moofiledialog-win32.h>
 #include <mooutils/mooutils-dialog-win32.h>
 #include <mooutils/mooutils-macros.h>
-#include <moocpp/strutils.h>
-#include <moocpp/utils.h>
 #include <gdk/gdkwin32.h>
 #include <gtk/gtk.h>
 
@@ -27,8 +25,6 @@
 #include <windows.h>
 #include <shobjidl.h> 
 #include <shlwapi.h>
-
-using namespace moo;
 
 #undef IGNORE
 #define IGNORE(op) MOO_STMT_START { op; } MOO_STMT_END
@@ -66,7 +62,8 @@ public:
     {
     }
 
-    MOO_DISABLE_COPY_OPS(FileDialogCallback);
+    FileDialogCallback(const FileDialogCallback&) = delete;
+    FileDialogCallback& operator=(const FileDialogCallback&) = delete;
 
 private:
     ~FileDialogCallback()
@@ -182,7 +179,7 @@ private:
 class FileDialog
 {
 protected:
-    FileDialog(HWND hwnd_parent, const gstr& start_folder, const gstr& start_name = gstr())
+    FileDialog(HWND hwnd_parent, const std::string& start_folder, const std::string& start_name = std::string())
         : m_hwnd_parent(hwnd_parent)
         , m_start_folder(start_folder)
         , m_start_name(start_name)
@@ -193,7 +190,8 @@ protected:
     {
     }
 
-    MOO_DISABLE_COPY_OPS(FileDialog);
+    FileDialog(const FileDialog&) = delete;
+    FileDialog& operator=(const FileDialog&) = delete;
 
     template<typename IRealDialog>
     HRESULT show_dialog(const CLSID& clsid, IRealDialog** ppDlg)
@@ -244,12 +242,12 @@ private:
         HRESULT hr = NOERROR;
         IShellItem* pItem = nullptr;
         WCHAR* pszPath = nullptr;
-        gerrp err;
+        GError* error = nullptr;
 
         if (m_start_folder.empty())
             goto out;
 
-        pszPath = reinterpret_cast<WCHAR*>(g_utf8_to_utf16(m_start_folder, -1, nullptr, nullptr, &err));
+        pszPath = reinterpret_cast<WCHAR*>(g_utf8_to_utf16(m_start_folder.c_str(), -1, nullptr, nullptr, &error));
 
         CHECK(SHCreateItemFromParsingName(pszPath, nullptr, IID_PPV_ARGS(&pItem)));
 
@@ -259,6 +257,8 @@ err:
 out:
         ReleaseAndNull(pItem);
         g_free(pszPath);
+        if (error != nullptr)
+            g_error_free (error);
         return hr;
     }
 
@@ -266,30 +266,32 @@ out:
     {
         HRESULT hr = NOERROR;
         WCHAR* pszPath = nullptr;
-        gerrp err;
+        GError* error = nullptr;
 
         if (m_start_name.empty())
             goto out;
 
-        pszPath = reinterpret_cast<WCHAR*>(g_utf8_to_utf16(m_start_name, -1, nullptr, nullptr, &err));
+        pszPath = reinterpret_cast<WCHAR*>(g_utf8_to_utf16(m_start_name.c_str(), -1, nullptr, nullptr, &error));
         CHECK(pDlg->SetFileName(pszPath));
 
 err:
 out:
         g_free(pszPath);
+        if (error != nullptr)
+            g_error_free (error);
         return hr;
     }
 
 private:
     HWND m_hwnd_parent;
-    moo::gstr m_start_folder;
-    moo::gstr m_start_name;
+    std::string m_start_folder;
+    std::string m_start_name;
 };
 
 class OpenFilesDialog : public FileDialog
 {
 public:
-    OpenFilesDialog(HWND hwnd_parent, const gstr& start_folder)
+    OpenFilesDialog(HWND hwnd_parent, const std::string& start_folder)
         : FileDialog(hwnd_parent, start_folder)
     {
     }
@@ -298,14 +300,14 @@ public:
     {
     }
 
-    gstrvec run()
+    std::vector<std::string> run()
     {
         HRESULT hr = NOERROR;
         IFileOpenDialog *pDlg = nullptr;
         IShellItemArray *pResults = nullptr;
         IShellItem *psi = nullptr;
         LPWSTR pszPath = nullptr;
-        std::vector<gstr> filenames;
+        std::vector<std::string> filenames;
 
         CHECK(show_dialog(CLSID_FileOpenDialog, &pDlg));
 
@@ -319,13 +321,17 @@ public:
             CHECK(pResults->GetItemAt(i, &psi));
             CHECK(psi->GetDisplayName(SIGDN_FILESYSPATH, &pszPath));
 
-            gerrp err;
-            gstr utf8_path = gstr::wrap_new(g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(pszPath), -1, nullptr, nullptr, &err));
-            filenames.emplace_back(std::move(utf8_path));
+            GError* error = nullptr;
+            char* utf8_path = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(pszPath), -1, nullptr, nullptr, &error);
+            filenames.push_back(utf8_path);
+
+            if (error != nullptr)
+                g_error_free (error);
 
             CoTaskMemFree(pszPath);
             pszPath = nullptr;
 
+            g_free (utf8_path);
             ReleaseAndNull(psi);
         }
 
@@ -367,7 +373,7 @@ private:
 class SaveFileDialog : public FileDialog
 {
 public:
-    SaveFileDialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename)
+    SaveFileDialog(HWND hwnd_parent, const std::string& start_folder, const std::string& basename)
         : FileDialog(hwnd_parent, start_folder, basename)
     {
     }
@@ -376,14 +382,15 @@ public:
     {
     }
 
-    gstr run()
+    std::string run()
     {
         HRESULT hr = NOERROR;
         IFileSaveDialog* pDlg = nullptr;
         LPWSTR pszPath = nullptr;
         IShellItem* psi = nullptr;
-        gstr path;
-        gerrp err;
+        std::string result;
+        GError* err = nullptr;
+        char* path = nullptr;
 
         CHECK(show_dialog(CLSID_FileSaveDialog, &pDlg));
 
@@ -391,18 +398,22 @@ public:
 
         CHECK(psi->GetDisplayName(SIGDN_FILESYSPATH, &pszPath));
 
-        path = gstr::wrap_new(g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(pszPath), -1, nullptr, nullptr, &err));
+        path = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(pszPath), -1, nullptr, nullptr, &err);
+        result = path;
 
         goto out;
 
 err:
-        path.clear();
+        result.clear();
 
 out:
+        g_free (path);
+        if (err != nullptr)
+            g_error_free (err);
         CoTaskMemFree(pszPath);
         ReleaseAndNull(psi);
         ReleaseAndNull(pDlg);
-        return path;
+        return result;
     }
 
 private:
@@ -427,13 +438,13 @@ private:
 
 } // anonymous namespace
 
-std::vector<gstr> moo_show_win32_file_open_dialog(HWND hwnd_parent, const gstr& start_folder)
+std::vector<std::string> moo_show_win32_file_open_dialog(HWND hwnd_parent, const std::string& start_folder)
 {
     OpenFilesDialog dlg(hwnd_parent, start_folder);
     return dlg.run();
 }
 
-moo::gstr moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const moo::gstr& start_folder, const moo::gstr& basename)
+std::string moo_show_win32_file_save_as_dialog(HWND hwnd_parent, const std::string& start_folder, const std::string& basename)
 {
     SaveFileDialog dlg(hwnd_parent, start_folder, basename);
     return dlg.run();

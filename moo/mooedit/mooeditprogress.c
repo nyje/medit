@@ -119,7 +119,7 @@ show_progress (MooEditProgress *progress)
     g_source_remove (progress->timeout);
 
     progress->timeout =
-        g_add_timeout (PROGRESS_TIMEOUT,
+        g_timeout_add (PROGRESS_TIMEOUT,
                        (GSourceFunc) pulse_progress,
                        progress);
     update_progress (progress);
@@ -155,7 +155,7 @@ _moo_edit_progress_start (MooEditProgress *progress,
     _moo_edit_progress_set_cancel_func (progress, cancel_func, cancel_func_data);
 
     progress->timeout =
-        g_add_timeout (INITIAL_TIMEOUT,
+        g_timeout_add (INITIAL_TIMEOUT,
                        (GSourceFunc) show_progress,
                        progress);
 }

@@ -453,7 +453,7 @@ watch_stat_start (MooFileWatch *watch,
                   G_GNUC_UNUSED GError **error)
 {
     watch->stat_timeout =
-            g_add_timeout_full (MOO_STAT_PRIORITY,
+            g_timeout_add_full (MOO_STAT_PRIORITY,
                                 MOO_STAT_TIMEOUT,
                                 (GSourceFunc) do_stat,
                                 watch, NULL);

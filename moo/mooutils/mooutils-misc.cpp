@@ -407,12 +407,12 @@ _moo_window_is_hidden (GtkWindow  *window)
 
 
 #define get_handle(w) \
-    gdk_win32_drawable_get_handle (GTK_WIDGET(w)->window)
+    ((HWND) gdk_win32_drawable_get_handle (GTK_WIDGET(w)->window))
 
 static gboolean
 _moo_window_is_hidden (GtkWindow  *window)
 {
-    HANDLE h;
+    HWND h;
     WINDOWPLACEMENT info;
 
     g_return_val_if_fail (GTK_IS_WINDOW (window), FALSE);
@@ -449,7 +449,7 @@ _moo_get_top_window (GSList *windows)
     g_return_val_if_fail (windows != NULL, NULL);
 
     if (!windows->next)
-        return windows->data;
+        return reinterpret_cast<GtkWindow*> (windows->data);
 
     for (l = windows; l != NULL; l = l->next)
     {
@@ -654,7 +654,7 @@ moo_log_window (void)
         g_object_add_weak_pointer (G_OBJECT (((MooLogWindow*)log)->window), &log);
     }
 
-    return log;
+    return (MooLogWindow*) log;
 }
 
 
@@ -714,7 +714,7 @@ set_print_funcs (GLogFunc   log_func,
     g_set_printerr_handler (printerr_func);
 
 #define set(domain) \
-    g_log_set_handler (domain, G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION, log_func, NULL)
+    g_log_set_handler (domain, GLogLevelFlags (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), log_func, NULL)
 
     set ("Glib");
     set ("Glib-GObject");
@@ -798,6 +798,8 @@ format_log_message (const char *log_domain,
 
     return text;
 }
+
+#define moo_break_if_in_debugger()
 
 static void
 log_func_window (const gchar    *log_domain,
@@ -1042,7 +1044,7 @@ moo_selection_data_set_pointer (GtkSelectionData *data,
 {
     g_return_if_fail (data != NULL);
     gtk_selection_data_set (data, type, 8, /* 8 bits per byte */
-                            (gpointer) &ptr, sizeof (ptr));
+                            (const guchar*) &ptr, sizeof (ptr));
 }
 
 
@@ -1079,11 +1081,11 @@ _moo_get_modifiers (GtkWidget *widget)
     GdkModifierType mask;
     GdkDisplay *display;
 
-    g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
-    g_return_val_if_fail (GTK_WIDGET_REALIZED (widget), 0);
+    g_return_val_if_fail (GTK_IS_WIDGET (widget), GdkModifierType (0));
+    g_return_val_if_fail (GTK_WIDGET_REALIZED (widget), GdkModifierType (0));
 
     display = gtk_widget_get_display (widget);
-    g_return_val_if_fail (display != NULL, 0);
+    g_return_val_if_fail (display != NULL, GdkModifierType (0));
 
     gdk_display_get_pointer (display, NULL, NULL, NULL, &mask);
 
@@ -1108,7 +1110,7 @@ accel_label_set_string (GtkWidget  *accel_label,
 static void
 accel_label_screen_changed (GtkWidget  *accel_label)
 {
-    const char *label = g_object_get_data (G_OBJECT (accel_label), "moo-accel-label-accel");
+    const char *label = (const char *) g_object_get_data (G_OBJECT (accel_label), "moo-accel-label-accel");
     accel_label_set_string (accel_label, label);
 }
 
@@ -1226,7 +1228,7 @@ get_special_folder (int csidl)
     {
         b = SHGetPathFromIDListW (pidl, path);
         if (b)
-            retval = g_utf16_to_utf8 (path, -1, NULL, NULL, NULL);
+            retval = g_utf16_to_utf8 ((const gunichar2*) path, -1, NULL, NULL, NULL);
         CoTaskMemFree (pidl);
     }
 
@@ -1468,7 +1470,7 @@ do_get_data_dirs (MooDataDirType  type,
 
         for (i = 0; i < dirs->len; ++i)
         {
-            if (cmp_dirs (path, dirs->pdata[i]))
+            if (cmp_dirs (path, (const char*) dirs->pdata[i]))
             {
                 found = TRUE;
                 break;
@@ -1504,7 +1506,7 @@ moo_get_data_dirs_real (MooDataDirType   type_requested,
     {
         int type;
         for (type = 0; type < 3; ++type)
-            moo_data_dirs[type] = do_get_data_dirs (type, &n_data_dirs[type]);
+            moo_data_dirs[type] = do_get_data_dirs (MooDataDirType (type), &n_data_dirs[type]);
     }
 
     G_UNLOCK (moo_data_dirs);

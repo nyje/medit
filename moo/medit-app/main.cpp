@@ -182,14 +182,14 @@ check_plus_line_arg (void)
     char **p;
     GRegex *re = NULL;
 
-    re = g_regex_new ("^\\+(?P<line>\\d+)", G_REGEX_OPTIMIZE | G_REGEX_DUPNAMES, 0, NULL);
+    re = g_regex_new ("^\\+(?P<line>\\d+)", GRegexCompileFlags (G_REGEX_OPTIMIZE | G_REGEX_DUPNAMES), GRegexMatchFlags (0), NULL);
     g_return_if_fail (re != NULL);
 
     for (p = medit_opts.files; !done && p && *p && **p; ++p)
     {
         GMatchInfo *match_info = NULL;
 
-        if (g_regex_match (re, *p, 0, &match_info))
+        if (g_regex_match (re, *p, GRegexMatchFlags (0), &match_info))
         {
             int line = 0;
             char *line_string = g_match_info_fetch_named (match_info, "line");
@@ -584,11 +584,11 @@ hookup_synaptics_touchpad (void)
 static void
 unit_test_func (void)
 {
-    MooTestOptions opts = 0;
+    MooTestOptions opts = MooTestOptions (0);
     int status;
 
     if (!medit_opts.ut_uninstalled)
-        opts |= MOO_TEST_INSTALLED;
+        opts = MooTestOptions (opts | MOO_TEST_INSTALLED);
 
     status = unit_tests_main (opts, medit_opts.ut_tests, medit_opts.ut_dir, medit_opts.ut_coverage_file);
     moo_app_set_exit_status (moo_app_instance (), status);
