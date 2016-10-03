@@ -21,8 +21,8 @@
 
 #include <gtk/gtk.h>
 
-#include "gpp/gobjtypes-glib.h"
-#include "gpp/strutils.h"
+#include "moogpp/gobjtypes-glib.h"
+#include "moogpp/strutils.h"
 #include <initializer_list>
 #include <functional>
 
