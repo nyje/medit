@@ -1,5 +1,5 @@
 /*
- *   moogpp/gutil.h
+ *   moocpp/gutil.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -15,14 +15,15 @@
 
 #pragma once
 
-#ifndef __cplusplus
-#error "This is a C++ header"
-#endif
+#ifdef __cplusplus
 
 #include <memory>
 #include <utility>
-#include <gpp/strutils.h>
+#include <moocpp/utils.h>
+#include <moocpp/strutils.h>
+#include <mooglib/moo-glib.h>
 
+namespace moo {
 namespace g {
 
 gstr build_filename(const char* c1, const char* c2, const char* c3 = nullptr, const char* c4 = nullptr, const char* c5 = nullptr);
@@ -60,3 +61,6 @@ gstr utf16_to_utf8(const wchar_t* str);
 #endif // __WIN32__
 
 } // namespace g
+} // namespace moo
+
+#endif // __cplusplus

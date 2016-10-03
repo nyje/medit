@@ -154,7 +154,7 @@ about_dialog_key_press (GtkWidget   *dialog,
 
     if (event->keyval == GDK_s && (event->state & GDK_CONTROL_MASK))
     {
-        g::gstr info = App::get_system_info ();
+        moo::gstr info = App::get_system_info ();
         if (!info.empty())
             gtk_clipboard_set_text (gtk_widget_get_clipboard (dialog, GDK_SELECTION_CLIPBOARD), info, -1);
     }

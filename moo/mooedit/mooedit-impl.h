@@ -69,8 +69,8 @@ public:
 
     MooActionCollection&    _get_actions                        ();
 
-    static g::gstr           _get_normalized_name                (g::File            file);
-    const g::gstr&           _get_normalized_name                () const;
+    static moo::gstr        _get_normalized_name                (g::File            file);
+    const moo::gstr&        _get_normalized_name                () const;
 
     MooEditPrivate&         get_priv                            ()                      { return *gobj()->priv; }
     const MooEditPrivate&   get_priv                            () const                { return *gobj()->priv; }

@@ -17,9 +17,7 @@
 
 #include <gtk/gtk.h>
 #include <mooutils/mooutils-file.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -73,7 +71,7 @@ void            moo_file_dialog_set_filter_mgr_id       (MooFileDialog  *dialog,
 gboolean        moo_file_dialog_run                     (MooFileDialog  *dialog);
 #ifdef __cplusplus
 G_END_DECLS
-g::FilePtr      moo_file_dialog_get_file                (MooFileDialog  *dialog);
+moo::g::FilePtr moo_file_dialog_get_file                (MooFileDialog  *dialog);
 G_BEGIN_DECLS
 #endif
 MooFileArray   *moo_file_dialog_get_files               (MooFileDialog  *dialog);

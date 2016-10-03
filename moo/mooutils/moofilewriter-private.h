@@ -35,7 +35,7 @@ struct MooFileWriter
 
     virtual bool write  (const char*    data,
                          gssize         len = -1) = 0;
-    virtual bool close(g::gerrp&    error) = 0;
+    virtual bool close  (moo::gerrp&    error) = 0;
 };
 
 struct MooLocalFileWriter : public MooFileWriter
@@ -45,14 +45,14 @@ struct MooLocalFileWriter : public MooFileWriter
 
     bool write  (const char*    data,
                  gssize         len = -1) override;
-    bool close(g::gerrp&    error) override;
+    bool close  (moo::gerrp&    error) override;
 
     MOO_DISABLE_COPY_OPS(MooLocalFileWriter);
 
-    g::FilePtr file;
-    g::FileOutputStreamPtr stream;
+    moo::g::FilePtr file;
+    moo::g::FileOutputStreamPtr stream;
     MooFileWriterFlags flags;
-    g::gerrp error;
+    moo::gerrp error;
 };
 
 struct MooStringWriter : public MooFileWriter
@@ -62,7 +62,7 @@ struct MooStringWriter : public MooFileWriter
 
     bool write  (const char*    data,
                  gssize         len = -1) override;
-    bool close(g::gerrp&    error) override;
+    bool close  (moo::gerrp&    error) override;
 
     MOO_DISABLE_COPY_OPS(MooStringWriter);
 

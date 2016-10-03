@@ -589,7 +589,7 @@ void App::Private::sm_quit_requested (App::Private* self)
 void App::Private::sm_quit (App::Private* self)
 {
     if (!self->app.quit())
-        self->do_quit ();
+        self->do_quit (self->app);
 }
 
 #endif // __WIN32__

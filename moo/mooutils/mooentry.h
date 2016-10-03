@@ -16,9 +16,7 @@
 #pragma once
 
 #include <gtk/gtk.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -67,8 +65,5 @@ void        moo_entry_set_use_special_chars_menu(MooEntry   *entry,
 G_END_DECLS
 
 #ifdef __cplusplus
-namespace moo
-{
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(Entry, gtk::Entry, MooEntry, MOO_TYPE_ENTRY);
-}
+MOO_DEFINE_GOBJ_TYPE(MooEntry, GtkEntry, MOO_TYPE_ENTRY)
 #endif // __cplusplus

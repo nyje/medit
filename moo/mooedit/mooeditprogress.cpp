@@ -21,11 +21,11 @@ struct MooEditProgress
     ProgressWidgetXml *xml;
 
     guint timeout;
-    g::gstr text;
+    moo::gstr text;
     GDestroyNotify cancel_op;
     gpointer cancel_data;
 
-    void update() const;
+    void update();
 };
 
 struct MooEditProgressClass
@@ -80,7 +80,7 @@ _moo_edit_progress_new (void)
     return moo::wrap_new(MOO_EDIT_PROGRESS(g_object_new(MOO_TYPE_EDIT_PROGRESS, NULL)));
 }
 
-void MooEditProgress::update() const
+void MooEditProgress::update()
 {
     g_return_if_fail (!text.empty());
     gtk_progress_bar_set_text(xml->progressbar, text);

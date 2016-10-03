@@ -19,9 +19,7 @@
 #include <mooedit/moolang.h>
 #include <mooedit/mootextstylescheme.h>
 #include <mooedit/mooeditconfig.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 G_BEGIN_DECLS
 
@@ -42,7 +40,7 @@ MooLang        *moo_lang_mgr_get_lang               (MooLangMgr*            mgr,
                                                      const char*            lang_id);
 #ifdef __cplusplus
 MooLang        *moo_lang_mgr_get_lang_for_file      (MooLangMgr*            mgr,
-                                                     g::File&               file);
+                                                     moo::g::File           file);
 #endif // __cplusplus
 
 /* list must be freed, content unref'ed */

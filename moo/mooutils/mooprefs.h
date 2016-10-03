@@ -18,9 +18,7 @@
 #include <glib-object.h>
 #include <mooutils/moomarkup.h>
 #include <mooutils/mooutils-file.h>
-#ifdef __cplusplus
 #include <moocpp/moocpp.h>
-#endif
 
 typedef enum {
     MOO_PREFS_RC,
@@ -90,9 +88,9 @@ G_END_DECLS
 bool            moo_prefs_load          (char**          sys_files,
                                          const char*     file_rc,
                                          const char*     file_state,
-                                         g::gerrp&       error);
+                                         moo::gerrp&     error);
 bool            moo_prefs_save          (const char*     file_rc,
                                          const char*     file_state,
-                                         g::gerrp&       error);
+                                         moo::gerrp&     error);
 
 #endif // __cplusplus

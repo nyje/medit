@@ -168,7 +168,7 @@ _moo_edit_open_dialog(GtkWidget* parent,
 
     GtkWidget* toplevel = parent ? gtk_widget_get_toplevel(parent) : nullptr;
     HWND hwnd = toplevel ? reinterpret_cast<HWND> (GDK_WINDOW_HWND(toplevel->window)) : nullptr;
-    g::gstrvec files = moo_show_win32_file_open_dialog(hwnd, start_folder);
+    moo::gstrvec files = moo_show_win32_file_open_dialog(hwnd, start_folder);
     if (files.empty())
         return nullptr;
 

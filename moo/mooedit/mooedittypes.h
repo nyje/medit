@@ -45,14 +45,10 @@ G_END_DECLS
 
 #include <moocpp/moocpp.h>
 
-namespace moo {
-
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(TextView, gtk::TextView, MooTextView, moo_text_view_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditTab, gtk::Widget, MooEditTab, moo_edit_tab_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditWindow, gtk::Window, MooEditWindow, moo_edit_window_get_type());
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(EditView, moo::TextView, MooEditView, moo_edit_view_get_type());
-
-} // namespace moo
+MOO_DEFINE_GOBJ_TYPE(MooTextView, GtkTextView, moo_text_view_get_type())
+MOO_DEFINE_GOBJ_TYPE(MooEditTab, GtkWidget, moo_edit_tab_get_type());
+MOO_DEFINE_GOBJ_TYPE(MooEditWindow, GtkWindow, moo_edit_window_get_type());
+MOO_DEFINE_GOBJ_TYPE(MooEditView, MooTextView, moo_edit_view_get_type());
 
 MOO_DECLARE_CUSTOM_GOBJ_TYPE(MooEdit);
 MOO_DECLARE_CUSTOM_GOBJ_TYPE(MooEditView);

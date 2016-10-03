@@ -65,28 +65,26 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-#include <moogpp/moogpp.h>
+#include <moocpp/moocpp.h>
 
-namespace moo {
-MOO_DEFINE_SIMPLE_GOBJ_CLASS(App, g::Object, MooApp, MOO_TYPE_APP);
-}
+MOO_DEFINE_GOBJ_TYPE(MooApp, GObject, MOO_TYPE_APP)
 
-struct MeditApp : public moo::App
+struct App : public moo::gobj_wrapper<MooApp, App>
 {
-    MOO_CUSTOM_GOBJ_CLASS_DECL(MeditApp, moo::App)
+    using Super = moo::gobj_wrapper<MooApp, App>;
 
 public:
     struct StartupOptions
     {
         bool run_input = false;
         int use_session = -1;
-        g::gstr instance_name;
+        moo::gstr instance_name;
     };
 
-    MeditApp(const StartupOptions& opts);
-    ~MeditApp();
+    App(gobj_wrapper_data& d, const StartupOptions& opts);
+    ~App();
 
-    static MeditApp& instance();
+    static App& instance();
 
     bool init();
     int run();
@@ -98,7 +96,7 @@ public:
 
     MooEditor* get_editor();
 
-    static g::gstr get_system_info();
+    static moo::gstr get_system_info();
     static void about_dialog(GtkWidget* parent);
 
     static bool send_msg(const char* pid, const char* data, gssize len);

@@ -1696,8 +1696,8 @@ moo_get_user_cache_file (const char *basename)
     return get_user_data_file (basename, TRUE).release_owned ();
 }
 
-g::gstr
-moo_get_user_cache_file(const g::gstr& basename)
+moo::gstr
+moo_get_user_cache_file(const moo::gstr& basename)
 {
     return get_user_data_file (basename, TRUE);
 }
@@ -1833,7 +1833,7 @@ moo_log_debug_enabled (void)
     return enabled;
 }
 
-void _moo_log_impl(MooCodeLoc loc, GLogLevelFlags flags, g::gstr message)
+void _moo_log_impl (MooCodeLoc loc, GLogLevelFlags flags, moo::gstr message)
 {
     if (flags >= G_LOG_LEVEL_DEBUG && !moo_log_debug_enabled ())
         return;
@@ -1866,7 +1866,7 @@ void _moo_logv (MooCodeLoc loc, GLogLevelFlags flags, const char *format, va_lis
     _moo_log_impl (loc, flags, gstr::vprintf (format, args));
 }
 
-void MOO_NORETURN _moo_error_impl(MooCodeLoc, g::gstr message)
+void MOO_NORETURN _moo_error_impl (MooCodeLoc, moo::gstr message)
 {
     g_log (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, "%s", message.get_non_null ());
     moo_abort ();
@@ -2147,8 +2147,8 @@ moo_error_message (GError *error)
     return error->message;
 }
 
-g::gstr
-moo_error_message(const g::gerrp& err)
+moo::gstr
+moo_error_message(const moo::gerrp& err)
 {
     return gstr::wrap (moo_error_message (err.get ()));
 }
