@@ -103,6 +103,13 @@
 #define NORETURN MOO_NORETURN
 #define NOTHROW MOO_NOTHROW
 
+#define MOO_STMT_START do
+
+#define MOO_STMT_END                    \
+    MOO_MSVC_WARNING_PUSH_DISABLE(4127) \
+        while (0)                       \
+    MOO_MSVC_WARNING_POP
+
 #if defined(MOO_CL_GCC)
 #  define MOO_VA_CLEANUP(func) __attribute__((cleanup(func)))
 #  define _MOO_VA_CLEANUP_DEFINED 1
