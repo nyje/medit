@@ -8,6 +8,9 @@ include_directories(${PYTHON_INCLUDE_DIR})
 
 set(MOO_PYTHON_LIB_DIR ${CMAKE_INSTALL_PREFIX}/bin/Lib)
 
+
+set(MOO_GTK_DIR /usr)
+
 set(PYGOBJECT_DEFS_DIR ${MOO_GTK_DIR}/share/pygobject/2.0/defs)
 set(PYGTK_DEFS_DIR ${MOO_GTK_DIR}/share/pygtk/2.0/defs)
 set(PYGTK_INCLUDE_DIR "${MOO_GTK_DIR}/include/pygtk-2.0")
@@ -47,14 +50,14 @@ list(APPEND built_moopython_sources
 )
 
 if(WIN32)
-set(codegen_platform --platform win32)
+    set(codegen_platform --platform win32)
 endif()
 
 list(APPEND built_moopython_sources moopython/pygtk/moo.defs)
-add_custom_command(OUTPUT moopython/pygtk/moo.defs
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo.defs
+    add_custom_command(OUTPUT moopython/pygtk/moo.defs
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo.defs
         ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/api/gendefs.py ${CMAKE_SOURCE_DIR}/api/moo.xml
-    DEPENDS ${gendefs_files} ${CMAKE_SOURCE_DIR}/api/moo.xml)
+	DEPENDS ${gendefs_files} ${CMAKE_SOURCE_DIR}/api/moo.xml)
 
 set(codegen_files
     moopython/codegen/codegen.py

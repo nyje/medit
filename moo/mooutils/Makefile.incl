@@ -7,7 +7,7 @@ moo_utils_enum_headers =		\
 moo_sources +=				\
 	$(moo_utils_enum_headers)	\
 	mooutils/mooarray.h		\
-	mooutils/mooutils-thread.c	\
+	mooutils/mooutils-thread.cpp	\
 	mooutils/mooutils-thread.h	\
 	mooutils/moohistorymgr.c	\
 	mooutils/moohistorymgr.h	\
@@ -49,7 +49,7 @@ moo_sources +=				\
 	mooutils/mooencodings-data.h	\
 	mooutils/mooencodings.c		\
 	mooutils/mooencodings.h		\
-	mooutils/mooentry.c		\
+	mooutils/mooentry.cpp		\
 	mooutils/mooentry.h		\
 	mooutils/moofiledialog.c	\
 	mooutils/moofileicon.c		\
@@ -122,7 +122,7 @@ moo_sources +=				\
 	mooutils/mooutils-macros.h	\
 	mooutils/mooutils-mem.h		\
 	mooutils/mooutils-messages.h	\
-	mooutils/mooutils-misc.c	\
+	mooutils/mooutils-misc.cpp	\
 	mooutils/mooutils-misc.h	\
 	mooutils/mooutils-script.c	\
 	mooutils/mooutils-script.h	\

@@ -10,6 +10,8 @@ output = output.replace('\r\n', '\n').replace('\r', '\n')
 
 filename = sys.argv[1]
 tmp = filename + '.tmp'
+if not os.path.exists(os.path.dirname(tmp)):
+    os.makedirs(os.path.dirname(tmp))
 with open(tmp, 'w') as f:
     f.write(output)
 if os.path.exists(filename):

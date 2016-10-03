@@ -17,6 +17,8 @@ endif
 
 CLEANFILES =
 
+MOO_INTL
+
 include plat/win32/Makefile.incl
 
 if MOO_OS_WIN32

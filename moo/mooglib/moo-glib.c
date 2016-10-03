@@ -76,7 +76,8 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
 
 
 #ifndef _MSC_VER
-#define call_with_errno(err__, func__, rtype__, ...)    \
+
+#define _call_with_errno(err__, func__, rtype__, ...)   \
 ({                                                      \
     rtype__ result__;                                   \
     errno = 0;                                          \
@@ -85,6 +86,7 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
         (err__)->value = errno;                         \
     result__;                                           \
 })
+
 #else // _MSC_VER
 
 #define _call_with_errno(what__, result__)                                  \
@@ -92,6 +94,8 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
     result__ = what__;                                                      \
     if (err != NULL)                                                        \
         err->value = errno;                                                 \
+
+#endif // _MSC_VER
 
 #define call_with_errno0(func__, result__)                                  \
     _call_with_errno((func__)(), result__)
@@ -107,8 +111,6 @@ static void convert_g_stat_buf (const GStatBuf* gbuf, MgwStatBuf* mbuf)
 
 #define call_with_errno4(func__, result__, a1__, a2__, a3__, a4__)          \
     _call_with_errno((func__)((a1__), (a2__), (a3__), (a4__)), result__)
-
-#endif // _MSC_VER
 
 
 const char *
