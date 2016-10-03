@@ -277,7 +277,7 @@ find_by_xid (GSList *windows, XID w)
 
     for (l = windows; l != NULL; l = l->next)
         if (GDK_WINDOW_XID (GTK_WIDGET(l->data)->window) == w)
-            return l->data;
+            return (GtkWindow*) l->data;
 
     return NULL;
 }
@@ -303,7 +303,7 @@ _moo_get_top_window (GSList *windows)
     g_return_val_if_fail (windows != NULL, NULL);
 
     if (!windows->next)
-        return windows->data;
+        return (GtkWindow*) windows->data;
 
     for (l = windows; l != NULL; l = l->next)
     {

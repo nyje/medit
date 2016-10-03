@@ -98,7 +98,9 @@ if(MOO_ENABLE_PYTHON)
 endif()
 ADD_MODULE(medit-app)
 
-include_directories(${PROJECT_SOURCE_DIR}/moo/mooutils/moowin32/ms)
+if(WIN32)
+    include_directories(${PROJECT_SOURCE_DIR}/moo/mooutils/moowin32/ms)
+endif()
 
 include_directories(
     ${PROJECT_BINARY_DIR}
@@ -112,7 +114,7 @@ source_group("generated\\sources" REGULAR_EXPRESSION ".*\\.c(pp)?$")
 source_group("generated\\headers" REGULAR_EXPRESSION ".*\\.h$")
 source_group("misc\\glade" REGULAR_EXPRESSION ".*\\.glade$")
 
-set(MOO_USE_PCH TRUE)
+set(MOO_USE_PCH ${WIN32})
 if(MOO_USE_PCH)
     set(MEDIT_PCH_SOURCES
         moo-pch.c

@@ -19,10 +19,10 @@ source_files = \
     ../moo/mooedit/mooeditaction.h\
     ../moo/mooedit/mooeditbookmark.c\
     ../moo/mooedit/mooeditbookmark.h\
-    ../moo/mooedit/mooedit.c\
+    ../moo/mooedit/mooedit.cpp\
     ../moo/mooedit/mooeditconfig.c\
     ../moo/mooedit/mooeditconfig.h\
-    ../moo/mooedit/mooeditdialogs.c\
+    ../moo/mooedit/mooeditdialogs.cpp\
     ../moo/mooedit/mooeditdialogs.h\
     ../moo/mooedit/mooedit-enum-types.c\
     ../moo/mooedit/mooedit-enum-types.h\
@@ -30,7 +30,7 @@ source_files = \
     ../moo/mooedit/mooeditfileinfo.c\
     ../moo/mooedit/mooeditfileinfo.c\
     ../moo/mooedit/mooeditfileinfo.h\
-    ../moo/mooedit/mooedit-fileops.c\
+    ../moo/mooedit/mooedit-fileops.cpp\
     ../moo/mooedit/mooedit-fileops.h\
     ../moo/mooedit/mooeditfiltersettings.c\
     ../moo/mooedit/mooeditfiltersettings.h\
@@ -167,7 +167,7 @@ source_files = \
     ../moo/mooutils/mooencodings.c\
     ../moo/mooutils/mooencodings-data.h\
     ../moo/mooutils/mooencodings.h\
-    ../moo/mooutils/mooentry.c\
+    ../moo/mooutils/mooentry.cpp\
     ../moo/mooutils/mooentry.h\
     ../moo/mooutils/moo-environ.h\
     ../moo/mooutils/moofiledialog.c\
@@ -248,12 +248,12 @@ source_files = \
     ../moo/mooutils/mooutils-macros.h\
     ../moo/mooutils/mooutils-mem.h\
     ../moo/mooutils/mooutils-messages.h\
-    ../moo/mooutils/mooutils-misc.c\
+    ../moo/mooutils/mooutils-misc.cpp\
     ../moo/mooutils/mooutils-misc.h\
     ../moo/mooutils/mooutils-script.c\
     ../moo/mooutils/mooutils-script.h\
     ../moo/mooutils/mooutils-tests.h\
-    ../moo/mooutils/mooutils-thread.c\
+    ../moo/mooutils/mooutils-thread.cpp\
     ../moo/mooutils/mooutils-thread.h\
     ../moo/mooutils/mooutils-treeview.c\
     ../moo/mooutils/mooutils-treeview.h\

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0048 NEW)
 
-include(cmake/PrecompiledHeader.cmake)
+if(WIN32)
+    include(cmake/PrecompiledHeader.cmake)
+endif()
 
 list(APPEND EXTRA_DIST
     tools/genenums.py

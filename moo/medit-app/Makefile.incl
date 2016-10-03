@@ -39,7 +39,7 @@ medit_SOURCES =				\
 	medit-app/mem-debug.h		\
 	medit-app/run-tests.h		\
 	medit-app/parse.h		\
-	medit-app/main.c		\
+	medit-app/main.cpp		\
 	$(moo_sources)			\
 	$(plugins_sources)
 

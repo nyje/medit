@@ -83,7 +83,7 @@ _moo_edit_open_dialog (GtkWidget *widget,
 
         info_array = moo_open_info_array_new ();
         for (i = 0; i < files->n_elms; ++i)
-            moo_open_info_array_take (info_array, moo_open_info_new_file (files->elms[i], encoding, -1, 0));
+            moo_open_info_array_take (info_array, moo_open_info_new_file (files->elms[i], encoding, -1, MooOpenFlags (0)));
 
         g_object_unref (start);
         start = g_file_get_parent (files->elms[0]);
