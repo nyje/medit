@@ -25,10 +25,10 @@ moo_sources +=				\
 	mooglib/moo-stat.h		\
 	mooglib/moo-time.h
 EXTRA_DIST +=                           \
-	mooglib/moo-glib.c
+	mooglib/moo-glib.cpp
 
 if !MOO_OS_WIN32
-moo_sources += mooglib/moo-glib.c
+moo_sources += mooglib/moo-glib.cpp
 endif
 
 EXTRA_DIST += marshals.list
