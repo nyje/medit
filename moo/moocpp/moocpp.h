@@ -21,15 +21,16 @@
 #ifdef __cplusplus
 
 #include <moocpp/gboxed.h>
-#include <moocpp/gparam.h>
-#include <moocpp/memutils.h>
-#include <moocpp/gobjtypes.h>
 
-#endif // __cplusplus
+#include <gpp/moogpp.h>
 
-#include <moocpp/grefptr.h>
-#include <moocpp/gobjwrapper.h>
-#include <moocpp/gutil.h>
-#include <moocpp/strutils.h>
+namespace moo {
+
+using gstr = g::gstr;
+using gerrp = g::gerrp;
+
+}
+
+#endif __cplusplus
+
 #include <moocpp/utils.h>
-#include <moocpp/gobjectutils.h>

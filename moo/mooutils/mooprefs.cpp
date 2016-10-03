@@ -599,7 +599,7 @@ process_item (MooMarkupElement *elm,
 static gboolean
 load_file (const char  *file,
            int          prefs_kind,
-           moo::gerrp&  error)
+           g::gerrp&  error)
 {
     MooMarkupDoc *xml;
     MooMarkupNode *root;
@@ -685,7 +685,7 @@ bool
 moo_prefs_load (char          **sys_files,
                 const char     *file_rc,
                 const char     *file_state,
-                moo::gerrp&     error)
+                g::gerrp&     error)
 {
     moo_prefs_set_modified (FALSE);
 

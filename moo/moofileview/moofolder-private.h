@@ -19,7 +19,9 @@
 #include "moofileview/moofile-private.h"
 #include "moofileview/moofilesystem.h"
 #include "mooutils/moofilewatch.h"
-#include "moocpp/moocpp.h"
+#ifdef __cplusplus
+#include <moocpp/moocpp.h>
+#endif
 
 using namespace moo;
 

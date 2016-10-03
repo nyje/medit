@@ -24,7 +24,9 @@
 #include "moofileview/moofolder.h"
 #include "mooutils/moofilewatch.h"
 #include <gtk/gtk.h>
-#include "moocpp/moocpp.h"
+#ifdef __cplusplus
+#include <moocpp/moocpp.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -147,7 +149,10 @@ G_END_DECLS
 
 #ifdef __cplusplus
 
-MOO_DEFINE_GOBJ_TYPE(MooFileSystem, GObject, MOO_TYPE_FILE_SYSTEM)
+namespace moo
+{
+MOO_DEFINE_SIMPLE_GOBJ_CLASS(FileSystem, g::Object, MooFileSystem, MOO_TYPE_FILE_SYSTEM);
+}
 
 MooFileWatchPtr _moo_file_system_get_file_watch(MooFileSystem  *fs);
 

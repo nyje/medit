@@ -17,7 +17,9 @@
 
 #include <gtk/gtk.h>
 #include <mooutils/moouixml.h>
+#ifdef __cplusplus
 #include <moocpp/moocpp.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -56,10 +58,10 @@ struct MooBookmark
     MooBookmark (MooBookmark&&);
     MooBookmark& operator=(MooBookmark&&);
 
-    moo::gstr path;
-    moo::gstr display_path;
-    moo::gstr label;
-    moo::gstr icon_stock_id;
+    g::gstr path;
+    g::gstr display_path;
+    g::gstr label;
+    g::gstr icon_stock_id;
     moo::gobj_ptr<GdkPixbuf> pixbuf;
 };
 
@@ -101,6 +103,8 @@ void            _moo_bookmark_mgr_add_user  (MooBookmarkMgr *mgr,
 void            _moo_bookmark_mgr_remove_user(MooBookmarkMgr *mgr,
                                              gpointer        user); /* GObject* */
 
-MOO_DEFINE_GOBJ_TYPE (MooBookmarkMgr, GObject, MOO_TYPE_BOOKMARK_MGR)
+namespace moo {
+MOO_DEFINE_SIMPLE_GOBJ_CLASS(BookmarkMgr, g::Object, MooBookmarkMgr, MOO_TYPE_BOOKMARK_MGR);
+}
 
 #endif // __cplusplus

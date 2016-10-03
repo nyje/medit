@@ -343,7 +343,7 @@ moo_file_dialog (GtkWidget  *parent,
 
     start = start_dir ? g::File::new_for_path (start_dir) : nullptr;
 
-    dialog = moo_file_dialog_new (type, parent, FALSE, title, start.gobj(), start_name);
+    dialog = moo_file_dialog_new (type, parent, FALSE, title, start->gobj(), start_name);
     g_return_val_if_fail (dialog != nullptr, nullptr);
 
     moo_file_dialog_run (dialog);
