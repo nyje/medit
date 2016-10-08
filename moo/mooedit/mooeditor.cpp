@@ -366,7 +366,7 @@ moo_editor_constructor (GType                  type,
     moo_ui_xml_add_ui_from_string (editor->priv->doc_ui_xml,
                                    mooedit_ui_xml, -1);
 
-    editor->priv->lang_mgr = moo_object_ref (moo_lang_mgr_default ());
+    editor->priv->lang_mgr = object_ref (moo_lang_mgr_default ());
     g_signal_connect_swapped (editor->priv->lang_mgr, "loaded",
                               G_CALLBACK (_moo_editor_apply_prefs),
                               editor);

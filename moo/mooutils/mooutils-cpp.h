@@ -20,7 +20,7 @@
 #ifdef __cplusplus
 
 template<typename T>
-inline T *moo_object_ref(T *obj)
+inline T *object_ref(T *obj)
 {
     return static_cast<T*>(g_object_ref(obj));
 }
@@ -51,7 +51,7 @@ inline GObjType* object_new()
         {                                                       \
             return FOO_TYPE_OBJECT;                             \
         }                                                       \
-    }
+    };
 
 MOO_DEFINE_GOBJ_TRAITS(GObject, G_TYPE_OBJECT);
 

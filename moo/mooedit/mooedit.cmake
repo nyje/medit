@@ -30,22 +30,22 @@ SET(mooedit_sources
     mooedit/mooeditfileinfo.h
     mooedit/mooeditfiltersettings.cpp
     mooedit/mooeditfiltersettings.h
-    mooedit/mooedithistoryitem.c
+    mooedit/mooedithistoryitem.cpp
     mooedit/mooedithistoryitem.h
     mooedit/mooeditor-impl.h
     mooedit/mooeditor-private.h
-    mooedit/mooeditor-tests.c
+    mooedit/mooeditor-tests.cpp
     mooedit/mooeditor-tests.h
     mooedit/mooeditor-tests.h
     mooedit/mooeditor.cpp
     mooedit/mooeditor.h
-    mooedit/mooeditprefs.c	
+    mooedit/mooeditprefs.cpp
     mooedit/mooeditprefs.h
-    mooedit/mooeditprefspage.c
+    mooedit/mooeditprefspage.cpp
     mooedit/mooeditprogress.c
     mooedit/mooeditprogress.h
     mooedit/mooedittab-impl.h
-    mooedit/mooedittab.c	
+    mooedit/mooedittab.cpp
     mooedit/mooedittab.h	
     mooedit/mooedittypes.h
     mooedit/mooeditview-impl.h
