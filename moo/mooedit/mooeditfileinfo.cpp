@@ -52,7 +52,7 @@ moo_open_info_new_file (GFile       *file,
 
     g_return_val_if_fail (G_IS_FILE (file), NULL);
 
-    info = g_object_new (MOO_TYPE_OPEN_INFO, NULL);
+    info = object_new<MooOpenInfo>();
 
     info->file = g_file_dup (file);
     info->encoding = g_strdup (encoding);
@@ -226,7 +226,7 @@ moo_open_info_set_line (MooOpenInfo *info,
 MooOpenFlags
 moo_open_info_get_flags (MooOpenInfo *info)
 {
-    g_return_val_if_fail (MOO_IS_OPEN_INFO (info), 0);
+    g_return_val_if_fail (MOO_IS_OPEN_INFO (info), MOO_OPEN_FLAGS_NONE);
     return info->flags;
 }
 
@@ -293,7 +293,7 @@ moo_save_info_new_file (GFile      *file,
 
     g_return_val_if_fail (G_IS_FILE (file), NULL);
 
-    info = g_object_new (MOO_TYPE_SAVE_INFO, NULL);
+    info = object_new<MooSaveInfo> ();
 
     info->file = g_file_dup (file);
     info->encoding = g_strdup (encoding);
@@ -397,7 +397,7 @@ moo_reload_info_new (const char *encoding,
 {
     MooReloadInfo *info;
 
-    info = g_object_new (MOO_TYPE_RELOAD_INFO, NULL);
+    info = object_new<MooReloadInfo>();
 
     info->encoding = g_strdup (encoding);
     info->line = line;
