@@ -1821,11 +1821,19 @@ create_goto_bookmark_action (MooWindow *window,
 }
 
 
+namespace {
+
+const ObjectDataAccessor<GtkWidget, MooEditBookmark*> widget_bookmark("moo-bookmark");
+const ObjectDataAccessor<GtkWidget, MooEdit*> widget_doc("moo-edit");
+const ObjectDataAccessor<GtkWidget, MooEditView*> widget_view("moo-edit-view");
+const ObjectDataAccessor<GtkWidget, MooEditTab*> data_moo_edit_tab("moo-edit-tab");
+
+} // anonymous namespace
+
 static void
 bookmark_item_activated (GtkWidget *item)
 {
-    moo_edit_view_goto_bookmark ((MooEditView*) g_object_get_data (G_OBJECT (item), "moo-edit-view"),
-                                 (MooEditBookmark*) g_object_get_data (G_OBJECT (item), "moo-bookmark"));
+    moo_edit_view_goto_bookmark (widget_view.get(item), widget_bookmark.get(item));
 }
 
 static GtkWidget *
@@ -1869,9 +1877,9 @@ create_bookmark_item (MooEditWindow   *window,
         g_signal_connect (item, "activate", G_CALLBACK (bookmark_item_activated), NULL);
     }
 
-    g_object_set_data_full (G_OBJECT (item), "moo-bookmark", g_object_ref (bk), g_object_unref);
-    g_object_set_data_full (G_OBJECT (item), "moo-edit", g_object_ref (doc), g_object_unref);
-    g_object_set_data_full (G_OBJECT (item), "moo-edit-view", g_object_ref (view), g_object_unref);
+    widget_bookmark.set(item, object_ref (bk), g_object_unref);
+    widget_doc.set(item, object_ref (doc), g_object_unref);
+    widget_view.set(item, object_ref (view), g_object_unref);
 
     g_free (label);
 
@@ -2070,7 +2078,7 @@ static void
 close_activated (GtkWidget     *item,
                  MooEditWindow *window)
 {
-    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = widget_doc.get(item);
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
     moo_editor_close_doc (window->priv->editor, doc);
@@ -2082,7 +2090,7 @@ close_others_activated (GtkWidget     *item,
                         MooEditWindow *window)
 {
     MooEditArray *others;
-    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = widget_doc.get(item);
 
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
@@ -2101,7 +2109,7 @@ static void
 detach_activated (GtkWidget     *item,
                   MooEditWindow *window)
 {
-    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = widget_doc.get(item);
 
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
@@ -2114,7 +2122,7 @@ static void
 move_to_split_notebook_activated (GtkWidget     *item,
                                   MooEditWindow *window)
 {
-    MooEditTab *tab = (MooEditTab*) g_object_get_data (G_OBJECT (item), "moo-edit-tab");
+    MooEditTab *tab = data_moo_edit_tab.get(item);
     move_tab_to_split_view (window, tab);
 }
 
@@ -2123,7 +2131,7 @@ static void
 copy_full_path_activated (GtkWidget     *item,
                           MooEditWindow *window)
 {
-    MooEdit *doc = (MooEdit*) g_object_get_data(G_OBJECT(item), "moo-edit");
+    MooEdit *doc = widget_doc.get(item);
     GtkClipboard *clipboard = gtk_widget_get_clipboard(item, GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, moo_edit_get_filename(doc), -1);
 }
@@ -2139,6 +2147,11 @@ open_containing_folder_activated (GtkWidget     *item,
 /****************************************************************************/
 /* Documents
  */
+
+namespace {
+const ObjectDataAccessor<GtkWidget, MooNotebook*> data_notebook("moo-notebook");
+const ObjectDataAccessor<MooEdit, GtkAction*> data_doc_list_action("moo-doc-list-action");
+} // namespace
 
 static gboolean
 can_move_to_split_notebook (MooEditWindow *window)
@@ -2241,7 +2254,7 @@ add_tab_menu_item (const char       *label,
                    MooEdit          *doc,
                    MooEditWindow    *window,
                    GtkMenu          *menu,
-                   GtkWidget        *child,
+                   MooEditTab       *tab,
                    GCallback         cb,
                    gboolean          enabled)
 {
@@ -2250,8 +2263,8 @@ add_tab_menu_item (const char       *label,
     gtk_widget_show(item);
     gtk_widget_set_sensitive(item, enabled);
     gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-    g_object_set_data(G_OBJECT(item), "moo-edit", doc);
-    g_object_set_data(G_OBJECT(item), "moo-edit-tab", child);
+    widget_doc.set(item, doc);
+    data_moo_edit_tab.set(item, tab);
     g_signal_connect(item, "activate", cb, window);
 }
 
@@ -2282,7 +2295,7 @@ notebook_populate_popup (MooEditWindow      *window,
 
     /* Item in document tab context menu */
     add_tab_menu_item(C_("tab-context-menu", "Close"),
-                      doc, window, menu, child,
+                      doc, window, menu, MOO_EDIT_TAB (child),
                       G_CALLBACK (close_activated),
                       TRUE);
 
@@ -2290,7 +2303,7 @@ notebook_populate_popup (MooEditWindow      *window,
     {
         /* Item in document tab context menu */
         add_tab_menu_item(C_("tab-context-menu", "Close All Others"),
-                          doc, window, menu, child,
+                          doc, window, menu, MOO_EDIT_TAB (child),
                           G_CALLBACK (close_others_activated),
                           TRUE);
     }
@@ -2299,13 +2312,13 @@ notebook_populate_popup (MooEditWindow      *window,
 
     /* Item in document tab context menu */
     add_tab_menu_item(C_("tab-context-menu", "Copy Full Path"),
-                      doc, window, menu, child,
+                      doc, window, menu, MOO_EDIT_TAB (child),
                       G_CALLBACK(copy_full_path_activated),
                       !moo_edit_is_untitled (doc));
 
     /* Item in document tab context menu */
     add_tab_menu_item(C_("tab-context-menu", "Open Containing Folder"),
-                      doc, window, menu, child,
+                      doc, window, menu, MOO_EDIT_TAB (child),
                       G_CALLBACK(open_containing_folder_activated),
                       !moo_edit_is_untitled(doc));
 
@@ -2315,13 +2328,13 @@ notebook_populate_popup (MooEditWindow      *window,
 
         /* Item in document tab context menu */
         add_tab_menu_item(C_("tab-context-menu", "Detach"),
-                          doc, window, menu, child,
+                          doc, window, menu, MOO_EDIT_TAB (child),
                           G_CALLBACK (detach_activated),
                           TRUE);
 
         /* Item in document tab context menu */
         add_tab_menu_item(C_("tab-context-menu", "Move to Split Notebook"),
-                          doc, window, menu, child,
+                          doc, window, menu, MOO_EDIT_TAB (child),
                           G_CALLBACK (move_to_split_notebook_activated),
                           TRUE);
     }
@@ -2476,7 +2489,7 @@ static void
 notebook_close_button_clicked (GtkWidget     *button,
                                MooEditWindow *window)
 {
-    MooNotebook *notebook = (MooNotebook*) g_object_get_data (G_OBJECT (button), "moo-notebook");
+    MooNotebook *notebook = data_notebook.get(button);
     g_return_if_fail (notebook != NULL);
     moo_editor_close_doc (window->priv->editor, get_notebook_active_doc (notebook));
 }
@@ -2501,7 +2514,7 @@ setup_notebook (MooEditWindow *window,
 
     button = gtk_button_new ();
     gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
-    g_object_set_data (G_OBJECT (button), "moo-notebook", notebook);
+    data_notebook.set(button, notebook);
     g_signal_connect (button, "clicked",
                       G_CALLBACK (notebook_close_button_clicked),
                       window);
@@ -3175,12 +3188,12 @@ _moo_edit_window_remove_doc (MooEditWindow *window,
 
     _moo_doc_detach_plugins (window, doc);
 
-    action = (GtkAction*) g_object_get_data (G_OBJECT (doc), "moo-doc-list-action");
+    action = data_doc_list_action.get(doc);
 
     if (action)
     {
         moo_action_collection_remove_action (moo_window_get_actions (MOO_WINDOW (window)), action);
-        g_object_set_data (G_OBJECT (doc), "moo-doc-list-action", NULL);
+        data_doc_list_action.set(doc, nullptr);
     }
 
     if (window->priv->enable_history)
@@ -3230,6 +3243,14 @@ typedef struct {
     gboolean drag_started;
 } DragInfo;
 
+namespace {
+
+const ObjectDataAccessor<GtkWidget, GtkWidget*> data_moo_edit_icon("moo-edit-icon");
+const ObjectDataAccessor<GtkWidget, GtkWidget*> data_moo_edit_icon_evbox("moo-edit-icon-evbox");
+const ObjectDataAccessor<GtkWidget, GtkWidget*> data_moo_edit_label("moo-edit-label");
+const ObjectDataAccessor<GtkWidget, DragInfo*> data_drag_info("moo-drag-info");
+
+} // namespace
 
 static gboolean tab_icon_button_press       (GtkWidget      *evbox,
                                              GdkEventButton *event,
@@ -3259,7 +3280,7 @@ tab_icon_button_release (GtkWidget      *evbox,
                          G_GNUC_UNUSED GdkEventButton *event,
                          MooEditWindow  *window)
 {
-    g_object_set_data (G_OBJECT (evbox), "moo-drag-info", NULL);
+    data_drag_info.set(evbox, nullptr);
     g_signal_handlers_disconnect_by_func (evbox, (gpointer) tab_icon_button_release, window);
     g_signal_handlers_disconnect_by_func (evbox, (gpointer) tab_icon_motion_notify, window);
     return FALSE;
@@ -3274,7 +3295,7 @@ tab_icon_start_drag (GtkWidget      *evbox,
     GtkTargetList *targets;
     MooEdit *doc;
 
-    doc = (MooEdit*) g_object_get_data (G_OBJECT (evbox), "moo-edit");
+    doc = widget_doc.get(evbox);
     g_return_if_fail (MOO_IS_EDIT (doc));
 
     g_signal_connect (evbox, "drag-begin", G_CALLBACK (tab_icon_drag_begin), window);
@@ -3306,7 +3327,7 @@ tab_icon_motion_notify (GtkWidget      *evbox,
 {
     DragInfo *info;
 
-    info = (DragInfo*) g_object_get_data (G_OBJECT (evbox), "moo-drag-info");
+    info = data_drag_info.get(evbox);
     g_return_val_if_fail (info != NULL, FALSE);
 
     if (info->drag_started)
@@ -3335,7 +3356,7 @@ tab_icon_button_press (GtkWidget        *evbox,
     info = g_new0 (DragInfo, 1);
     info->x = event->x;
     info->y = event->y;
-    g_object_set_data_full (G_OBJECT (evbox), "moo-drag-info", info, g_free);
+    data_drag_info.set(evbox, info, g_free);
 
     g_signal_connect (evbox, "motion-notify-event", G_CALLBACK (tab_icon_motion_notify), window);
     g_signal_connect (evbox, "button-release-event", G_CALLBACK (tab_icon_button_release), window);
@@ -3350,8 +3371,7 @@ tab_icon_drag_begin (GtkWidget      *evbox,
                      G_GNUC_UNUSED MooEditWindow *window)
 {
     GdkPixbuf *pixbuf;
-    GtkImage *icon;
-    icon = (GtkImage*) g_object_get_data (G_OBJECT (evbox), "moo-edit-icon");
+    GtkImage *icon = GTK_IMAGE(data_moo_edit_icon.get(evbox));
     pixbuf = gtk_image_get_pixbuf (icon);
     gtk_drag_set_icon_pixbuf (context, pixbuf, 0, 0);
 }
@@ -3365,8 +3385,8 @@ tab_icon_drag_data_get (GtkWidget      *evbox,
                         G_GNUC_UNUSED guint           time,
                         G_GNUC_UNUSED MooEditWindow  *window)
 {
-    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (evbox), "moo-edit");
-    MooEditTab *tab = (MooEditTab*) g_object_get_data (G_OBJECT (evbox), "moo-edit-tab");
+    MooEdit *doc = widget_doc.get(evbox);
+    MooEditTab *tab = data_moo_edit_tab.get(evbox);
 
     g_return_if_fail (MOO_IS_EDIT (doc));
     g_return_if_fail (MOO_IS_EDIT_TAB (tab));
@@ -3395,7 +3415,7 @@ tab_icon_drag_end (GtkWidget      *evbox,
                    G_GNUC_UNUSED GdkDragContext *context,
                    MooEditWindow  *window)
 {
-    g_object_set_data (G_OBJECT (evbox), "moo-drag-info", NULL);
+    data_drag_info.set(evbox, nullptr);
     g_signal_handlers_disconnect_by_func (evbox, (gpointer) tab_icon_drag_begin, window);
     g_signal_handlers_disconnect_by_func (evbox, (gpointer) tab_icon_drag_data_get, window);
     g_signal_handlers_disconnect_by_func (evbox, (gpointer) tab_icon_drag_end, window);
@@ -3488,15 +3508,15 @@ create_tab_label (MooEditWindow *window,
     gtk_size_group_add_widget (group, evbox);
     gtk_size_group_add_widget (group, label);
 
-    g_object_set_data (G_OBJECT (hbox), "moo-edit-icon", icon);
-    g_object_set_data (G_OBJECT (hbox), "moo-edit-icon-evbox", evbox);
-    g_object_set_data (G_OBJECT (hbox), "moo-edit-label", label);
-    g_object_set_data (G_OBJECT (hbox), "moo-edit-tab", tab);
-    g_object_set_data (G_OBJECT (evbox), "moo-edit-icon", icon);
-    g_object_set_data (G_OBJECT (evbox), "moo-edit", doc);
-    g_object_set_data (G_OBJECT (evbox), "moo-edit-tab", tab);
-    g_object_set_data (G_OBJECT (icon), "moo-edit", doc);
-    g_object_set_data (G_OBJECT (icon), "moo-edit-tab", tab);
+    data_moo_edit_icon.set(hbox, icon);
+    data_moo_edit_icon_evbox.set(hbox, evbox);
+    data_moo_edit_label.set(hbox, label);
+    data_moo_edit_tab.set(hbox, tab);
+    data_moo_edit_icon.set(evbox, icon);
+    widget_doc.set(evbox, doc);
+    data_moo_edit_tab.set(evbox, tab);
+    widget_doc.set(icon, doc);
+    data_moo_edit_tab.set(icon, tab);
 
     g_signal_connect (evbox, "button-press-event",
                       G_CALLBACK (tab_icon_button_press),
@@ -3539,9 +3559,9 @@ update_tab_label (MooEditTab    *tab,
     hbox = moo_notebook_get_tab_label (notebook, GTK_WIDGET (tab));
     g_return_if_fail (GTK_IS_WIDGET (hbox));
 
-    icon = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-icon");
-    label = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-label");
-    evbox = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-icon-evbox");
+    icon = data_moo_edit_icon.get(hbox);
+    label = data_moo_edit_label.get(hbox);
+    evbox = data_moo_edit_icon_evbox.get(hbox);
     g_return_if_fail (GTK_IS_WIDGET (icon) && GTK_IS_WIDGET (label));
     g_return_if_fail (GTK_IS_WIDGET (evbox));
 
@@ -4523,6 +4543,10 @@ moo_edit_window_job_finished (MooEditWindow  *window,
 /* Doc list
  */
 
+namespace {
+const ObjectDataAccessor<GtkWidget, bool> data_is_doc_menu_item("moo-document-menu-item");
+} // namespace
+
 static int
 compare_docs_for_menu (MooEdit       *doc1,
                        MooEdit       *doc2)
@@ -4570,7 +4594,7 @@ populate_window_menu (MooEditWindow *window,
 
     for (l = g_list_nth (children, pos + 1); l != NULL; l = l->next)
     {
-        if (g_object_get_data ((GObject*) l->data, "moo-document-menu-item"))
+        if (data_is_doc_menu_item.get(GTK_WIDGET (l->data)))
             gtk_container_remove (GTK_CONTAINER (menu), (GtkWidget*) l->data);
         else
             break;
@@ -4587,7 +4611,7 @@ populate_window_menu (MooEditWindow *window,
     }
 
     item = gtk_separator_menu_item_new ();
-    g_object_set_data (G_OBJECT (item), "moo-document-menu-item", GINT_TO_POINTER (TRUE));
+    data_is_doc_menu_item.set(item, true);
     gtk_widget_show (item);
     gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, ++pos);
 
@@ -4605,7 +4629,7 @@ populate_window_menu (MooEditWindow *window,
         _moo_widget_set_tooltip (item, moo_edit_get_display_name (doc));
         gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (item), doc == active_doc);
         gtk_check_menu_item_set_draw_as_radio (GTK_CHECK_MENU_ITEM (item), TRUE);
-        g_object_set_data (G_OBJECT (item), "moo-document-menu-item", GINT_TO_POINTER (TRUE));
+        data_is_doc_menu_item.set(item, TRUE);
         gtk_widget_show (item);
         gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, ++pos);
         g_signal_connect_swapped (item, "activate", G_CALLBACK (doc_menu_item_activated), doc);
@@ -4671,6 +4695,10 @@ moo_edit_window_update_doc_list (MooEditWindow *window)
 /* Drag into the window
  */
 
+namespace {
+const ObjectDataAccessor<GtkWidget, bool> data_window_drop("moo-edit-window-drop");
+} // namespace
+
 static gboolean
 notebook_drag_motion (GtkWidget          *widget,
                       GdkDragContext     *context,
@@ -4713,8 +4741,7 @@ notebook_drag_drop (GtkWidget          *widget,
     }
     else
     {
-        g_object_set_data (G_OBJECT (widget), "moo-edit-window-drop",
-                           GINT_TO_POINTER (TRUE));
+        data_window_drop.set(widget, true);
         gtk_drag_get_data (widget, context, target, time);
     }
 
@@ -4734,9 +4761,9 @@ notebook_drag_data_recv (GtkWidget          *widget,
 {
     gboolean finished = FALSE;
 
-    if (g_object_get_data (G_OBJECT (widget), "moo-edit-window-drop"))
+    if (data_window_drop.get(widget))
     {
-        g_object_set_data (G_OBJECT (widget), "moo-edit-window-drop", NULL);
+        data_window_drop.set(widget, false);
 
         if (data->target == MOO_EDIT_TAB_ATOM)
         {

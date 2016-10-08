@@ -68,6 +68,69 @@ inline GObjType* object_new(const char* prop1, Arg1 arg1, const char* prop2, Arg
 MOO_DEFINE_GOBJ_TRAITS(GObject, G_TYPE_OBJECT);
 
 
+template<typename Owner, typename Value>
+class ObjectDataAccessor
+{
+public:
+    ObjectDataAccessor(const char* prop_name)
+        : m_prop_name(prop_name)
+    {
+    }
+
+    Value get(Owner* owner) const
+    {
+        return (Value) g_object_get_data (G_OBJECT (owner), m_prop_name);
+    }
+
+    void set(Owner* owner, Value value) const
+    {
+        g_object_set_data (G_OBJECT (owner), m_prop_name, value);
+    }
+
+    void set(Owner* owner, Value value, GDestroyNotify notify) const
+    {
+        g_object_set_data_full (G_OBJECT (owner), m_prop_name, value, notify);
+    }
+
+    ObjectDataAccessor(const ObjectDataAccessor&) = delete;
+    ObjectDataAccessor& operator=(const ObjectDataAccessor&) = delete;
+
+private:
+    const char* m_prop_name;
+};
+
+template<typename Owner>
+class ObjectDataAccessor<Owner, bool>
+{
+public:
+    ObjectDataAccessor(const char* prop_name)
+        : m_prop_name(prop_name)
+    {
+    }
+
+    bool get(Owner* owner) const
+    {
+        return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (owner), m_prop_name));
+    }
+
+    void set(Owner* owner, bool value) const
+    {
+        g_object_set_data (G_OBJECT (owner), m_prop_name, GINT_TO_POINTER (value));
+    }
+
+    void set(Owner* owner, bool value, GDestroyNotify notify) const
+    {
+        g_object_set_data_full (G_OBJECT (owner), m_prop_name, GINT_TO_POINTER (value), notify);
+    }
+
+    ObjectDataAccessor(const ObjectDataAccessor&) = delete;
+    ObjectDataAccessor& operator=(const ObjectDataAccessor&) = delete;
+
+private:
+    const char* m_prop_name;
+};
+
+
 MOO_DEFINE_FLAGS(GRegexCompileFlags)
 MOO_DEFINE_FLAGS(GRegexMatchFlags)
 MOO_DEFINE_FLAGS(GdkDragAction)
