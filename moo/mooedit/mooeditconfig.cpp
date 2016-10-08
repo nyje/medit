@@ -286,7 +286,7 @@ moo_edit_config_install_setting (GParamSpec *pspec)
     g_return_val_if_fail (G_IS_PARAM_SPEC (pspec), 0);
 
     global_init ();
-    klass = g_type_class_ref (MOO_TYPE_EDIT_CONFIG);
+    klass = (GObjectClass*) g_type_class_ref (MOO_TYPE_EDIT_CONFIG);
 
     if (moo_edit_config_lookup_spec (pspec->name, NULL, TRUE))
     {
@@ -335,13 +335,13 @@ moo_edit_config_lookup_spec (const char     *name,
 
     global_init ();
 
-    klass = g_type_class_ref (MOO_TYPE_EDIT_CONFIG);
+    klass = (GObjectClass*) g_type_class_ref (MOO_TYPE_EDIT_CONFIG);
 
     norm_name = g_strdelimit (g_strdup (name), "_", '-');
     real_name = norm_name;
 
     if (try_alias)
-        real_name = g_hash_table_lookup (aliases, norm_name);
+        real_name = (const char*) g_hash_table_lookup (aliases, norm_name);
     if (!real_name)
         real_name = norm_name;
 

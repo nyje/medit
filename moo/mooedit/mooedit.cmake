@@ -15,20 +15,20 @@ SET(mooedit_sources
     mooedit/mooedit-script.h
     mooedit/mooedit.cpp
     mooedit/mooedit.h
-    mooedit/mooeditaction-factory.c
+    mooedit/mooeditaction-factory.cpp
     mooedit/mooeditaction-factory.h
-    mooedit/mooeditaction.c	
+    mooedit/mooeditaction.cpp
     mooedit/mooeditaction.h
     mooedit/mooeditbookmark.cpp
     mooedit/mooeditbookmark.h
-    mooedit/mooeditconfig.c	
+    mooedit/mooeditconfig.cpp
     mooedit/mooeditconfig.h
     mooedit/mooeditdialogs.cpp
     mooedit/mooeditdialogs.h
     mooedit/mooeditfileinfo-impl.h
     mooedit/mooeditfileinfo.cpp
     mooedit/mooeditfileinfo.h
-    mooedit/mooeditfiltersettings.c
+    mooedit/mooeditfiltersettings.cpp
     mooedit/mooeditfiltersettings.h
     mooedit/mooedithistoryitem.c
     mooedit/mooedithistoryitem.h

@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <glib.h>
+
 #ifdef __cplusplus
 
 template<typename T>
@@ -52,5 +54,10 @@ inline GObjType* object_new()
     }
 
 MOO_DEFINE_GOBJ_TRAITS(GObject, G_TYPE_OBJECT);
+
+
+MOO_DEFINE_FLAGS(GRegexCompileFlags)
+MOO_DEFINE_FLAGS(GRegexMatchFlags)
+
 
 #endif // __cplusplus

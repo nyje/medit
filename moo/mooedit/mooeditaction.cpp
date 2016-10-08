@@ -172,7 +172,7 @@ moo_edit_action_set_property (GObject        *object,
     switch (prop_id)
     {
         case PROP_DOC:
-            action->priv->doc = g_value_get_object (value);
+            action->priv->doc = (MooEdit*) g_value_get_object (value);
             g_object_notify (object, "doc");
             break;
 
@@ -210,7 +210,7 @@ get_current_line (MooEdit *doc)
 {
     char *line;
 
-    line = g_object_get_data (G_OBJECT (doc), "moo-edit-current-line");
+    line = (char*) g_object_get_data (G_OBJECT (doc), "moo-edit-current-line");
 
     if (!line)
     {
@@ -253,7 +253,7 @@ moo_edit_action_check_visible_real (MooEditAction *action)
     if (visible && filter)
     {
         const char *line = get_current_line (action->priv->doc);
-        if (!g_regex_match (filter, line, 0, NULL))
+        if (!g_regex_match (filter, line, (GRegexMatchFlags) 0, NULL))
             visible = FALSE;
     }
 
@@ -271,7 +271,7 @@ moo_edit_action_check_sensitive_real (MooEditAction *action)
         return gtk_action_get_sensitive (GTK_ACTION (action));
 
     line = get_current_line (action->priv->doc);
-    return g_regex_match (filter, line, 0, NULL);
+    return g_regex_match (filter, line, (GRegexMatchFlags) 0, NULL);
 }
 
 
@@ -376,7 +376,7 @@ _moo_edit_check_actions (MooEdit     *edit,
 
     while (actions)
     {
-        GtkAction *action = actions->data;
+        GtkAction *action = (GtkAction*) actions->data;
         g_object_set_data (G_OBJECT (action), "moo-edit", edit);
         g_object_set_data (G_OBJECT (action), "moo-edit-view", view);
         if (MOO_IS_EDIT_ACTION (action))
@@ -414,14 +414,14 @@ get_filter_regex (const char *pattern)
 
     init_filter_store ();
 
-    ref = g_hash_table_lookup (filter_store.hash, pattern);
+    ref = (RegexRef*) g_hash_table_lookup (filter_store.hash, pattern);
 
     if (!ref)
     {
         GRegex *regex;
         GError *error = NULL;
 
-        regex = g_regex_new (pattern, G_REGEX_OPTIMIZE, 0, &error);
+        regex = g_regex_new (pattern, G_REGEX_OPTIMIZE, (GRegexMatchFlags) 0, &error);
 
         if (!regex)
         {
@@ -452,7 +452,7 @@ unuse_filter_regex (GRegex *regex)
     init_filter_store ();
 
     pattern = g_regex_get_pattern (regex);
-    ref = g_hash_table_lookup (filter_store.hash, pattern);
+    ref = (RegexRef*) g_hash_table_lookup (filter_store.hash, pattern);
     g_return_if_fail (ref != NULL);
 
     if (!--ref->use_count)
