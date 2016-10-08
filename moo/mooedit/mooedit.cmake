@@ -50,22 +50,22 @@ SET(mooedit_sources
     mooedit/mooedittypes.h
     mooedit/mooeditview-impl.h
     mooedit/mooeditview-priv.h
-    mooedit/mooeditview-script.c
+    mooedit/mooeditview-script.cpp
     mooedit/mooeditview-script.h
-    mooedit/mooeditview.c
+    mooedit/mooeditview.cpp
     mooedit/mooeditview.h
     mooedit/mooeditwindow-impl.h
-    mooedit/mooeditwindow.c
+    mooedit/mooeditwindow.cpp
     mooedit/mooeditwindow.h
-    mooedit/moofold.c	
+    mooedit/moofold.cpp
     mooedit/moofold.h	
-    mooedit/mooindenter.c	
+    mooedit/mooindenter.cpp
     mooedit/mooindenter.h	
     mooedit/moolang-private.h
-    mooedit/moolang.c	
+    mooedit/moolang.cpp
     mooedit/moolang.h	
     mooedit/moolangmgr-private.h
-    mooedit/moolangmgr.c	
+    mooedit/moolangmgr.cpp
     mooedit/moolangmgr.h	
     mooedit/moolinebuffer.c	
     mooedit/moolinebuffer.h	

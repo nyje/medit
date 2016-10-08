@@ -13,8 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_INDENTER_H
-#define MOO_INDENTER_H
+#pragma once
 
 #include <mooedit/mooedittypes.h>
 
@@ -93,4 +92,8 @@ guint        moo_text_iter_get_prev_stop        (const GtkTextIter *start,
 
 G_END_DECLS
 
-#endif /* MOO_INDENTER_H */
+#ifdef __cplusplus
+
+MOO_DEFINE_GOBJ_TRAITS(MooIndenter, MOO_TYPE_INDENTER);
+
+#endif // __cplusplus

@@ -74,7 +74,7 @@ const char *
 _moo_lang_get_line_comment (MooLang *lang)
 {
     g_return_val_if_fail (MOO_IS_LANG (lang), NULL);
-    return g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "line-comment-start");
+    return (const char*) g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "line-comment-start");
 }
 
 
@@ -82,7 +82,7 @@ const char *
 _moo_lang_get_block_comment_start (MooLang *lang)
 {
     g_return_val_if_fail (MOO_IS_LANG (lang), NULL);
-    return g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "block-comment-start");
+    return (const char*) g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "block-comment-start");
 }
 
 
@@ -90,7 +90,7 @@ const char *
 _moo_lang_get_block_comment_end (MooLang *lang)
 {
     g_return_val_if_fail (MOO_IS_LANG (lang), NULL);
-    return g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "block-comment-end");
+    return (const char*) g_hash_table_lookup (GTK_SOURCE_LANGUAGE(lang)->priv->properties, "block-comment-end");
 }
 
 

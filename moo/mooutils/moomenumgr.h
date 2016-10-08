@@ -35,6 +35,7 @@ typedef struct _MooMenuMgrPrivate MooMenuMgrPrivate;
 typedef struct _MooMenuMgrClass   MooMenuMgrClass;
 
 typedef enum {
+    MOO_MENU_ITEM_FLAGS_NONE        = 0,
     MOO_MENU_ITEM_TOGGLE            = 1 << 0,
     MOO_MENU_ITEM_RADIO             = 1 << 1,
     MOO_MENU_ITEM_ACTIVATABLE       = 1 << 2,
