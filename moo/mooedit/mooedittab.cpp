@@ -22,6 +22,8 @@ struct MooEditTab
     MooEditView *active_view;
 };
 
+MOO_DEFINE_GOBJ_TRAITS(MooEditTab, MOO_TYPE_EDIT_TAB)
+
 struct MooEditTabClass
 {
     GtkVBoxClass base_class;
@@ -104,8 +106,8 @@ _moo_edit_tab_new (MooEdit *doc)
 
     g_return_val_if_fail (moo_edit_get_n_views (doc) == 1, NULL);
 
-    tab = g_object_new (MOO_TYPE_EDIT_TAB, NULL);
-    tab->doc = g_object_ref (doc);
+    tab = object_new<MooEditTab>();
+    tab->doc = object_ref (doc);
 
     view = moo_edit_get_view (doc);
     _moo_edit_view_set_tab (view, tab);
@@ -148,7 +150,7 @@ moo_edit_tab_get_views (MooEditTab *tab)
         GList *children = gtk_container_get_children (GTK_CONTAINER (i == 0 ? tab->vpaned1 : tab->vpaned2));
         while (children)
         {
-            MooEditView *view = MOO_EDIT_VIEW (gtk_bin_get_child (children->data));
+            MooEditView *view = MOO_EDIT_VIEW (gtk_bin_get_child (GTK_BIN (children->data)));
             moo_edit_view_array_append (views, view);
             children = g_list_delete_link (children, children);
         }
@@ -172,7 +174,7 @@ moo_edit_tab_get_active_view (MooEditTab *tab)
         {
             GList *children = gtk_container_get_children (GTK_CONTAINER (i == 0 ? tab->vpaned1 : tab->vpaned2));
             if (children)
-                tab->active_view = MOO_EDIT_VIEW (gtk_bin_get_child (children->data));
+                tab->active_view = MOO_EDIT_VIEW (gtk_bin_get_child (GTK_BIN (children->data)));
             g_list_free (children);
         }
     }

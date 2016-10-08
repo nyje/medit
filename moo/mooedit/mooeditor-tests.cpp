@@ -52,7 +52,7 @@ test_basic (void)
 
     editor = moo_editor_instance ();
     filename = g_build_filename (test_data.working_dir, "test.txt", NULL);
-    info = moo_open_info_new (filename, NULL, -1, 0);
+    info = moo_open_info_new (filename, NULL, -1, MOO_OPEN_FLAGS_NONE);
     doc = moo_editor_new_file (editor, info, NULL, NULL);
 
     TEST_ASSERT (doc != NULL);

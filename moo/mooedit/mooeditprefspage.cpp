@@ -131,7 +131,7 @@ tab_width_changed (GtkSpinButton *tab_width,
 static void
 page_general_init (MooPrefsPage *page)
 {
-    PrefsGeneralXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsGeneralXml *gxml = (PrefsGeneralXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
 
     g_signal_connect (gxml->tab_width, "value-changed",
                       G_CALLBACK (tab_width_changed),
@@ -153,7 +153,7 @@ page_general_init (MooPrefsPage *page)
 static void
 page_general_apply (MooPrefsPage *page)
 {
-    PrefsGeneralXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsGeneralXml *gxml = (PrefsGeneralXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     MooTextStyleScheme *scheme = page_get_scheme (gxml);
 
     if (scheme)
@@ -191,14 +191,14 @@ page_filters_init_ui (MooPrefsPage *page)
 static void
 page_filters_init (MooPrefsPage *page)
 {
-    PrefsFiltersXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsFiltersXml *gxml = (PrefsFiltersXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     filter_treeview_init (gxml);
 }
 
 static void
 page_filters_apply (MooPrefsPage *page)
 {
-    PrefsFiltersXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsFiltersXml *gxml = (PrefsFiltersXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     apply_filter_settings (gxml);
 }
 
@@ -246,14 +246,14 @@ page_view_init_ui (MooPrefsPage *page)
 static void
 page_view_init (MooPrefsPage *page)
 {
-    PrefsViewXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsViewXml *gxml = (PrefsViewXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     MOO_UNUSED (gxml);
 }
 
 static void
 page_view_apply (MooPrefsPage *page)
 {
-    PrefsViewXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsViewXml *gxml = (PrefsViewXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     MOO_UNUSED (gxml);
 }
 
@@ -294,7 +294,7 @@ page_file_init_ui (MooPrefsPage *page)
 static void
 page_file_init (MooPrefsPage *page)
 {
-    PrefsFileXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsFileXml *gxml = (PrefsFileXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
 
     save_encoding_combo_init (gxml);
 }
@@ -302,7 +302,7 @@ page_file_init (MooPrefsPage *page)
 static void
 page_file_apply (MooPrefsPage *page)
 {
-    PrefsFileXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsFileXml *gxml = (PrefsFileXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
 
     save_encoding_combo_apply (gxml);
 }
@@ -334,12 +334,12 @@ page_langs_init_ui (MooPrefsPage *page)
 static void
 page_langs_init (MooPrefsPage *page)
 {
-    PrefsLangsXml *gxml = g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
+    PrefsLangsXml *gxml = (PrefsLangsXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     MooTreeHelper *helper;
 
     lang_combo_init (gxml->lang_combo, page, gxml);
 
-    helper = g_object_get_data (G_OBJECT (page), "moo-tree-helper");
+    helper = (MooTreeHelper*) g_object_get_data (G_OBJECT (page), "moo-tree-helper");
     _moo_tree_helper_update_widgets (helper);
 }
 
@@ -417,7 +417,7 @@ page_get_lang_model (MooPrefsPage *page)
 {
     GtkTreeModel *model;
 
-    model = g_object_get_data (G_OBJECT (page), "moo-lang-model");
+    model = (GtkTreeModel*) g_object_get_data (G_OBJECT (page), "moo-lang-model");
 
     if (!model)
     {
@@ -518,7 +518,7 @@ list_to_string (GSList  *list,
 
     for (l = list; l != NULL; l = l->next)
     {
-        g_string_append (string, l->data);
+        g_string_append (string, (const char*) l->data);
 
         if (l->next)
             g_string_append_c (string, ';');
@@ -581,14 +581,14 @@ create_lang_model (void)
 
     while (sections)
     {
-        char *section = sections->data;
+        char *section = (char*) sections->data;
 
         gtk_tree_store_append (store, &iter, NULL);
         gtk_tree_store_set (store, &iter, COLUMN_NAME, section, -1);
 
         for (l = langs; l != NULL; l = l->next)
         {
-            MooLang *lang = l->data;
+            MooLang *lang = (MooLang*) l->data;
 
             if (!_moo_lang_get_hidden (lang) &&
                 !strcmp (_moo_lang_get_section (lang), section))
@@ -797,7 +797,7 @@ prefs_page_apply_lang_prefs (MooPrefsPage *page)
     MooTreeHelper *helper;
     MooLangMgr *mgr;
 
-    helper = g_object_get_data (G_OBJECT (page), "moo-tree-helper");
+    helper = (MooTreeHelper*) g_object_get_data (G_OBJECT (page), "moo-tree-helper");
     _moo_tree_helper_update_model (helper, NULL, NULL);
 
     model = page_get_lang_model (page);
@@ -824,21 +824,21 @@ enum {
 
 
 static void
-filter_store_set_modified (gpointer store,
+filter_store_set_modified (GObject* store,
                            gboolean modified)
 {
     g_return_if_fail (GTK_IS_LIST_STORE (store));
     g_object_set_data (store, "filter-store-modified",
                        GINT_TO_POINTER (modified));
-    _moo_tree_helper_set_modified (g_object_get_data (store, "tree-helper"), FALSE);
+    _moo_tree_helper_set_modified ((MooTreeHelper*) g_object_get_data (store, "tree-helper"), FALSE);
 }
 
 static gboolean
-filter_store_get_modified (gpointer store)
+filter_store_get_modified (GObject* store)
 {
     g_return_val_if_fail (GTK_IS_LIST_STORE (store), FALSE);
     return g_object_get_data (store, "filter-store-modified") != NULL ||
-           _moo_tree_helper_get_modified (g_object_get_data (store, "tree-helper"));
+           _moo_tree_helper_get_modified ((MooTreeHelper*) g_object_get_data (store, "tree-helper"));
 }
 
 static gboolean
@@ -919,8 +919,8 @@ populate_filter_settings_store (GtkListStore *store)
 
         g_return_if_fail (l->next != NULL);
 
-        filter = l->data;
-        config = l->next->data;
+        filter = (const char*) l->data;
+        config = (const char*) l->next->data;
         valid = check_filter (filter, &message);
 
         gtk_list_store_append (store, &iter);
@@ -970,7 +970,7 @@ filter_cell_edited (GtkCellRendererText *cell,
     if (!moo_str_equal (old_text, text))
     {
         gtk_list_store_set (store, &iter, column, text, -1);
-        filter_store_set_modified (store, TRUE);
+        filter_store_set_modified (G_OBJECT (store), TRUE);
         check_filter_row (store, &iter);
     }
 
@@ -1081,7 +1081,7 @@ apply_filter_settings (PrefsFiltersXml *gxml)
 
     model = gtk_tree_view_get_model (gxml->filter_treeview);
 
-    if (!filter_store_get_modified (model))
+    if (!filter_store_get_modified (G_OBJECT (model)))
         return;
 
     gtk_tree_model_foreach (model,
@@ -1090,7 +1090,7 @@ apply_filter_settings (PrefsFiltersXml *gxml)
     strings = g_slist_reverse (strings);
 
     _moo_edit_filter_settings_set_strings (strings);
-    filter_store_set_modified (model, FALSE);
+    filter_store_set_modified (G_OBJECT (model), FALSE);
 
     g_slist_foreach (strings, (GFunc) g_free, NULL);
     g_slist_free (strings);
