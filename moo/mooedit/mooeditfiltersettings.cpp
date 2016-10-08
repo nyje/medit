@@ -108,7 +108,7 @@ moo_edit_filter_get_string (MooEditFilter     *filter,
             {
                 if (l != filter->u.langs)
                     g_string_append (str, ";");
-                g_string_append (str, l->data);
+                g_string_append (str, (const char*) l->data);
             }
             break;
         case MOO_EDIT_FILTER_REGEX:
@@ -236,7 +236,7 @@ moo_edit_filter_new_regex (const char  *string,
 #ifdef __WIN32__
                                 | G_REGEX_CASELESS
 #endif
-                         , 0, error);
+                         , GRegexMatchFlags (0), error);
 
     if (!regex)
         return moo_edit_regex_new_invalid (string, NULL);
@@ -330,8 +330,8 @@ moo_edit_filter_check_globs (GSList  *globs,
 
     while (globs)
     {
-        if (!strcmp (globs->data, "*") ||
-            (file && moo_file_fnmatch (file, globs->data)))
+        if (!strcmp ((const char*) globs->data, "*") ||
+            (file && moo_file_fnmatch (file, (const char*) globs->data)))
         {
             moo_file_free (file);
             return TRUE;
@@ -352,7 +352,7 @@ moo_edit_filter_check_langs (GSList  *langs,
 
     while (lang_id && langs)
     {
-        if (strcmp (langs->data, lang_id) == 0)
+        if (strcmp ((const char*) langs->data, lang_id) == 0)
         {
             g_free (lang_id);
             return TRUE;
@@ -371,7 +371,7 @@ moo_edit_filter_check_regex (GRegex  *regex,
 {
     const char *name = moo_edit_get_display_name (doc);
     g_return_val_if_fail (name != NULL, FALSE);
-    return g_regex_match (regex, name, 0, NULL);
+    return g_regex_match (regex, name, GRegexMatchFlags (0), NULL);
 }
 
 gboolean
@@ -544,7 +544,7 @@ filter_settings_store_get_setting (FilterSettingsStore *store,
 
     for (l = store->settings; l != NULL; l = l->next)
     {
-        FilterSetting *setting = l->data;
+        FilterSetting *setting = (FilterSetting*) l->data;
         if (_moo_edit_filter_match (setting->filter, doc))
         {
             if (!result)
@@ -587,8 +587,8 @@ _moo_edit_filter_settings_set_strings (GSList *list)
 
         g_return_if_fail (list->data && list->next && list->next->data);
 
-        filter = list->data;
-        config = list->next->data;
+        filter = (const char*) list->data;
+        config = (const char*) list->next->data;
 
         node = moo_markup_create_element (root, ELEMENT_SETTING);
         moo_markup_set_prop (node, PROP_FILTER, filter);
@@ -610,7 +610,7 @@ _moo_edit_filter_settings_get_strings (void)
 
     for (l = settings_store->settings; l != NULL; l = l->next)
     {
-        FilterSetting *setting = l->data;
+        FilterSetting *setting = (FilterSetting*) l->data;
         strings = g_slist_prepend (strings, moo_edit_filter_get_string (setting->filter, MOO_EDIT_FILTER_REGEX));
         strings = g_slist_prepend (strings, g_strdup (setting->config));
     }
