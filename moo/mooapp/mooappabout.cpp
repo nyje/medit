@@ -90,7 +90,7 @@ show_credits (void)
     if (credits_dialog)
     {
         if (about_dialog)
-            moo_window_set_parent (credits_dialog, about_dialog);
+            moo_window_set_parent (GTK_WIDGET (credits_dialog), GTK_WIDGET (about_dialog));
         gtk_window_present (GTK_WINDOW (credits_dialog));
         return;
     }
@@ -126,7 +126,7 @@ show_credits (void)
     gtk_text_buffer_insert_at_cursor (buffer, MOO_APP_CREDITS, -1);
 
     if (about_dialog)
-        moo_window_set_parent (credits_dialog, about_dialog);
+        moo_window_set_parent (GTK_WIDGET (credits_dialog), GTK_WIDGET (about_dialog));
     gtk_window_present (GTK_WINDOW (credits_dialog));
 }
 
@@ -218,7 +218,7 @@ moo_app_about_dialog (GtkWidget *parent)
         parent = gtk_widget_get_toplevel (parent);
 
     if (parent && GTK_IS_WINDOW (parent))
-        moo_window_set_parent (about_dialog, parent);
+        moo_window_set_parent (GTK_WIDGET (about_dialog), parent);
 
     gtk_window_present (GTK_WINDOW (about_dialog));
 }

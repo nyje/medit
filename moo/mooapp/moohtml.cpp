@@ -17,6 +17,7 @@
 #include "moohtml.h"
 #include "marshals.h"
 #include "mooutils/mooutils-misc.h"
+#include "mooutils/mooutils-gpp.h"
 #include "mooutils/moocompat.h"
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -60,6 +61,8 @@ struct _MooHtmlData {
 };
 
 typedef enum {
+    MOO_HTML_NONE               = 0,
+
     MOO_HTML_FG                 = 1 << 0,
     MOO_HTML_BG                 = 1 << 1,
     MOO_HTML_BOLD               = 1 << 2,
@@ -81,6 +84,8 @@ typedef enum {
     MOO_HTML_FONT_PT_SIZE       = 1 << 16,
     MOO_HTML_FONT_FACE          = 1 << 17
 } MooHtmlAttrMask;
+
+MOO_DEFINE_FLAGS(MooHtmlAttrMask)
 
 struct _MooHtmlAttr
 {
@@ -111,7 +116,7 @@ static void     moo_html_get_property       (GObject        *object,
                                              GValue         *value,
                                              GParamSpec     *pspec);
 
-static MooHtmlData *moo_html_get_data       (gpointer        object);
+static MooHtmlData *moo_html_get_data       (GtkTextView    *object);
 
 static void     moo_html_tag_finalize       (GObject        *object);
 static void     moo_html_tag_set_property   (GObject        *object,
@@ -405,17 +410,15 @@ moo_html_data_free (MooHtmlData *data)
 }
 
 static MooHtmlData *
-moo_html_get_data (gpointer object)
+moo_html_get_data (GtkTextView* object)
 {
-    MooHtmlData *data;
-
-    data = g_object_get_data (object, "moo-html-data");
+    MooHtmlData *data = object_get_data_cast<MooHtmlData> (object, "moo-html-data");
 
     if (!data)
     {
         init_funcs ();
         data = moo_html_data_new ();
-        g_object_set_data_full (object, "moo-html-data", data,
+        g_object_set_data_full(G_OBJECT(object), "moo-html-data", data,
                                 (GDestroyNotify) moo_html_data_free);
         g_signal_connect (object, "size-allocate", G_CALLBACK (moo_html_size_allocate_cb), NULL);
     }
@@ -988,7 +991,7 @@ moo_html_create_tag (GtkTextView       *view,
         real_attr = *attr;
     }
 
-    tag = g_object_new (MOO_TYPE_HTML_TAG, (const char*) NULL);
+    tag = MOO_HTML_TAG (g_object_new (MOO_TYPE_HTML_TAG, (const char*) NULL));
     gtk_text_tag_table_add (gtk_text_buffer_get_tag_table (gtk_text_view_get_buffer (view)),
                             GTK_TEXT_TAG (tag));
     g_object_unref (tag);
@@ -1084,7 +1087,7 @@ moo_html_motion (GtkWidget      *widget,
     {
         x = event->x;
         y = event->y;
-        state = event->state;
+        state = GdkModifierType (event->state);
     }
 
     if (state & (GDK_BUTTON1_MASK | GDK_BUTTON2_MASK | GDK_BUTTON3_MASK))
@@ -1152,7 +1155,7 @@ moo_html_get_tag (GtkTextIter *iter)
     {
         if (MOO_IS_HTML_TAG (l->data))
         {
-            tag = l->data;
+            tag = MOO_HTML_TAG (l->data);
             break;
         }
     }
@@ -1224,10 +1227,10 @@ moo_html_parse_url (const char     *url,
     g_return_val_if_fail (url != NULL, FALSE);
     g_return_val_if_fail (scheme && base && anchor, FALSE);
 
-    regex = g_regex_new ("^([a-zA-Z]+:(//)?)?([^#]*)(#(.*))?$", 0, 0, NULL);
+    regex = g_regex_new ("^([a-zA-Z]+:(//)?)?([^#]*)(#(.*))?$", GRegexCompileFlags (0), GRegexMatchFlags (0), NULL);
     g_return_val_if_fail (regex != NULL, FALSE);
 
-    if (!g_regex_match (regex, url, 0, &match_info))
+    if (!g_regex_match (regex, url, GRegexMatchFlags (0), &match_info))
     {
         g_match_info_free (match_info);
         g_regex_unref (regex);
@@ -1257,7 +1260,7 @@ moo_html_goto_anchor (GtkTextView *view,
 
     g_return_val_if_fail (anchor != NULL, FALSE);
 
-    mark = g_hash_table_lookup (data->anchors, anchor);
+    mark = (GtkTextMark*) g_hash_table_lookup (data->anchors, anchor);
 
     if (!mark)
     {
@@ -1299,7 +1302,7 @@ moo_html_size_allocate_real (GtkWidget *widget,
     int border_width, child_width, height;
     GSList *l;
     GdkWindow *window;
-    MooHtmlData *data = moo_html_get_data (widget);
+    MooHtmlData *data = moo_html_get_data (GTK_TEXT_VIEW (widget));
 
     if (!GTK_WIDGET_REALIZED (widget))
         return;
@@ -1317,7 +1320,7 @@ moo_html_size_allocate_real (GtkWidget *widget,
 
     for (l = data->rulers; l != NULL; l = l->next)
     {
-        GtkWidget *ruler = l->data;
+        GtkWidget *ruler = GTK_WIDGET (l->data);
         gtk_widget_set_size_request (ruler, child_width, -1);
     }
 }
@@ -1755,7 +1758,7 @@ get_format_elm_attr (xmlNode *node)
         g_hash_table_insert (elms, (char*) "small", attr);
     }
 
-    return g_hash_table_lookup (elms, node->name);
+    return (MooHtmlAttr*) g_hash_table_lookup (elms, node->name);
 }
 
 
@@ -2152,7 +2155,7 @@ process_font_elm (GtkTextView   *view,
     color = GET_PROP (elm, "color");
     face = GET_PROP (elm, "face");
 
-    attr.mask = 0;
+    attr.mask = MOO_HTML_NONE;
     attr.font_face = NULL;
 
     if (size__)

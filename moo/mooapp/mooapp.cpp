@@ -174,7 +174,7 @@ moo_app_get_type (void)
         };
 
         type = g_type_register_static (G_TYPE_OBJECT, "MooApp",
-                                       &type_info, 0);
+                                       &type_info, GTypeFlags (0));
     }
 
     return type;
@@ -206,7 +206,7 @@ moo_app_class_init (MooAppClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-    moo_app_parent_class = g_type_class_peek_parent (klass);
+    moo_app_parent_class = (GObjectClass*) g_type_class_peek_parent (klass);
 
     gobject_class->constructor = moo_app_constructor;
     gobject_class->finalize = moo_app_finalize;
@@ -424,7 +424,7 @@ moo_app_set_property (GObject        *object,
             break;
 
         case PROP_DEFAULT_UI:
-            app->priv->default_ui = g_value_get_pointer (value);
+            app->priv->default_ui = (const char*) g_value_get_pointer (value);
             break;
 
         default:
@@ -693,7 +693,7 @@ input_callback (char        cmd,
                 gsize       len,
                 gpointer    cb_data)
 {
-    MooApp *app = cb_data;
+    MooApp *app = (MooApp*) cb_data;
 
     g_return_if_fail (MOO_IS_APP (app));
     g_return_if_fail (data != NULL);
@@ -962,7 +962,7 @@ moo_app_quit (MooApp *app)
 static void
 install_common_actions (void)
 {
-    MooWindowClass *klass = g_type_class_ref (MOO_TYPE_WINDOW);
+    MooWindowClass *klass = (MooWindowClass*) g_type_class_ref (MOO_TYPE_WINDOW);
 
     g_return_if_fail (klass != NULL);
 
@@ -1010,7 +1010,7 @@ install_common_actions (void)
 static void
 install_editor_actions (void)
 {
-    MooWindowClass *klass = g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
+    MooWindowClass *klass = (MooWindowClass*) g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
     g_return_if_fail (klass != NULL);
     g_type_class_unref (klass);
 }
@@ -1294,9 +1294,9 @@ get_cmd_code (char cmd)
 
     for (i = 1; i < CMD_LAST; ++i)
         if (cmd == moo_app_cmd_chars[i])
-            return i;
+            return (MooAppCmdCode) i;
 
-    g_return_val_if_reached (0);
+    g_return_val_if_reached ((MooAppCmdCode) 0);
 }
 
 static void
