@@ -26,7 +26,7 @@ SET(mooedit_sources
     mooedit/mooeditdialogs.cpp
     mooedit/mooeditdialogs.h
     mooedit/mooeditfileinfo-impl.h
-    mooedit/mooeditfileinfo.c
+    mooedit/mooeditfileinfo.cpp
     mooedit/mooeditfileinfo.h
     mooedit/mooeditfiltersettings.c
     mooedit/mooeditfiltersettings.h

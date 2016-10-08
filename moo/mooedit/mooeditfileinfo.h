@@ -13,11 +13,11 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_EDIT_FILE_INFO_H
-#define MOO_EDIT_FILE_INFO_H
+#pragma once
 
 #include <gio/gio.h>
 #include <mooedit/mooedittypes.h>
+#include <mooutils/mooutils-cpp.h>
 
 G_BEGIN_DECLS
 
@@ -101,4 +101,10 @@ void                 moo_save_info_free         (MooSaveInfo        *info);
 
 G_END_DECLS
 
-#endif /* MOO_EDIT_FILE_INFO_H */
+#ifdef __cplusplus
+
+MOO_DEFINE_GOBJ_TRAITS(MooOpenInfo, MOO_TYPE_OPEN_INFO);
+MOO_DEFINE_GOBJ_TRAITS(MooSaveInfo, MOO_TYPE_SAVE_INFO);
+MOO_DEFINE_GOBJ_TRAITS(MooReloadInfo, MOO_TYPE_RELOAD_INFO);
+
+#endif // __cplusplus

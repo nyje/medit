@@ -15,6 +15,8 @@
 
 #pragma once
 
+#ifdef __cplusplus
+
 template<typename T>
 inline T *moo_object_ref(T *obj)
 {
@@ -28,3 +30,27 @@ inline T *moo_object_ref(T *obj)
     inline Flags& operator &= (Flags& f1, Flags f2) { f1 = f1 & f2; return f1; }                                \
     inline Flags operator ~ (Flags f) { return static_cast<Flags>(~static_cast<int>(f)); }                      \
 
+
+template<typename GObjType>
+struct ObjectTraits;
+
+template<typename GObjType>
+inline GObjType* object_new()
+{
+    return (GObjType*) g_object_new (ObjectTraits<GObjType>::gtype(), nullptr);
+}
+
+#define MOO_DEFINE_GOBJ_TRAITS(FooObject, FOO_TYPE_OBJECT)      \
+    template<>                                                  \
+    struct ObjectTraits<FooObject>                              \
+    {                                                           \
+        using CType = FooObject;                                \
+        static GType gtype()                                    \
+        {                                                       \
+            return FOO_TYPE_OBJECT;                             \
+        }                                                       \
+    }
+
+MOO_DEFINE_GOBJ_TRAITS(GObject, G_TYPE_OBJECT);
+
+#endif // __cplusplus
