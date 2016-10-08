@@ -13,8 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_EDIT_WINDOW_H
-#define MOO_EDIT_WINDOW_H
+#pragma once
 
 #include <mooedit/mooedittypes.h>
 #include <mooedit/mooedit.h>
@@ -135,4 +134,8 @@ void                 moo_edit_window_abort_jobs             (MooEditWindow  *win
 
 G_END_DECLS
 
-#endif /* MOO_EDIT_WINDOW_H */
+#ifdef __cplusplus
+
+MOO_DEFINE_GOBJ_TRAITS(MooEditWindow, MOO_TYPE_EDIT_WINDOW);
+
+#endif // __cplusplus

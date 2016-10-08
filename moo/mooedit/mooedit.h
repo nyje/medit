@@ -13,8 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_EDIT_H
-#define MOO_EDIT_H
+#pragma once
 
 #include <mooedit/mooeditconfig.h>
 #include <mooedit/mooedit-enums.h>
@@ -125,4 +124,8 @@ void                 moo_edit_uncomment_selection       (MooEdit            *edi
 
 G_END_DECLS
 
-#endif /* MOO_EDIT_H */
+#ifdef __cplusplus
+
+MOO_DEFINE_GOBJ_TRAITS(MooEdit, MOO_TYPE_EDIT);
+
+#endif // __cplusplus

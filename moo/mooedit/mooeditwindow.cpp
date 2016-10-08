@@ -53,6 +53,8 @@
 #include <gtk/gtk.h>
 #include <math.h>
 
+#include <unordered_set>
+
 #define ENABLE_PRINTING
 #include "mooedit/mootextprint.h"
 
@@ -82,7 +84,7 @@ typedef struct {
 } ActionCheck;
 
 static GHashTable *action_checks; /* char* -> ActionCheck* */
-static GSList *windows;
+static std::unordered_set<MooEditWindow*> windows;
 
 MOO_DECLARE_OBJECT_ARRAY (MooNotebook, moo_notebook)
 MOO_DEFINE_OBJECT_ARRAY (MooNotebook, moo_notebook)
@@ -849,7 +851,7 @@ moo_edit_window_init (MooEditWindow *window)
 
     set_title_format_from_prefs (window);
 
-    windows = g_slist_prepend (windows, window);
+    windows.insert(window);
 }
 
 
@@ -892,7 +894,7 @@ moo_edit_window_destroy (GtkObject *object)
 
         list = g_slist_copy (window->priv->stop_clients);
         for (l = list; l != NULL; l = l->next)
-            moo_edit_window_remove_stop_client (window, l->data);
+            moo_edit_window_remove_stop_client (window, (GObject*) l->data);
         g_assert (window->priv->stop_clients == NULL);
         g_slist_free (list);
     }
@@ -903,7 +905,7 @@ moo_edit_window_destroy (GtkObject *object)
         window->priv->notebooks = NULL;
     }
 
-    windows = g_slist_remove (windows, window);
+    windows.erase(window);
 
     GTK_OBJECT_CLASS(moo_edit_window_parent_class)->destroy (object);
 }
@@ -932,11 +934,11 @@ moo_edit_window_set_property (GObject        *object,
     switch (prop_id)
     {
         case PROP_EDITOR:
-            window->priv->editor = g_value_get_object (value);
+            window->priv->editor = (MooEditor*) g_value_get_object (value);
             break;
 
         case PROP_ACTIVE_DOC:
-            moo_edit_window_set_active_doc (window, g_value_get_object (value));
+            moo_edit_window_set_active_doc (window, (MooEdit*) g_value_get_object (value));
             break;
 
         default:
@@ -1252,9 +1254,8 @@ set_title_format_from_prefs (MooEditWindow *window)
 void
 _moo_edit_window_update_title (void)
 {
-    GSList *l;
-    for (l = windows; l != NULL; l = l->next)
-        set_title_format_from_prefs (l->data);
+    for (MooEditWindow* w: windows)
+        set_title_format_from_prefs (w);
 }
 
 
@@ -1337,7 +1338,7 @@ static void
 reopen_encoding_item_activated (const char *encoding,
                                 gpointer    data)
 {
-    MooEditWindow *window = data;
+    MooEditWindow *window = (MooEditWindow*) data;
     MooEdit *doc;
     MooReloadInfo *info;
 
@@ -1389,7 +1390,7 @@ static void
 doc_encoding_item_activated (const char *encoding,
                              gpointer    data)
 {
-    MooEditWindow *window = data;
+    MooEditWindow *window = (MooEditWindow*) data;
     MooEdit *doc;
 
     doc = ACTIVE_DOC (window);
@@ -1449,7 +1450,7 @@ doc_line_end_item_set_active (MooEditWindow *window, gpointer data)
     doc = ACTIVE_DOC (window);
     g_return_if_fail (doc != NULL);
 
-    moo_edit_set_line_end_type (doc, GPOINTER_TO_INT (data));
+    moo_edit_set_line_end_type (doc, (MooLineEndType) GPOINTER_TO_INT (data));
 }
 
 static GtkAction *
@@ -1747,7 +1748,7 @@ action_next_bookmark (MooEditWindow *window)
 
     if (bookmarks)
     {
-        moo_edit_view_goto_bookmark (view, bookmarks->data);
+        moo_edit_view_goto_bookmark (view, (MooEditBookmark*) bookmarks->data);
         g_slist_free (bookmarks);
     }
 }
@@ -1771,7 +1772,7 @@ action_prev_bookmark (MooEditWindow *window)
     if (bookmarks)
     {
         GSList *last = g_slist_last (bookmarks);
-        moo_edit_view_goto_bookmark (view, last->data);
+        moo_edit_view_goto_bookmark (view, (MooEditBookmark*) last->data);
         g_slist_free (bookmarks);
     }
 }
@@ -1786,7 +1787,7 @@ goto_bookmark_activated (GtkAction *action,
     MooEditBookmark *bk;
     guint n = GPOINTER_TO_UINT (data);
 
-    window = _moo_action_get_window (action);
+    window = (MooEditWindow*) _moo_action_get_window (action);
     g_return_if_fail (window != NULL);
 
     view = ACTIVE_VIEW (window);
@@ -1823,8 +1824,8 @@ create_goto_bookmark_action (MooWindow *window,
 static void
 bookmark_item_activated (GtkWidget *item)
 {
-    moo_edit_view_goto_bookmark (g_object_get_data (G_OBJECT (item), "moo-edit-view"),
-                                 g_object_get_data (G_OBJECT (item), "moo-bookmark"));
+    moo_edit_view_goto_bookmark ((MooEditView*) g_object_get_data (G_OBJECT (item), "moo-edit-view"),
+                                 (MooEditBookmark*) g_object_get_data (G_OBJECT (item), "moo-bookmark"));
 }
 
 static GtkWidget *
@@ -1896,8 +1897,8 @@ populate_bookmark_menu (MooEditWindow *window,
 
     for (l = g_list_nth (children, pos + 1); l != NULL; l = l->next)
     {
-        if (g_object_get_data (l->data, "moo-bookmark-menu-item"))
-            gtk_container_remove (GTK_CONTAINER (menu), l->data);
+        if (g_object_get_data ((GObject*) l->data, "moo-bookmark-menu-item"))
+            gtk_container_remove (GTK_CONTAINER (menu), (GtkWidget*) l->data);
         else
             break;
     }
@@ -1923,7 +1924,7 @@ populate_bookmark_menu (MooEditWindow *window,
 
     while (bookmarks)
     {
-        item = create_bookmark_item (window, view, bookmarks->data);
+        item = create_bookmark_item (window, view, (MooEditBookmark*) bookmarks->data);
         gtk_widget_show (item);
         g_object_set_data (G_OBJECT (item), "moo-bookmark-menu-item", GINT_TO_POINTER (TRUE));
         gtk_menu_shell_insert (GTK_MENU_SHELL (menu), item, ++pos);
@@ -2069,7 +2070,7 @@ static void
 close_activated (GtkWidget     *item,
                  MooEditWindow *window)
 {
-    MooEdit *doc = g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
     moo_editor_close_doc (window->priv->editor, doc);
@@ -2081,7 +2082,7 @@ close_others_activated (GtkWidget     *item,
                         MooEditWindow *window)
 {
     MooEditArray *others;
-    MooEdit *doc = g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
 
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
@@ -2100,7 +2101,7 @@ static void
 detach_activated (GtkWidget     *item,
                   MooEditWindow *window)
 {
-    MooEdit *doc = g_object_get_data (G_OBJECT (item), "moo-edit");
+    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (item), "moo-edit");
 
     g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
     g_return_if_fail (MOO_IS_EDIT (doc));
@@ -2113,7 +2114,7 @@ static void
 move_to_split_notebook_activated (GtkWidget     *item,
                                   MooEditWindow *window)
 {
-    MooEditTab *tab = g_object_get_data (G_OBJECT (item), "moo-edit-tab");
+    MooEditTab *tab = (MooEditTab*) g_object_get_data (G_OBJECT (item), "moo-edit-tab");
     move_tab_to_split_view (window, tab);
 }
 
@@ -2122,7 +2123,7 @@ static void
 copy_full_path_activated (GtkWidget     *item,
                           MooEditWindow *window)
 {
-    MooEdit *doc = g_object_get_data(G_OBJECT(item), "moo-edit");
+    MooEdit *doc = (MooEdit*) g_object_get_data(G_OBJECT(item), "moo-edit");
     GtkClipboard *clipboard = gtk_widget_get_clipboard(item, GDK_SELECTION_CLIPBOARD);
     gtk_clipboard_set_text(clipboard, moo_edit_get_filename(doc), -1);
 }
@@ -2364,14 +2365,11 @@ set_use_tabs (MooEditWindow *window,
 void
 _moo_edit_window_set_use_tabs (void)
 {
-    GSList *l;
-
-    for (l = windows; l != NULL; l = l->next)
+    for (MooEditWindow* w: windows)
     {
         guint i;
-        MooEditWindow *window = l->data;
         for (i = 0; i < 2; ++i)
-            set_use_tabs (window, get_notebook (window, i));
+            set_use_tabs (w, get_notebook (w, i));
     }
 }
 
@@ -2478,7 +2476,7 @@ static void
 notebook_close_button_clicked (GtkWidget     *button,
                                MooEditWindow *window)
 {
-    MooNotebook *notebook = g_object_get_data (G_OBJECT (button), "moo-notebook");
+    MooNotebook *notebook = (MooNotebook*) g_object_get_data (G_OBJECT (button), "moo-notebook");
     g_return_if_fail (notebook != NULL);
     moo_editor_close_doc (window->priv->editor, get_notebook_active_doc (notebook));
 }
@@ -2516,7 +2514,7 @@ setup_notebook (MooEditWindow *window,
     gtk_widget_show_all (frame);
     moo_notebook_set_action_widget (notebook, frame, TRUE);
 
-    gtk_drag_dest_set (GTK_WIDGET (notebook), 0,
+    gtk_drag_dest_set (GTK_WIDGET (notebook), (GtkDestDefaults) 0,
                        dest_targets, G_N_ELEMENTS (dest_targets),
                        GDK_ACTION_COPY | GDK_ACTION_MOVE);
     gtk_drag_dest_add_text_targets (GTK_WIDGET (notebook));
@@ -2597,7 +2595,7 @@ sync_proxies (GtkAction *action)
     GSList *l = gtk_action_get_proxies (action);
     while (l)
     {
-        gtk_activatable_sync_action_properties (l->data, action);
+        gtk_activatable_sync_action_properties ((GtkActivatable*) l->data, action);
         l = l->next;
     }
 }
@@ -3177,7 +3175,7 @@ _moo_edit_window_remove_doc (MooEditWindow *window,
 
     _moo_doc_detach_plugins (window, doc);
 
-    action = g_object_get_data (G_OBJECT (doc), "moo-doc-list-action");
+    action = (GtkAction*) g_object_get_data (G_OBJECT (doc), "moo-doc-list-action");
 
     if (action)
     {
@@ -3202,7 +3200,7 @@ _moo_edit_window_remove_doc (MooEditWindow *window,
     {
         window->priv->history_blocked = FALSE;
         if (window->priv->history)
-            moo_edit_window_set_active_doc (window, window->priv->history->data);
+            moo_edit_window_set_active_doc (window, (MooEdit*) window->priv->history->data);
     }
 
     edit_changed (window, NULL);
@@ -3276,7 +3274,7 @@ tab_icon_start_drag (GtkWidget      *evbox,
     GtkTargetList *targets;
     MooEdit *doc;
 
-    doc = g_object_get_data (G_OBJECT (evbox), "moo-edit");
+    doc = (MooEdit*) g_object_get_data (G_OBJECT (evbox), "moo-edit");
     g_return_if_fail (MOO_IS_EDIT (doc));
 
     g_signal_connect (evbox, "drag-begin", G_CALLBACK (tab_icon_drag_begin), window);
@@ -3308,7 +3306,7 @@ tab_icon_motion_notify (GtkWidget      *evbox,
 {
     DragInfo *info;
 
-    info = g_object_get_data (G_OBJECT (evbox), "moo-drag-info");
+    info = (DragInfo*) g_object_get_data (G_OBJECT (evbox), "moo-drag-info");
     g_return_val_if_fail (info != NULL, FALSE);
 
     if (info->drag_started)
@@ -3353,7 +3351,7 @@ tab_icon_drag_begin (GtkWidget      *evbox,
 {
     GdkPixbuf *pixbuf;
     GtkImage *icon;
-    icon = g_object_get_data (G_OBJECT (evbox), "moo-edit-icon");
+    icon = (GtkImage*) g_object_get_data (G_OBJECT (evbox), "moo-edit-icon");
     pixbuf = gtk_image_get_pixbuf (icon);
     gtk_drag_set_icon_pixbuf (context, pixbuf, 0, 0);
 }
@@ -3367,8 +3365,8 @@ tab_icon_drag_data_get (GtkWidget      *evbox,
                         G_GNUC_UNUSED guint           time,
                         G_GNUC_UNUSED MooEditWindow  *window)
 {
-    MooEdit *doc = g_object_get_data (G_OBJECT (evbox), "moo-edit");
-    MooEditTab *tab = g_object_get_data (G_OBJECT (evbox), "moo-edit-tab");
+    MooEdit *doc = (MooEdit*) g_object_get_data (G_OBJECT (evbox), "moo-edit");
+    MooEditTab *tab = (MooEditTab*) g_object_get_data (G_OBJECT (evbox), "moo-edit-tab");
 
     g_return_if_fail (MOO_IS_EDIT (doc));
     g_return_if_fail (MOO_IS_EDIT_TAB (tab));
@@ -3541,9 +3539,9 @@ update_tab_label (MooEditTab    *tab,
     hbox = moo_notebook_get_tab_label (notebook, GTK_WIDGET (tab));
     g_return_if_fail (GTK_IS_WIDGET (hbox));
 
-    icon = g_object_get_data (G_OBJECT (hbox), "moo-edit-icon");
-    label = g_object_get_data (G_OBJECT (hbox), "moo-edit-label");
-    evbox = g_object_get_data (G_OBJECT (hbox), "moo-edit-icon-evbox");
+    icon = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-icon");
+    label = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-label");
+    evbox = (GtkWidget*) g_object_get_data (G_OBJECT (hbox), "moo-edit-icon-evbox");
     g_return_if_fail (GTK_IS_WIDGET (icon) && GTK_IS_WIDGET (label));
     g_return_if_fail (GTK_IS_WIDGET (evbox));
 
@@ -3683,7 +3681,7 @@ add_pane_action (MooEditWindow *window,
     MooUiXml *xml;
 
     action_id = make_show_pane_action_id (user_id);
-    klass = g_type_class_peek (MOO_TYPE_EDIT_WINDOW);
+    klass = (MooWindowClass*) g_type_class_peek (MOO_TYPE_EDIT_WINDOW);
 
     if (!moo_window_class_find_action (klass, action_id))
     {
@@ -4033,12 +4031,12 @@ create_lang_action (MooEditWindow *window)
 
     for (l = sections; l != NULL; l = l->next)
         moo_menu_mgr_append (menu_mgr, NULL,
-                             l->data, l->data, NULL,
-                             0, NULL, NULL);
+                             (const char*) l->data, (const char*) l->data, NULL,
+                             MOO_MENU_ITEM_FLAGS_NONE, NULL, NULL);
 
     for (l = langs; l != NULL; l = l->next)
     {
-        MooLang *lang = l->data;
+        MooLang *lang = (MooLang*) l->data;
         if (!_moo_lang_get_hidden (lang))
             moo_menu_mgr_append (menu_mgr, _moo_lang_get_section (lang),
                                  _moo_lang_id (lang),
@@ -4140,15 +4138,18 @@ window_check_one_action (const char    *action_id,
 }
 
 
+struct CheckActionData
+{
+    MooEdit *doc;
+    MooEditWindow *window;
+};
+
 static void
 check_action_hash_cb (const char    *action_id,
                       ActionCheck   *check,
                       gpointer       user_data)
 {
-    struct {
-        MooEdit *doc;
-        MooEditWindow *window;
-    } *data = user_data;
+    CheckActionData* data = (CheckActionData*) user_data;
 
     window_check_one_action (action_id, check, data->window, data->doc);
 }
@@ -4157,10 +4158,7 @@ check_action_hash_cb (const char    *action_id,
 static void
 moo_edit_window_check_actions (MooEditWindow *window)
 {
-    struct {
-        MooEdit *doc;
-        MooEditWindow *window;
-    } data;
+    CheckActionData data;
 
     data.window = window;
     data.doc = ACTIVE_DOC (window);
@@ -4179,7 +4177,6 @@ moo_edit_window_set_action_check (const char     *action_id,
                                   GDestroyNotify  notify)
 {
     ActionCheck *check;
-    GSList *l;
 
     g_return_if_fail (action_id != NULL);
     g_return_if_fail (type < N_ACTION_CHECKS);
@@ -4187,7 +4184,7 @@ moo_edit_window_set_action_check (const char     *action_id,
 
     action_checks_init ();
 
-    check = g_hash_table_lookup (action_checks, action_id);
+    check = (ActionCheck*) g_hash_table_lookup (action_checks, action_id);
 
     if (!check)
     {
@@ -4207,11 +4204,10 @@ moo_edit_window_set_action_check (const char     *action_id,
     check->checks[type].data = data;
     check->checks[type].notify = notify;
 
-    for (l = windows; l != NULL; l = l->next)
+    for (MooEditWindow* w: windows)
     {
-        MooEditWindow *window = l->data;
-        MooEdit *doc = ACTIVE_DOC (window);
-        window_check_one_action (action_id, check, window, doc);
+        MooEdit *doc = ACTIVE_DOC (w);
+        window_check_one_action (action_id, check, w, doc);
     }
 }
 
@@ -4230,7 +4226,7 @@ moo_edit_window_remove_action_check (const char        *action_id,
     if (!action_checks)
         return;
 
-    check = g_hash_table_lookup (action_checks, action_id);
+    check = (ActionCheck*) g_hash_table_lookup (action_checks, action_id);
 
     if (!check)
         return;
@@ -4275,7 +4271,7 @@ check_action_filter (G_GNUC_UNUSED GtkAction *action,
     gboolean value = FALSE;
 
     if (doc)
-        value = _moo_edit_filter_match (filter, doc);
+        value = _moo_edit_filter_match ((MooEditFilter*) filter, doc);
 
     return value;
 }
@@ -4458,7 +4454,7 @@ moo_edit_window_abort_jobs (MooEditWindow *window)
 
     for (l = jobs; l != NULL; l = l->next)
     {
-        Job *j = l->data;
+        Job *j = (Job*) l->data;
         j->abort (j->job);
     }
 
@@ -4503,7 +4499,7 @@ moo_edit_window_job_finished (MooEditWindow  *window,
 
     for (l = window->priv->jobs; l != NULL; l = l->next)
     {
-        j = l->data;
+        j = (Job*) l->data;
 
         if (j->job == job)
             break;
@@ -4574,8 +4570,8 @@ populate_window_menu (MooEditWindow *window,
 
     for (l = g_list_nth (children, pos + 1); l != NULL; l = l->next)
     {
-        if (g_object_get_data (l->data, "moo-document-menu-item"))
-            gtk_container_remove (GTK_CONTAINER (menu), l->data);
+        if (g_object_get_data ((GObject*) l->data, "moo-document-menu-item"))
+            gtk_container_remove (GTK_CONTAINER (menu), (GtkWidget*) l->data);
         else
             break;
     }
@@ -4749,7 +4745,7 @@ notebook_drag_data_recv (GtkWidget          *widget,
             MooEdit *doc;
             MooEditTab *tab;
 
-            tab = moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
+            tab = (MooEditTab*) moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
             doc = tab ? moo_edit_tab_get_doc (tab) : NULL;
 
             if (!doc)
@@ -4831,12 +4827,12 @@ notebook_drag_data_recv (GtkWidget          *widget,
             MooEditTab *tab;
             gboolean can_move = TRUE;
 
-            tab = moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
+            tab = (MooEditTab*) moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
 
             if (!tab)
             {
                 g_critical ("oops");
-                gdk_drag_status (context, 0, time);
+                gdk_drag_status (context, (GdkDragAction) 0, time);
                 return;
             }
 
@@ -4852,7 +4848,7 @@ notebook_drag_data_recv (GtkWidget          *widget,
 
             if (!can_move)
             {
-                gdk_drag_status (context, 0, time);
+                gdk_drag_status (context, (GdkDragAction) 0, time);
                 return;
             }
 
@@ -4860,7 +4856,7 @@ notebook_drag_data_recv (GtkWidget          *widget,
         }
         else
         {
-            gdk_drag_status (context, 0, time);
+            gdk_drag_status (context, (GdkDragAction) 0, time);
         }
 
         return;

@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 #ifdef __cplusplus
 
@@ -42,6 +42,18 @@ inline GObjType* object_new()
     return (GObjType*) g_object_new (ObjectTraits<GObjType>::gtype(), nullptr);
 }
 
+template<typename GObjType, typename Arg1>
+inline GObjType* object_new(const char* prop1, Arg1 arg1)
+{
+    return (GObjType*) g_object_new (ObjectTraits<GObjType>::gtype(), prop1, arg1, nullptr);
+}
+
+template<typename GObjType, typename Arg1, typename Arg2>
+inline GObjType* object_new(const char* prop1, Arg1 arg1, const char* prop2, Arg2 arg2)
+{
+    return (GObjType*) g_object_new (ObjectTraits<GObjType>::gtype(), prop1, arg1, prop2, arg2, nullptr);
+}
+
 #define MOO_DEFINE_GOBJ_TRAITS(FooObject, FOO_TYPE_OBJECT)      \
     template<>                                                  \
     struct ObjectTraits<FooObject>                              \
@@ -58,6 +70,7 @@ MOO_DEFINE_GOBJ_TRAITS(GObject, G_TYPE_OBJECT);
 
 MOO_DEFINE_FLAGS(GRegexCompileFlags)
 MOO_DEFINE_FLAGS(GRegexMatchFlags)
+MOO_DEFINE_FLAGS(GdkDragAction)
 
 
 #endif // __cplusplus

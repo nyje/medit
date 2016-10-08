@@ -13,8 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_TEXT_VIEW_H
-#define MOO_TEXT_VIEW_H
+#pragma once
 
 #include <gtk/gtk.h>
 #include <mooedit/mooindenter.h>
@@ -161,4 +160,8 @@ void         moo_text_view_unindent                 (MooTextView        *view);
 
 G_END_DECLS
 
-#endif /* MOO_TEXT_VIEW_H */
+#ifdef __cplusplus
+
+MOO_DEFINE_GOBJ_TRAITS(MooTextView, MOO_TYPE_TEXT_VIEW);
+
+#endif // __cplusplus
