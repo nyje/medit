@@ -11,7 +11,7 @@ SET(mooedit_sources
     mooedit/mooedit-fileops.h
     mooedit/mooedit-impl.h	
     mooedit/mooedit-private.h
-    mooedit/mooedit-script.c
+    mooedit/mooedit-script.cpp
     mooedit/mooedit-script.h
     mooedit/mooedit.cpp
     mooedit/mooedit.h
@@ -19,7 +19,7 @@ SET(mooedit_sources
     mooedit/mooeditaction-factory.h
     mooedit/mooeditaction.c	
     mooedit/mooeditaction.h
-    mooedit/mooeditbookmark.c
+    mooedit/mooeditbookmark.cpp
     mooedit/mooeditbookmark.h
     mooedit/mooeditconfig.c	
     mooedit/mooeditconfig.h
