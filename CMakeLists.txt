@@ -180,6 +180,10 @@ else()
             string(REPLACE "/D_DEBUG" "/DENABLE_DEBUG=1 /DDEBUG=1 /DMOO_DEBUG=1 /D_DEBUG" ${var}_DEBUG "${${var}_DEBUG}")
         endif()
     endforeach()
+
+    foreach(mode EXE MODULE SHARED STATIC)
+        set(CMAKE_${mode}_LINKER_FLAGS "${CMAKE_${mode}_LINKER_FLAGS} /DEBUG")
+    endforeach()
 endif()
 
 find_program(GLIB_GENMARSHAL glib-genmarshal)
