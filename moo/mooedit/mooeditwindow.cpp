@@ -49,10 +49,12 @@
 #include "mooutils/moocompat.h"
 #include "mooutils/mooutils-enums.h"
 #include "mooedit/moostatusbar-gxml.h"
+#include "moocpp/gobjptr.h"
 #include <string.h>
 #include <gtk/gtk.h>
 #include <math.h>
 
+#include <string>
 #include <unordered_set>
 
 #define ENABLE_PRINTING
@@ -67,8 +69,12 @@
 
 #define DOCUMENT_ACTION "SwitchToTab"
 
-#define DEFAULT_TITLE_FORMAT        "%a - %f%s"
-#define DEFAULT_TITLE_FORMAT_NO_DOC "%a"
+namespace {
+
+const std::string DEFAULT_TITLE_FORMAT("%a - %f%s");
+const std::string DEFAULT_TITLE_FORMAT_NO_DOC("%a");
+
+} // namespace
 
 #define PREFS_KEY_SPLIT_POS MOO_EDIT_PREFS_PREFIX "/window/splitpos"
 
@@ -86,8 +92,7 @@ typedef struct {
 static GHashTable *action_checks; /* char* -> ActionCheck* */
 static std::unordered_set<MooEditWindow*> windows;
 
-MOO_DECLARE_OBJECT_ARRAY (MooNotebook, moo_notebook)
-MOO_DEFINE_OBJECT_ARRAY (MooNotebook, moo_notebook)
+using MooNotebookPtr = moo::ObjectPtr<MooNotebook>;
 
 struct MooEditWindowPrivate {
     MooEditor *editor;
@@ -100,12 +105,12 @@ struct MooEditWindowPrivate {
     GtkWidget *info;
 
     GtkWidget *doc_paned;
-    MooNotebookArray *notebooks;
+    std::vector<MooNotebookPtr> notebooks;
     MooEditTab *active_tab;
     guint save_params_idle;
 
-    char *title_format;
-    char *title_format_no_doc;
+    std::string title_format;
+    std::string title_format_no_doc;
 
     GSList *stop_clients;
     GSList *jobs; /* Job* */
@@ -215,7 +220,7 @@ static void          update_split_view_actions          (MooEditWindow      *win
 
 static void          create_statusbar                   (MooEditWindow      *window);
 static void          update_statusbar                   (MooEditWindow      *window);
-static MooEditTab   *get_nth_tab                        (MooNotebook        *notebook,
+static MooEditTab   *get_nth_tab                        (MooNotebook        &notebook,
                                                          guint               n);
 static MooEdit      *get_nth_doc                        (MooNotebook        *notebook,
                                                          guint               n);
@@ -838,11 +843,11 @@ static void
 moo_edit_window_init (MooEditWindow *window)
 {
     window->priv = G_TYPE_INSTANCE_GET_PRIVATE (window, MOO_TYPE_EDIT_WINDOW, MooEditWindowPrivate);
+    new(window->priv) MooEditWindowPrivate;
+
     window->priv->history = NULL;
     window->priv->history_blocked = FALSE;
     window->priv->enable_history = TRUE;
-
-    window->priv->notebooks = moo_notebook_array_new ();
 
     g_object_set (G_OBJECT (window),
                   "menubar-ui-name", "Editor/Menubar",
@@ -899,11 +904,7 @@ moo_edit_window_destroy (GtkObject *object)
         g_slist_free (list);
     }
 
-    if (window->priv->notebooks)
-    {
-        moo_notebook_array_free (window->priv->notebooks);
-        window->priv->notebooks = NULL;
-    }
+    window->priv->notebooks.clear();
 
     windows.erase(window);
 
@@ -916,8 +917,7 @@ moo_edit_window_finalize (GObject *object)
 {
     MooEditWindow *window = MOO_EDIT_WINDOW (object);
 
-    g_free (window->priv->title_format);
-    g_free (window->priv->title_format_no_doc);
+    window->priv->~MooEditWindowPrivate();
 
     G_OBJECT_CLASS (moo_edit_window_parent_class)->finalize (object);
 }
@@ -1032,13 +1032,17 @@ moo_edit_window_constructor (GType                  type,
                           "enable-popup", TRUE,
                           "enable-reordering", TRUE,
                           (const char*) NULL));
+
         if (i == 0)
             gtk_widget_show (notebook);
-        moo_notebook_array_append (window->priv->notebooks, MOO_NOTEBOOK (notebook));
+
+        window->priv->notebooks.push_back(moo::ref_obj(MOO_NOTEBOOK(notebook)));
+
         if (i == 0)
             gtk_paned_pack1 (GTK_PANED (window->priv->doc_paned), notebook, TRUE, FALSE);
         else
             gtk_paned_pack2 (GTK_PANED (window->priv->doc_paned), notebook, TRUE, FALSE);
+
         setup_notebook (window, MOO_NOTEBOOK (notebook));
     }
 
@@ -1113,27 +1117,26 @@ get_doc_status_string (MooEdit *doc)
     }
 }
 
-static char *
-parse_title_format (const char *format,
-                    MooEdit    *doc)
+static std::string
+parse_title_format(const std::string& format, MooEdit *doc)
 {
     GString *str;
 
     str = g_string_new (NULL);
 
-    while (*format)
+    for (const char* p = format.c_str(); *p; )
     {
-        if (*format == '%')
+        if (*p == '%')
         {
-            format++;
+            p++;
 
-            if (!*format)
+            if (!*p)
             {
                 g_critical ("%s: trailing percent sign", G_STRFUNC);
                 break;
             }
 
-            switch (*format)
+            switch (*p)
             {
                 case 'a':
                     g_string_append (str, moo_get_display_app_name ());
@@ -1178,16 +1181,16 @@ parse_title_format (const char *format,
                     g_string_append_c (str, '%');
                     break;
                 default:
-                    g_critical ("%s: unknown format '%%%c'", G_STRFUNC, *format);
+                    g_critical ("%s: unknown format '%%%c'", G_STRFUNC, *p);
                     break;
             }
         }
         else
         {
-            g_string_append_c (str, *format);
+            g_string_append_c (str, *p);
         }
 
-        format++;
+        p++;
     }
 
     return g_string_free (str, FALSE);
@@ -1196,47 +1199,43 @@ parse_title_format (const char *format,
 static void
 update_window_title (MooEditWindow *window)
 {
-    MooEdit *doc;
-    char *title;
+    MooEdit *doc = ACTIVE_DOC (window);
 
-    doc = ACTIVE_DOC (window);
+    std::string title;
 
     if (doc)
         title = parse_title_format (window->priv->title_format, doc);
     else
         title = parse_title_format (window->priv->title_format_no_doc, NULL);
 
-    moo_window_set_title (MOO_WINDOW (window), title);
-
-    g_free (title);
+    moo_window_set_title (MOO_WINDOW (window), title.c_str());
 }
 
-static const char *
-check_format (const char *format)
+static std::string
+check_format (const std::string& format)
 {
-    if (!format || !format[0])
+    if (format.empty())
         return DEFAULT_TITLE_FORMAT;
-    if (!g_utf8_validate (format, -1, NULL))
+
+    if (!g_utf8_validate (format.c_str(), -1, NULL))
     {
         g_critical ("window title format is not valid UTF8");
         return DEFAULT_TITLE_FORMAT;
     }
+
     return format;
 }
 
 static void
-set_title_format (MooEditWindow *window,
-                  const char    *format,
-                  const char    *format_no_doc)
+set_title_format (MooEditWindow* window,
+                  std::string    format,
+                  std::string    format_no_doc)
 {
     format = check_format (format);
     format_no_doc = check_format (format_no_doc);
 
-    g_free (window->priv->title_format);
-    g_free (window->priv->title_format_no_doc);
-
-    window->priv->title_format = g_strdup (format);
-    window->priv->title_format_no_doc = g_strdup (format_no_doc);
+    window->priv->title_format = std::move(format);
+    window->priv->title_format_no_doc = std::move(format_no_doc);
 
     if (GTK_WIDGET_REALIZED (window))
         update_window_title (window);
@@ -1542,7 +1541,7 @@ switch_to_tab (MooEditWindow *window,
         int n_pages = moo_notebook_get_n_pages (notebook);
         if (n < n_pages)
         {
-            MooEditTab *tab = get_nth_tab (notebook, n);
+            MooEditTab *tab = get_nth_tab (*notebook, n);
             moo_edit_window_set_active_tab (window, tab);
             break;
         }
@@ -1581,14 +1580,13 @@ static int
 get_first_tab_in_notebook (MooNotebook *notebook, MooEditWindow *window)
 {
     int tab = 0;
-    guint i;
 
-    for (i = 0; i < window->priv->notebooks->n_elms; ++i)
+    for (const auto& nb: window->priv->notebooks)
     {
-        if (window->priv->notebooks->elms[i] == notebook)
+        if (nb == notebook)
             return tab;
 
-        tab += moo_notebook_get_n_pages (window->priv->notebooks->elms[i]);
+        tab += moo_notebook_get_n_pages (nb.get());
     }
 
     g_return_val_if_reached (-1);
@@ -1701,10 +1699,10 @@ action_focus_other_split_notebook (MooEditWindow *window)
 
         if (current == nb1)
             moo_edit_window_set_active_tab (window,
-                get_nth_tab(nb2, moo_notebook_get_current_page(nb2)));
+                get_nth_tab(*nb2, moo_notebook_get_current_page (nb2)));
         else
             moo_edit_window_set_active_tab (window,
-                get_nth_tab(nb1, moo_notebook_get_current_page(nb1)));
+                get_nth_tab(*nb1, moo_notebook_get_current_page (nb1)));
     }
 }
 
@@ -2391,9 +2389,8 @@ static MooNotebook *
 get_notebook (MooEditWindow *window,
               int            i)
 {
-    g_return_val_if_fail (window->priv->notebooks != NULL, NULL);
-    g_return_val_if_fail (i >= 0 && i < (int) window->priv->notebooks->n_elms, NULL);
-    return window->priv->notebooks->elms[i];
+    g_return_val_if_fail (i >= 0 && i < (int) window->priv->notebooks.size(), NULL);
+    return window->priv->notebooks[i].get();
 }
 
 static MooEditView *
@@ -2451,10 +2448,9 @@ get_active_notebook (MooEditWindow *window)
 static gboolean
 both_notebooks_visible (MooEditWindow *window)
 {
-    return window->priv->notebooks &&
-           window->priv->notebooks->n_elms == 2 &&
-           GTK_WIDGET_VISIBLE (window->priv->notebooks->elms[0]) &&
-           GTK_WIDGET_VISIBLE (window->priv->notebooks->elms[1]);
+    return window->priv->notebooks.size() == 2 &&
+           GTK_WIDGET_VISIBLE (window->priv->notebooks[0].get()) &&
+           GTK_WIDGET_VISIBLE (window->priv->notebooks[1].get());
 }
 
 static void
@@ -2720,7 +2716,7 @@ moo_edit_window_get_active_tab (MooEditWindow *window)
 {
     g_return_val_if_fail (MOO_IS_EDIT_WINDOW (window), NULL);
 
-    if (moo_notebook_array_is_empty (window->priv->notebooks))
+    if (window->priv->notebooks.empty())
         return NULL;
 
     if (!window->priv->active_tab)
@@ -2869,7 +2865,7 @@ moo_edit_window_get_views (MooEditWindow *window)
         int n_pages = moo_notebook_get_n_pages (notebook);
         for (ipage = 0; ipage < n_pages; ipage++)
         {
-            MooEditTab *tab = get_nth_tab (notebook, ipage);
+            MooEditTab *tab = get_nth_tab (*notebook, ipage);
             MooEditViewArray *tab_views = moo_edit_tab_get_views (tab);
             moo_edit_view_array_append_array (views, tab_views);
             moo_edit_view_array_free (tab_views);
@@ -2900,7 +2896,7 @@ moo_edit_window_get_tabs (MooEditWindow *window)
         MooNotebook *notebook = get_notebook (window, inb);
         int n_pages = moo_notebook_get_n_pages (notebook);
         for (ipage = 0; ipage < n_pages; ipage++)
-            moo_edit_tab_array_append (tabs, get_nth_tab (notebook, ipage));
+            moo_edit_tab_array_append (tabs, get_nth_tab (*notebook, ipage));
     }
 
     return tabs;
@@ -2913,16 +2909,12 @@ moo_edit_window_get_tabs (MooEditWindow *window)
 int
 moo_edit_window_get_n_tabs (MooEditWindow *window)
 {
-    guint i;
-    int n_docs = 0;
-
     g_return_val_if_fail (MOO_IS_EDIT_WINDOW (window), 0);
 
-    for (i = 0; i < moo_notebook_array_get_size (window->priv->notebooks); ++i)
-    {
-        MooNotebook *notebook = get_notebook (window, i);
-        n_docs += moo_notebook_get_n_pages (notebook);
-    }
+    int n_docs = 0;
+
+    for (const auto& notebook: window->priv->notebooks)
+        n_docs += moo_notebook_get_n_pages (notebook.get());
 
     return n_docs;
 }
@@ -2932,15 +2924,15 @@ static MooEdit *
 get_nth_doc (MooNotebook *notebook,
              guint        n)
 {
-    MooEditTab *tab = get_nth_tab (notebook, n);
+    MooEditTab *tab = get_nth_tab (*notebook, n);
     return tab ? moo_edit_tab_get_doc (tab) : NULL;
 }
 
 static MooEditTab *
-get_nth_tab (MooNotebook *notebook,
+get_nth_tab (MooNotebook &notebook,
              guint        n)
 {
-    GtkWidget *tab = moo_notebook_get_nth_page (notebook, n);
+    GtkWidget *tab = moo_notebook_get_nth_page (&notebook, n);
     return tab ? MOO_EDIT_TAB (tab) : NULL;
 }
 
@@ -2948,20 +2940,19 @@ static int
 get_active_tab (MooEditWindow *window)
 {
     int tab = 0;
-    guint i;
     MooNotebook *notebook = get_active_notebook (window);
 
     g_return_val_if_fail (notebook != NULL, -1);
 
-    for (i = 0; i < window->priv->notebooks->n_elms; ++i)
+    for (const auto& nb: window->priv->notebooks)
     {
-        if (window->priv->notebooks->elms[i] == notebook)
+        if (nb == notebook)
         {
             tab += moo_notebook_get_current_page (notebook);
             return tab;
         }
 
-        tab += moo_notebook_get_n_pages (window->priv->notebooks->elms[i]);
+        tab += moo_notebook_get_n_pages (nb.get());
     }
 
     g_return_val_if_reached (-1);
@@ -3544,7 +3535,7 @@ set_tab_icon (GtkWidget *image,
 
 static void
 update_tab_label (MooEditTab    *tab,
-                  MooNotebook   *notebook)
+                  MooNotebook   &notebook)
 {
     GtkWidget *hbox, *icon, *label, *evbox;
     MooEditStatus status;
@@ -3556,7 +3547,7 @@ update_tab_label (MooEditTab    *tab,
     doc = moo_edit_tab_get_doc (tab);
     g_return_if_fail (doc != NULL);
 
-    hbox = moo_notebook_get_tab_label (notebook, GTK_WIDGET (tab));
+    hbox = moo_notebook_get_tab_label (&notebook, GTK_WIDGET (tab));
     g_return_if_fail (GTK_IS_WIDGET (hbox));
 
     icon = data_moo_edit_icon.get(hbox);
@@ -3610,18 +3601,15 @@ static void
 update_tab_labels (MooEditWindow *window,
                    MooEdit       *doc)
 {
-    guint inb;
-
-    for (inb = 0; inb < window->priv->notebooks->n_elms; inb++)
+    for (const auto& notebook: window->priv->notebooks)
     {
         int i;
-        MooNotebook *notebook = get_notebook (window, inb);
-        int n_pages = moo_notebook_get_n_pages (notebook);
+        int n_pages = moo_notebook_get_n_pages (notebook.get());
         for (i = 0; i < n_pages; i++)
         {
-            MooEditTab *tab = get_nth_tab (notebook, i);
+            MooEditTab *tab = get_nth_tab (*notebook, i);
             if (doc == moo_edit_tab_get_doc (tab))
-                update_tab_label (tab, notebook);
+                update_tab_label (tab, *notebook);
         }
     }
 }
