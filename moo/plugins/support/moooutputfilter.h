@@ -30,9 +30,7 @@ G_BEGIN_DECLS
 #define MOO_IS_OUTPUT_FILTER_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), MOO_TYPE_OUTPUT_FILTER))
 #define MOO_OUTPUT_FILTER_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), MOO_TYPE_OUTPUT_FILTER, MooOutputFilterClass))
 
-typedef struct _MooOutputFilter         MooOutputFilter;
 typedef struct _MooOutputFilterPrivate  MooOutputFilterPrivate;
-typedef struct _MooOutputFilterClass    MooOutputFilterClass;
 typedef struct _MooFileLineData         MooFileLineData;
 
 struct _MooFileLineData {
@@ -41,14 +39,13 @@ struct _MooFileLineData {
     int character;
 };
 
-struct _MooOutputFilter {
-    GObject base;
+struct MooOutputFilter : public GObject
+{
     MooOutputFilterPrivate *priv;
 };
 
-struct _MooOutputFilterClass {
-    GObjectClass base_class;
-
+struct MooOutputFilterClass : public GObjectClass
+{
     void     (*attach)      (MooOutputFilter *filter);
     void     (*detach)      (MooOutputFilter *filter);
 

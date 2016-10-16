@@ -117,7 +117,7 @@ moo_line_view_class_init (MooLineViewClass *klass)
 
     binding_set = gtk_binding_set_by_class (klass);
 
-    gtk_binding_entry_add_signal (binding_set, GDK_Return, 0,
+    gtk_binding_entry_add_signal (binding_set, GDK_Return, (GdkModifierType) 0,
                                   "activate-current-line", 0);
 }
 
@@ -377,7 +377,7 @@ moo_line_view_get_text_cursor (MooTextView    *view,
         return MOO_TEXT_CURSOR_ARROW;
 
     line = gtk_text_iter_get_line (&iter);
-    cursor = GPOINTER_TO_INT (g_hash_table_lookup (MOO_LINE_VIEW (view)->priv->cursors, GINT_TO_POINTER (line)));
+    cursor = (MooTextCursor) GPOINTER_TO_INT (g_hash_table_lookup (MOO_LINE_VIEW (view)->priv->cursors, GINT_TO_POINTER (line)));
 
     return cursor ? cursor : MOO_TEXT_CURSOR_ARROW;
 }

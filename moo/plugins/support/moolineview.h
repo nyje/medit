@@ -30,20 +30,15 @@ G_BEGIN_DECLS
 #define MOO_LINE_VIEW_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), MOO_TYPE_LINE_VIEW, MooLineViewClass))
 
 
-typedef struct _MooLineView         MooLineView;
 typedef struct _MooLineViewPrivate  MooLineViewPrivate;
-typedef struct _MooLineViewClass    MooLineViewClass;
 
-struct _MooLineView
+struct MooLineView : public MooTextView
 {
-    MooTextView parent;
     MooLineViewPrivate *priv;
 };
 
-struct _MooLineViewClass
+struct MooLineViewClass : public MooTextViewClass
 {
-    MooTextViewClass parent_class;
-
     void     (*activate) (MooLineView *view,
                           int          line);
 };

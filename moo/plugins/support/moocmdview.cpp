@@ -417,7 +417,7 @@ moo_cmd_view_run_command_full (MooCmdView  *view,
 #endif
 
     view->priv->cmd = _moo_cmd_new (working_dir, argv, envp,
-                                    G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+                                    (GSpawnFlags) (G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD),
                                     MOO_CMD_UTF8_OUTPUT,
                                     NULL, NULL,
                                     &error);
