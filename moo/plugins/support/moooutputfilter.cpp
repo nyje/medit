@@ -66,7 +66,7 @@ moo_output_filter_activate (MooOutputFilter *filter,
 {
     MooFileLineData *data;
 
-    data = moo_line_view_get_boxed (filter->priv->view, line, MOO_TYPE_FILE_LINE_DATA);
+    data = (MooFileLineData*) moo_line_view_get_boxed (filter->priv->view, line, MOO_TYPE_FILE_LINE_DATA);
 
     if (data)
     {
@@ -298,7 +298,7 @@ moo_file_line_data_copy (MooFileLineData *data)
 
     if (data)
     {
-        copy = g_memdup (data, sizeof (MooFileLineData));
+        copy = (MooFileLineData*) g_memdup (data, sizeof (MooFileLineData));
         copy->file = g_strdup (data->file);
     }
 
@@ -349,7 +349,7 @@ moo_output_filter_set_window (MooOutputFilter *filter,
 {
     g_return_if_fail (MOO_IS_OUTPUT_FILTER (filter));
     g_return_if_fail (!window || MOO_IS_EDIT_WINDOW (window));
-    filter->priv->window = window;
+    filter->priv->window = (MooEditWindow*) window;
 }
 
 #if 0

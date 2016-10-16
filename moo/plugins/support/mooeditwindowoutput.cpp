@@ -61,7 +61,7 @@ moo_edit_window_get_output (MooEditWindow *window)
         return cmd_view;
     }
 
-    return g_object_get_data (G_OBJECT (scrolled_window), MOO_OUTPUT);
+    return (GtkWidget*) g_object_get_data (G_OBJECT (scrolled_window), MOO_OUTPUT);
 }
 
 

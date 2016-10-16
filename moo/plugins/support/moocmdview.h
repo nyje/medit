@@ -34,20 +34,15 @@ G_BEGIN_DECLS
 #define MOO_CMD_VIEW_STDOUT  "stdout"
 #define MOO_CMD_VIEW_STDERR  "stderr"
 
-typedef struct _MooCmdView         MooCmdView;
 typedef struct _MooCmdViewPrivate  MooCmdViewPrivate;
-typedef struct _MooCmdViewClass    MooCmdViewClass;
 
-struct _MooCmdView
+struct MooCmdView : public MooLineView
 {
-    MooLineView parent;
     MooCmdViewPrivate *priv;
 };
 
-struct _MooCmdViewClass
+struct MooCmdViewClass : public MooLineViewClass
 {
-    MooLineViewClass parent_class;
-
     void     (*job_started) (MooCmdView *view,
                              const char *job_name);
     void     (*job_finished)(MooCmdView *view);

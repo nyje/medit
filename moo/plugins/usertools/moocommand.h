@@ -45,41 +45,34 @@ G_BEGIN_DECLS
 
 #define MOO_TYPE_COMMAND_DATA               (moo_command_data_get_type ())
 
-typedef struct _MooCommand                  MooCommand;
-typedef struct _MooCommandClass             MooCommandClass;
-typedef struct _MooCommandContext           MooCommandContext;
 typedef struct _MooCommandContextPrivate    MooCommandContextPrivate;
-typedef struct _MooCommandContextClass      MooCommandContextClass;
 typedef struct _MooCommandData              MooCommandData;
-typedef struct _MooCommandFactory           MooCommandFactory;
-typedef struct _MooCommandFactoryClass      MooCommandFactoryClass;
 
-struct _MooCommandContext {
-    GObject base;
+struct MooCommandContext : public GObject
+{
     MooCommandContextPrivate *priv;
 };
 
-struct _MooCommandContextClass {
-    GObjectClass base_class;
+struct MooCommandContextClass : public GObjectClass
+{
 };
 
-struct _MooCommand {
-    GObject base;
+struct MooCommand : public GObject
+{
     /* read-only */
     MooCommandOptions options;
 };
 
-struct _MooCommandClass {
-    GObjectClass base_class;
-
+struct MooCommandClass : public GObjectClass
+{
     gboolean    (*check_sensitive)  (MooCommand         *cmd,
                                      MooEdit            *doc);
     void        (*run)              (MooCommand         *cmd,
                                      MooCommandContext  *ctx);
 };
 
-struct _MooCommandFactory {
-    GObject base;
+struct MooCommandFactory : public GObject
+{
     char *name;
     char *display_name;
     char **keys;
@@ -87,9 +80,8 @@ struct _MooCommandFactory {
     char *extension;
 };
 
-struct _MooCommandFactoryClass {
-    GObjectClass base_class;
-
+struct MooCommandFactoryClass : public GObjectClass
+{
     MooCommand *(*create_command) (MooCommandFactory *factory,
                                    MooCommandData    *data,
                                    const char        *options);
