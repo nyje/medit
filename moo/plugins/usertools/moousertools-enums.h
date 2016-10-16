@@ -1,11 +1,11 @@
-#ifndef MOOUSERTOOLS_ENUMS_H
-#define MOOUSERTOOLS_ENUMS_H
+#pragma once
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
 typedef enum {
+    MOO_COMMAND_OPTIONS_NONE = 0,
     MOO_COMMAND_NEED_DOC = 1 << 0,
     MOO_COMMAND_NEED_FILE = 1 << 1,
     MOO_COMMAND_NEED_SAVE = 1 << 2,
@@ -15,7 +15,12 @@ typedef enum {
 GType moo_command_options_get_type (void) G_GNUC_CONST;
 #define MOO_TYPE_COMMAND_OPTIONS (moo_command_options_get_type())
 
-
 G_END_DECLS
 
-#endif /* MOOUSERTOOLS_ENUMS_H */
+#ifdef __cplusplus
+
+#include "mooutils/mooutils-cpp.h"
+
+MOO_DEFINE_FLAGS(MooCommandOptions)
+
+#endif // __cplusplus

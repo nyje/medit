@@ -65,7 +65,7 @@ moo_indenter_new (MooEdit *doc)
 
     g_return_val_if_fail (MOO_IS_EDIT (doc), NULL);
 
-    indent = object_new<MooIndenter>();
+    indent = g::object_new<MooIndenter>();
     indent->doc = doc;
 
     return indent;

@@ -43,9 +43,14 @@ typedef struct MooEditWindowPrivate MooEditWindowPrivate;
 typedef struct MooEditWindowClass   MooEditWindowClass;
 typedef struct MooEditTabClass      MooEditTabClass;
 
+#ifdef __cplusplus
+struct MooEditWindow : public MooWindow
+{
+#else
 struct MooEditWindow
 {
     MooWindow               parent;
+#endif
     MooEditWindowPrivate   *priv;
     MooBigPaned            *paned;
 };

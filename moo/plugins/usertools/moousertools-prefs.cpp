@@ -34,10 +34,13 @@ enum {
 };
 
 
+const ObjectDataAccessor<MooPrefsPage, CommandXml*> command_xml_data("moo-user-tools-prefs-xml");
+
+
 static MooUserToolType
 page_get_type (MooPrefsPage *page)
 {
-    return GPOINTER_TO_INT (g_object_get_data (G_OBJECT (page), "moo-user-tool-type"));
+    return (MooUserToolType) GPOINTER_TO_INT (g_object_get_data (G_OBJECT (page), "moo-user-tool-type"));
 }
 
 
@@ -67,7 +70,7 @@ set_changed (MooPrefsPage *page,
 static MooCommandDisplay *
 get_helper (MooPrefsPage *page)
 {
-    return g_object_get_data (G_OBJECT (page), "moo-tree-helper");
+    return (MooCommandDisplay*) g_object_get_data (G_OBJECT (page), "moo-tree-helper");
 }
 
 
@@ -82,7 +85,7 @@ populate_store (GtkListStore   *store,
 
     while (list)
     {
-        MooUserToolInfo *info = list->data;
+        MooUserToolInfo *info = (MooUserToolInfo*) list->data;
 
         gtk_list_store_append (store, &iter);
         gtk_list_store_set (store, &iter, COLUMN_INFO, info, -1);
@@ -103,7 +106,7 @@ new_row (MooPrefsPage *page,
     GtkTreeViewColumn *column;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
 
     info = _moo_user_tool_info_new ();
     info->cmd_factory = moo_command_factory_lookup ("lua");
@@ -296,7 +299,7 @@ update_widgets (MooPrefsPage *page,
     MooCommandDisplay *helper;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
     helper = get_helper (page);
 
     if (path)
@@ -356,7 +359,7 @@ update_model (MooPrefsPage *page,
     gboolean changed = FALSE;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
 
     helper = get_helper (page);
     gtk_tree_model_get (model, iter, COLUMN_INFO, &info, -1);
@@ -417,7 +420,7 @@ name_cell_edited (MooPrefsPage *page,
     MooUserToolInfo *info = NULL;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
 
     path = gtk_tree_path_new_from_string (path_string);
     model = gtk_tree_view_get_model (gxml->treeview);
@@ -448,7 +451,7 @@ command_page_init (MooPrefsPage    *page,
     MooCommandDisplay *helper;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
 
     page_set_type (page, type);
 
@@ -502,9 +505,9 @@ command_page_apply (MooPrefsPage *page)
     GSList *list = NULL;
     CommandXml *gxml;
 
-    gxml = g_object_get_data (G_OBJECT (page), "moo-user-tools-prefs-xml");
+    gxml = command_xml_data.get(page);
 
-    helper = g_object_get_data (G_OBJECT (page), "moo-tree-helper");
+    helper = (MooTreeHelper*) g_object_get_data (G_OBJECT (page), "moo-tree-helper");
     _moo_tree_helper_update_model (helper, NULL, NULL);
 
     if (!get_changed (page))
@@ -568,10 +571,10 @@ moo_user_tools_prefs_page_new (void)
 #endif
 
     cxml = command_xml_new_with_root (GTK_WIDGET (gxml->page_menu));
-    g_object_set_data (G_OBJECT (gxml->page_menu), "moo-user-tools-prefs-xml", cxml);
+    command_xml_data.set(gxml->page_menu, cxml);
 
     cxml = command_xml_new_with_root (GTK_WIDGET (gxml->page_context));
-    g_object_set_data (G_OBJECT (gxml->page_context), "moo-user-tools-prefs-xml", cxml);
+    command_xml_data.set(gxml->page_context, cxml);
 
     return page;
 }

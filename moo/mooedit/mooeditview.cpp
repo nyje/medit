@@ -101,7 +101,7 @@ _moo_edit_view_new (MooEdit *doc)
 
     g_return_val_if_fail (MOO_IS_EDIT (doc), NULL);
 
-    view = object_new<MooEditView> ("buffer", moo_edit_get_buffer (doc));
+    view = g::object_new<MooEditView> ("buffer", moo_edit_get_buffer (doc));
     view->priv->doc = doc;
     view->priv->editor = moo_edit_get_editor (doc);
 

@@ -1158,12 +1158,11 @@ parse_title_format(const std::string& format, MooEdit *doc)
                         g_critical ("%s: %%u used without document", G_STRFUNC);
                     else
                     {
-                        char *tmp = moo_edit_get_uri (doc);
-                        if (tmp)
-                            g_string_append (str, tmp);
+                        gstr tmp = moo_edit_get_uri (doc);
+                        if (!tmp.empty())
+                            g_string_append (str, tmp.get());
                         else
                             g_string_append (str, moo_edit_get_display_name (doc));
-                        g_free (tmp);
                     }
                     break;
                 case 's':
@@ -1875,9 +1874,9 @@ create_bookmark_item (MooEditWindow   *window,
         g_signal_connect (item, "activate", G_CALLBACK (bookmark_item_activated), NULL);
     }
 
-    widget_bookmark.set(item, object_ref (bk), g_object_unref);
-    widget_doc.set(item, object_ref (doc), g_object_unref);
-    widget_view.set(item, object_ref (view), g_object_unref);
+    widget_bookmark.set(item, g::object_ref (bk), g_object_unref);
+    widget_doc.set(item, g::object_ref (doc), g_object_unref);
+    widget_view.set(item, g::object_ref (view), g_object_unref);
 
     g_free (label);
 
@@ -3388,10 +3387,11 @@ tab_icon_drag_data_get (GtkWidget      *evbox,
     }
     else if (info == TARGET_URI_LIST)
     {
-        char *uris[] = {NULL, NULL};
-        uris[0] = moo_edit_get_uri (doc);
-        gtk_selection_data_set_uris (data, uris);
-        g_free (uris[0]);
+        const char *uris[] = { nullptr, nullptr };
+        gstr uri = moo_edit_get_uri (doc);
+        if (!uri.empty())
+            uris[0] = uri.get();
+        gtk_selection_data_set_uris (data, (char**) uris);
     }
     else
     {

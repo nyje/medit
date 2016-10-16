@@ -27,6 +27,7 @@
 #include "mooutils/mooutils-debug.h"
 #include "mooutils/mooutils-misc.h"
 #include "mooutils/mootype-macros.h"
+#include "mooutils/mooutils-cpp.h"
 #include <gtk/gtk.h>
 #include <mooglib/moo-glib.h>
 #include <string.h>
@@ -123,7 +124,7 @@ moo_command_factory_register (const char        *name,
 
     if (registered_factories != NULL)
     {
-        MooCommandFactory *old = g_hash_table_lookup (registered_factories, name);
+        MooCommandFactory *old = (MooCommandFactory*) g_hash_table_lookup (registered_factories, name);
 
         if (old)
         {
@@ -154,7 +155,7 @@ moo_command_factory_lookup (const char *name)
     g_return_val_if_fail (name != NULL, NULL);
 
     if (registered_factories != NULL)
-        factory = g_hash_table_lookup (registered_factories, name);
+        factory = (MooCommandFactory*) g_hash_table_lookup (registered_factories, name);
 
     return factory;
 }
@@ -325,7 +326,7 @@ moo_command_set_property (GObject *object,
     switch (property_id)
     {
         case CMD_PROP_OPTIONS:
-            moo_command_set_options (cmd, g_value_get_flags (value));
+            moo_command_set_options (cmd, (MooCommandOptions) g_value_get_flags (value));
             break;
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -517,11 +518,11 @@ moo_command_set_options (MooCommand       *cmd,
 MooCommandOptions
 moo_parse_command_options (const char *string)
 {
-    MooCommandOptions options = 0;
+    MooCommandOptions options = MOO_COMMAND_OPTIONS_NONE;
     char **pieces, **p;
 
     if (!string)
-        return 0;
+        return MOO_COMMAND_OPTIONS_NONE;
 
     pieces = g_strsplit_set (string, " \t\r\n;,", 0);
 
@@ -584,10 +585,10 @@ moo_command_context_set_property (GObject *object,
     switch (property_id)
     {
         case CTX_PROP_DOC:
-            moo_command_context_set_doc (ctx, g_value_get_object (value));
+            moo_command_context_set_doc (ctx, static_cast<MooEdit*> (g_value_get_object (value)));
             break;
         case CTX_PROP_WINDOW:
-            moo_command_context_set_window (ctx, g_value_get_object (value));
+            moo_command_context_set_window (ctx, static_cast<MooEditWindow*> (g_value_get_object (value)));
             break;
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -653,10 +654,7 @@ moo_command_context_new (MooEdit       *doc,
     g_return_val_if_fail (!doc || MOO_IS_EDIT (doc), NULL);
     g_return_val_if_fail (!window || MOO_IS_EDIT_WINDOW (window), NULL);
 
-    return g_object_new (MOO_TYPE_COMMAND_CONTEXT,
-                         "doc", doc,
-                         "window", window,
-                         (const char*) NULL);
+    return g::object_new<MooCommandContext>("doc", doc, "window", window);
 }
 
 
@@ -875,7 +873,7 @@ _moo_command_parse_file (const char         *filename,
     factories  = moo_command_list_factories ();
     while (factories)
     {
-        factory = factories->data;
+        factory = (MooCommandFactory*) factories->data;
 
         if (factory->extension && g_str_has_suffix (filename, factory->extension))
             break;
@@ -1225,7 +1223,7 @@ filter_lookup (const char *id)
     g_return_val_if_fail (id != NULL, NULL);
 
     if (registered_filters)
-        return g_hash_table_lookup (registered_filters, id);
+        return (FilterInfo*) g_hash_table_lookup (registered_filters, id);
     else
         return NULL;
 }
@@ -1339,7 +1337,7 @@ moo_command_filter_list (void)
 
     while (list)
     {
-        FilterInfo *fi = list->data;
+        FilterInfo *fi = (FilterInfo*) list->data;
         ids = g_slist_prepend (ids, g_strdup (fi->id));
         list = g_slist_delete_link (list, list);
     }

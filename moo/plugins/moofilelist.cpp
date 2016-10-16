@@ -273,11 +273,11 @@ uri_get_basename (const char *uri)
         return g_strdup (uri);
 }
 
-static char *
+static gstr
 file_get_uri (File *file)
 {
     if (file->uri)
-        return g_strdup (file->uri);
+        return gstr::copy (file->uri);
     else
         return moo_edit_get_uri (file->doc);
 }
@@ -648,7 +648,6 @@ file_list_add_doc (FileList *list,
                    MooEdit  *doc,
                    gboolean  new_)
 {
-    char *uri;
     GtkTreeIter iter;
     Item *item;
     GtkTreeRowReference *row;
@@ -657,9 +656,9 @@ file_list_add_doc (FileList *list,
     DEBUG_ASSERT (!new_ || !get_doc_row (list, doc));
     DEBUG_ASSERT (new_ == !g_slist_find (list->docs, doc));
 
-    uri = moo_edit_get_uri (doc);
+    gstr uri = moo_edit_get_uri (doc);
 
-    if (uri && file_list_find_uri (list, uri, &iter))
+    if (!uri.empty() && file_list_find_uri (list, uri.get(), &iter))
     {
         item = get_item_at_iter (list, &iter);
         DEBUG_ASSERT (ITEM_IS_FILE (item) && !FILE_ITEM (item)->doc);
@@ -681,7 +680,6 @@ file_list_add_doc (FileList *list,
         connect_doc (list, doc);
 
     gtk_tree_path_free (path);
-    g_free (uri);
 }
 
 static gboolean
@@ -708,7 +706,6 @@ file_list_update_doc (FileList *list,
                       MooEdit  *doc)
 {
     GtkTreeIter iter;
-    char *new_uri;
     Item *item;
 
     if (!g_slist_find (list->docs, doc))
@@ -729,16 +726,14 @@ file_list_update_doc (FileList *list,
     DEBUG_ASSERT (ITEM_IS_FILE (item) && FILE_ITEM (item)->doc == doc);
     DEBUG_ASSERT (FILE_ITEM (item)->uri != NULL);
 
-    new_uri = moo_edit_get_uri (doc);
+    gstr new_uri = moo_edit_get_uri (doc);
 
-    if (!new_uri || strcmp (new_uri, FILE_ITEM (item)->uri) != 0)
+    if (new_uri.empty() || strcmp (new_uri.get(), FILE_ITEM (item)->uri) != 0)
     {
         file_list_row_data.set(doc, nullptr);
         file_set_doc (FILE_ITEM (item), NULL);
         file_list_add_doc (list, doc, FALSE);
     }
-
-    g_free (new_uri);
 }
 
 static void
@@ -1263,18 +1258,20 @@ drag_source_drag_data_get (GtkTreeDragSource *drag_source,
     }
     else if (selection_data->target == moo_atom_uri_list ())
     {
-        Item *item;
-        char *uris[2] = {NULL, NULL};
+        Item *item = get_item_at_path (FILE_LIST (drag_source), path);
 
-        item = get_item_at_path (FILE_LIST (drag_source), path);
+        gstr uri;
+        const char *uris[2] = { nullptr, nullptr };
 
         if (ITEM_IS_FILE (item))
-            uris[0] = file_get_uri (FILE_ITEM (item));
+        {
+            uri = file_get_uri (FILE_ITEM (item));
+            uris[0] = !uri.empty() ? uri.get() : nullptr;
+        }
 
         if (uris[0])
         {
             gtk_selection_data_set_uris (selection_data, (char**) uris);
-            g_free (uris[0]);
             return TRUE;
         }
     }
@@ -1360,18 +1357,16 @@ move_row (FileList    *list,
 
     if (ITEM_IS_FILE (item) && FILE_ITEM (item)->doc)
     {
-        char *uri = file_get_uri (FILE_ITEM (item));
+        gstr uri = file_get_uri (FILE_ITEM (item));
 
-        if (!uri)
+        if (uri.empty())
             return FALSE;
 
         if (!FILE_ITEM (item)->uri)
-            file_set_uri (FILE_ITEM (item), uri);
+            file_set_uri (FILE_ITEM (item), uri.get());
 
         file_list_row_data.set(FILE_ITEM (item)->doc, nullptr);
         file_set_doc (FILE_ITEM (item), NULL);
-
-        g_free (uri);
     }
 
     if (gtk_tree_path_get_depth (source) > 1)

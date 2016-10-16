@@ -63,6 +63,8 @@ set(codegen_files
     moopython/codegen/reversewrapper.py
 )
 
+list(APPEND moopython_sources ${codegen_files})
+
 set(codegen_script ${CMAKE_CURRENT_SOURCE_DIR}/moopython/codegen/codegen.py)
 set(codegen ${PYTHON_EXECUTABLE} ${codegen_script} ${codegen_platform}
     --codebefore ${CMAKE_CURRENT_SOURCE_DIR}/moopython/pygtk/codebefore.c

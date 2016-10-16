@@ -366,7 +366,7 @@ moo_editor_constructor (GType                  type,
     moo_ui_xml_add_ui_from_string (editor->priv->doc_ui_xml,
                                    mooedit_ui_xml, -1);
 
-    editor->priv->lang_mgr = object_ref (moo_lang_mgr_default ());
+    editor->priv->lang_mgr = g::object_ref (moo_lang_mgr_default ());
     g_signal_connect_swapped (editor->priv->lang_mgr, "loaded",
                               G_CALLBACK (_moo_editor_apply_prefs),
                               editor);
@@ -995,7 +995,6 @@ update_history_item_for_doc (MooEditor *editor,
                              MooEdit   *doc,
                              gboolean   add)
 {
-    char *uri;
     MooHistoryItem *item;
     int line;
     const char *enc;
@@ -1004,10 +1003,11 @@ update_history_item_for_doc (MooEditor *editor,
     if (is_embedded (editor))
         return;
 
-    if (!(uri = moo_edit_get_uri (doc)))
+    gstr uri = moo_edit_get_uri (doc);
+    if (uri.empty())
         return;
 
-    item = moo_history_item_new (uri, NULL);
+    item = moo_history_item_new (uri.get(), NULL);
 
     view = moo_edit_get_view (doc);
     line = moo_text_view_get_cursor_line (GTK_TEXT_VIEW (view));
@@ -1024,7 +1024,6 @@ update_history_item_for_doc (MooEditor *editor,
         moo_history_mgr_update_file (editor->priv->history, item);
 
     moo_history_item_free (item);
-    g_free (uri);
 }
 
 
@@ -1894,16 +1893,15 @@ static MooMarkupNode *
 save_doc_session (MooEdit       *doc,
                   MooMarkupNode *elm)
 {
-    char *uri;
     const char *encoding;
     MooMarkupNode *node;
 
-    uri = moo_edit_get_uri (doc);
+    gstr uri = moo_edit_get_uri (doc);
     encoding = moo_edit_get_encoding (doc);
 
-    if (uri)
+    if (!uri.empty())
     {
-        node = moo_markup_create_text_element (elm, "document", uri);
+        node = moo_markup_create_text_element (elm, "document", uri.get());
 
         if (encoding && encoding[0])
             moo_markup_set_prop (node, "encoding", encoding);
@@ -1913,7 +1911,6 @@ save_doc_session (MooEdit       *doc,
         node = moo_markup_create_element (elm, "document");
     }
 
-    g_free (uri);
     return node;
 }
 

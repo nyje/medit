@@ -123,6 +123,28 @@ class StringArg(ArgType):
                                   '    Py_INCREF(Py_None);\n' +
                                   '    return Py_None;')
 
+class GstrArg(ArgType):
+    def write_param(self, ptype, pname, pdflt, pnull, info):
+        if pdflt:
+            if pdflt != 'NULL': pdflt = '"' + pdflt + '"'
+            info.varlist.add('char', '*' + pname + ' = ' + pdflt)
+        else:
+            info.varlist.add('char', '*' + pname)
+        info.arglist.append(pname)
+        if pnull:
+            info.add_parselist('z', ['&' + pname], [pname])
+        else:
+            info.add_parselist('s', ['&' + pname], [pname])
+    def write_return(self, ptype, ownsreturn, info):
+        # have to free result ...
+        info.varlist.add('gstr', 'ret')
+        info.codeafter.append('    if (!ret.is_null()) {\n' +
+                                '        PyObject *py_ret = PyString_FromString(ret.get());\n' +
+                                '        return py_ret;\n' +
+                                '    }\n' +
+                                '    Py_INCREF(Py_None);\n' +
+                                '    return Py_None;')
+
 class UCharArg(ArgType):
     # allows strings with embedded NULLs.
     def write_param(self, ptype, pname, pdflt, pnull, info):
@@ -943,6 +965,9 @@ matcher.register('const-gchar*', arg)
 matcher.register('gchar-const*', arg)
 matcher.register('string', arg)
 matcher.register('static_string', arg)
+
+arg = GstrArg()
+matcher.register('gstr', arg)
 
 arg = UCharArg()
 matcher.register('unsigned-char*', arg)
