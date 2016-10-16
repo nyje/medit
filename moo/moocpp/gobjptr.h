@@ -1,5 +1,5 @@
-/*11
- *   gptr.h
+/*
+ *   gobjptr.h
  *
  *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
@@ -14,8 +14,6 @@
  */
 
 #pragma once
-
-namespace moo {
 
 enum class ObjectMemPolicy
 {
@@ -141,6 +139,9 @@ private:
     FooObject* m_p;
 };
 
+namespace g 
+{
+
 template<typename T>
 inline ObjectPtr<T> ref_obj(T* p)
 {
@@ -153,4 +154,4 @@ inline ObjectPtr<T> take_obj(T* p)
     return ObjectPtr<T>(p, ObjectMemPolicy::TakeOwnership);
 }
 
-} // namespace moo
+} // namespace g

@@ -74,22 +74,37 @@ class ObjectDataAccessor
 public:
     ObjectDataAccessor(const char* prop_name)
         : m_prop_name(prop_name)
+        , m_prop_quark(0)
+    {
+    }
+
+    ObjectDataAccessor(GQuark prop_quark)
+        : m_prop_name(nullptr)
+        , m_prop_quark(prop_quark)
     {
     }
 
     Value get(Owner* owner) const
     {
-        return (Value) g_object_get_data (G_OBJECT (owner), m_prop_name);
+        return (Value) (m_prop_name ? 
+                        g_object_get_data (G_OBJECT (owner), m_prop_name) :
+                        g_object_get_qdata (G_OBJECT (owner), m_prop_quark));
     }
 
     void set(Owner* owner, Value value) const
     {
-        g_object_set_data (G_OBJECT (owner), m_prop_name, value);
+        if (m_prop_name)
+            g_object_set_data (G_OBJECT (owner), m_prop_name, value);
+        else
+            g_object_set_qdata (G_OBJECT (owner), m_prop_quark, value);
     }
 
     void set(Owner* owner, Value value, GDestroyNotify notify) const
     {
-        g_object_set_data_full (G_OBJECT (owner), m_prop_name, value, notify);
+        if (m_prop_name)
+            g_object_set_data_full (G_OBJECT (owner), m_prop_name, value, notify);
+        else
+            g_object_set_qdata_full (G_OBJECT (owner), m_prop_quark, value, notify);
     }
 
     ObjectDataAccessor(const ObjectDataAccessor&) = delete;
@@ -97,6 +112,7 @@ public:
 
 private:
     const char* m_prop_name;
+    const GQuark m_prop_quark;
 };
 
 template<typename Owner>
@@ -133,7 +149,10 @@ private:
 
 MOO_DEFINE_FLAGS(GRegexCompileFlags)
 MOO_DEFINE_FLAGS(GRegexMatchFlags)
+MOO_DEFINE_FLAGS(GParamFlags)
+MOO_DEFINE_FLAGS(GSignalFlags)
 MOO_DEFINE_FLAGS(GdkDragAction)
+MOO_DEFINE_FLAGS(GdkModifierType)
 
 
 #endif // __cplusplus

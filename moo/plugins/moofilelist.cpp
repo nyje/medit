@@ -119,10 +119,12 @@ struct FileListWindowPlugin {
 #define TREE_MODEL_ROW_ATOM (tree_model_row_atom ())
 MOO_DEFINE_ATOM (GTK_TREE_MODEL_ROW, tree_model_row)
 
-#define FILE_LIST_ROW_QUARK (file_list_row_quark ())
 MOO_DEFINE_QUARK_STATIC (moo-file-list-plugin-model-row, file_list_row_quark)
 #define FILE_LIST_QUARK (file_list_quark ())
 MOO_DEFINE_QUARK_STATIC (moo-file-list-plugin, file_list_quark)
+
+const ObjectDataAccessor<MooEdit, GtkTreeRowReference*> file_list_row_data(file_list_row_quark());
+
 
 static GType         item_get_type              (void) G_GNUC_CONST;
 static Item         *item_ref                   (Item           *item);
@@ -635,7 +637,7 @@ disconnect_doc (FileList *list,
 static GtkTreeRowReference *
 get_doc_row (FileList *list, MooEdit *doc)
 {
-    GtkTreeRowReference *row = g_object_get_qdata (G_OBJECT (doc), FILE_LIST_ROW_QUARK);
+    GtkTreeRowReference *row = file_list_row_data.get(doc);
     if (row && g_object_get_qdata (G_OBJECT (doc), FILE_LIST_QUARK) != list->plugin)
         row = NULL;
     return row;
@@ -644,7 +646,7 @@ get_doc_row (FileList *list, MooEdit *doc)
 static void
 file_list_add_doc (FileList *list,
                    MooEdit  *doc,
-                   gboolean  new)
+                   gboolean  new_)
 {
     char *uri;
     GtkTreeIter iter;
@@ -652,8 +654,8 @@ file_list_add_doc (FileList *list,
     GtkTreeRowReference *row;
     GtkTreePath *path;
 
-    DEBUG_ASSERT (!new || !get_doc_row (list, doc));
-    DEBUG_ASSERT (new == !g_slist_find (list->docs, doc));
+    DEBUG_ASSERT (!new_ || !get_doc_row (list, doc));
+    DEBUG_ASSERT (new_ == !g_slist_find (list->docs, doc));
 
     uri = moo_edit_get_uri (doc);
 
@@ -672,11 +674,10 @@ file_list_add_doc (FileList *list,
 
     path = gtk_tree_model_get_path (GTK_TREE_MODEL (list), &iter);
     row = gtk_tree_row_reference_new (GTK_TREE_MODEL (list), path);
-    g_object_set_qdata_full (G_OBJECT (doc), FILE_LIST_ROW_QUARK, row,
-                             (GDestroyNotify) gtk_tree_row_reference_free);
+    file_list_row_data.set(doc, row, (GDestroyNotify) gtk_tree_row_reference_free);
     g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, list->plugin);
 
-    if (new)
+    if (new_)
         connect_doc (list, doc);
 
     gtk_tree_path_free (path);
@@ -732,7 +733,7 @@ file_list_update_doc (FileList *list,
 
     if (!new_uri || strcmp (new_uri, FILE_ITEM (item)->uri) != 0)
     {
-        g_object_set_qdata (G_OBJECT (doc), FILE_LIST_ROW_QUARK, NULL);
+        file_list_row_data.set(doc, nullptr);
         file_set_doc (FILE_ITEM (item), NULL);
         file_list_add_doc (list, doc, FALSE);
     }
@@ -764,7 +765,7 @@ file_list_remove_doc (FileList *list,
 
     if (get_doc_row (list, doc))
     {
-        g_object_set_qdata (G_OBJECT (doc), FILE_LIST_ROW_QUARK, NULL);
+        file_list_row_data.set(doc, nullptr);
         g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, NULL);
     }
 
@@ -795,13 +796,13 @@ file_list_update (FileList *list,
     remove_auto_items (list);
 
     for (l = docs; l != NULL; l = l->next)
-        file_list_update_doc (list, l->data);
+        file_list_update_doc (list, (MooEdit*) l->data);
 
     old_docs = g_slist_copy (list->docs);
     for (l = docs; l != NULL; l = l->next)
         old_docs = g_slist_remove (old_docs, l->data);
     for (l = old_docs; l != NULL; l = l->next)
-        file_list_remove_doc (list, l->data);
+        file_list_remove_doc (list, (MooEdit*) l->data);
 
     check_list (list);
 
@@ -816,7 +817,7 @@ file_list_shutdown (FileList *list)
         GtkTreeIter iter;
         MooEdit *doc;
 
-        doc = list->docs->data;
+        doc = (MooEdit*) list->docs->data;
 
         if (doc_get_list_iter (list, doc, &iter))
         {
@@ -827,7 +828,7 @@ file_list_shutdown (FileList *list)
 
         if (get_doc_row (list, doc))
         {
-            g_object_set_qdata (G_OBJECT (doc), FILE_LIST_ROW_QUARK, NULL);
+            file_list_row_data.set(doc, nullptr);
             g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, NULL);
         }
 
@@ -1089,7 +1090,7 @@ file_list_save_config (FileList   *list,
 
             for (l = ui_config->expanded_rows; l != NULL; l = l->next)
             {
-                GtkTreePath *path = l->data;
+                GtkTreePath *path = (GtkTreePath*) l->data;
                 char *tmp = gtk_tree_path_to_string (path);
                 if (l != ui_config->expanded_rows)
                     g_string_append (buffer, ";");
@@ -1215,7 +1216,7 @@ file_list_remove_items (FileList *list,
     {
         GtkTreeRowReference *row;
 
-        row = gtk_tree_row_reference_new (GTK_TREE_MODEL (list), paths->data);
+        row = gtk_tree_row_reference_new (GTK_TREE_MODEL (list), (GtkTreePath*) paths->data);
 
         if (row)
             rows = g_slist_prepend (rows, row);
@@ -1229,8 +1230,8 @@ file_list_remove_items (FileList *list,
     {
         GtkTreePath *path = NULL;
 
-        if (gtk_tree_row_reference_valid (rows->data))
-            path = gtk_tree_row_reference_get_path (rows->data);
+        if (gtk_tree_row_reference_valid ((GtkTreeRowReference*) rows->data))
+            path = gtk_tree_row_reference_get_path ((GtkTreeRowReference*) rows->data);
 
         if (path)
         {
@@ -1238,7 +1239,7 @@ file_list_remove_items (FileList *list,
             gtk_tree_path_free (path);
         }
 
-        gtk_tree_row_reference_free (rows->data);
+        gtk_tree_row_reference_free ((GtkTreeRowReference*) rows->data);
         rows = g_slist_delete_link (rows, rows);
     }
 }
@@ -1367,8 +1368,7 @@ move_row (FileList    *list,
         if (!FILE_ITEM (item)->uri)
             file_set_uri (FILE_ITEM (item), uri);
 
-        g_object_set_qdata (G_OBJECT (FILE_ITEM (item)->doc),
-                            FILE_LIST_ROW_QUARK, NULL);
+        file_list_row_data.set(FILE_ITEM (item)->doc, nullptr);
         file_set_doc (FILE_ITEM (item), NULL);
 
         g_free (uri);
@@ -1671,8 +1671,8 @@ static int
 cmp_uris (const void *p1,
           const void *p2)
 {
-    const char *const *s1 = p1;
-    const char *const *s2 = p2;
+    const char *const *s1 = (const char *const *) p1;
+    const char *const *s2 = (const char *const *) p2;
     return strcmp (*s1, *s2);
 }
 
@@ -1875,14 +1875,14 @@ rename_activated (G_GNUC_UNUSED GtkWidget *menuitem,
         g_return_if_fail (selected && !selected->next);
     }
 
-    item = get_item_at_path (plugin->list, selected->data);
+    item = get_item_at_path (plugin->list, (GtkTreePath*) selected->data);
     if (!ITEM_IS_GROUP (item))
     {
         path_list_free (selected);
         g_return_if_fail (ITEM_IS_GROUP (item));
     }
 
-    start_edit (plugin, selected->data);
+    start_edit (plugin, (GtkTreePath*) selected->data);
 
     path_list_free (selected);
 }
@@ -1896,7 +1896,7 @@ add_group_activated (G_GNUC_UNUSED GtkWidget *menuitem,
 
     selected = get_selected_rows (plugin);
     if (selected)
-        path = g_list_last (selected)->data;
+        path = (GtkTreePath*) g_list_last (selected)->data;
     else
         path = NULL;
 
@@ -1992,7 +1992,7 @@ open_activated (G_GNUC_UNUSED GtkWidget *menuitem,
     selected = get_selected_rows (plugin);
 
     for (l = selected; l != NULL; l = l->next)
-        open_file (plugin, l->data);
+        open_file (plugin, (GtkTreePath*) l->data);
 
     path_list_free (selected);
 }
@@ -2012,7 +2012,7 @@ can_remove (FileList *list,
     while (paths)
     {
         GtkTreeIter iter;
-        GtkTreePath *path = paths->data;
+        GtkTreePath *path = (GtkTreePath*) paths->data;
         gtk_tree_model_get_iter (GTK_TREE_MODEL (list), &iter, path);
         if (!file_list_iter_is_auto (list, &iter))
             return TRUE;
@@ -2032,7 +2032,7 @@ popup_menu (WindowPlugin *plugin,
     GtkTreePath *single_path;
     Item *single_item;
 
-    single_path = (selected && !selected->next) ? selected->data : NULL;
+    single_path = (selected && !selected->next) ? (GtkTreePath*) selected->data : NULL;
     single_item = single_path ? get_item_at_path (plugin->list, single_path) : NULL;
 
     menu = gtk_menu_new ();
@@ -2184,7 +2184,7 @@ create_treeview (WindowPlugin *plugin)
 static void
 create_model (WindowPlugin *plugin)
 {
-    plugin->list = g_object_new (file_list_get_type (), (const char*) NULL);
+    plugin->list = (FileList*) g_object_new (file_list_get_type (), (const char*) NULL);
     plugin->list->plugin = plugin;
 
     file_list_load_config (plugin->list, plugin->filename, &plugin->ui_config);
@@ -2259,7 +2259,7 @@ load_ui_config (WindowPlugin *plugin)
 
         while (cfg->expanded_rows)
         {
-            GtkTreePath *path = cfg->expanded_rows->data;
+            GtkTreePath *path = (GtkTreePath*) cfg->expanded_rows->data;
             gtk_tree_view_expand_row (plugin->treeview, path, FALSE);
             gtk_tree_path_free (path);
             cfg->expanded_rows = g_slist_delete_link (cfg->expanded_rows,

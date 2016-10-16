@@ -271,10 +271,45 @@ moo_edit_class_init (MooEditClass *klass)
 }
 
 
+MooEditPrivate::MooEditPrivate()
+    : editor(nullptr)
+    , views(nullptr)
+    , active_view(nullptr)
+    , dead_active_view(false)
+    , changed_handler_id(0)
+    , modified_changed_handler_id(0)
+    , apply_config_idle(0)
+    , in_recheck_config(0)
+    , filename(nullptr)
+    , norm_name(nullptr)
+    , display_filename(nullptr)
+    , display_basename(nullptr)
+    , encoding(nullptr)
+    , line_end_type(MOO_LE_NONE)
+    , status(MOO_EDIT_STATUS_NORMAL)
+    , file_monitor_id(0)
+    , modified_on_disk(false)
+    , deleted_from_disk(false)
+    , sync_timeout_id(0)
+    , state(MOO_EDIT_STATE_NORMAL)
+    , progress(nullptr)
+    , enable_bookmarks(false)
+    , bookmarks(nullptr)
+    , update_bookmarks_idle(0)
+    , actions(nullptr)
+{
+}
+
+MooEditPrivate::~MooEditPrivate()
+{
+}
+
+
 static void
 moo_edit_init (MooEdit *edit)
 {
     edit->priv = G_TYPE_INSTANCE_GET_PRIVATE (edit, MOO_TYPE_EDIT, MooEditPrivate);
+    new(edit->priv) MooEditPrivate;
 
     edit->priv->views = moo_edit_view_array_new ();
     edit->priv->buffer = GTK_TEXT_BUFFER (g_object_new (MOO_TYPE_TEXT_BUFFER, NULL));
@@ -347,6 +382,8 @@ moo_edit_finalize (GObject *object)
     g_free (edit->priv->display_filename);
     g_free (edit->priv->display_basename);
     g_free (edit->priv->encoding);
+
+    edit->priv->~MooEditPrivate();
 
     G_OBJECT_CLASS (moo_edit_parent_class)->finalize (object);
 }

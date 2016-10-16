@@ -60,6 +60,7 @@ static void     helper_update_model     (MooTreeHelper  *helper,
                                          GtkTreeIter    *iter,
                                          PrefsPageXml   *gxml);
 
+const ObjectDataAccessor<MooGladeXML, MooTreeHelper*> tree_helper_data("moo-tree-helper");
 
 GtkWidget *
 _moo_file_selector_prefs_page (MooPlugin *plugin)
@@ -107,7 +108,7 @@ _moo_file_selector_prefs_page (MooPlugin *plugin)
     g_signal_connect (helper, "update-model",
                       G_CALLBACK (helper_update_model),
                       gxml);
-    g_object_set_data_full (G_OBJECT (gxml->xml), "moo-tree-helper", helper, g_object_unref);
+    tree_helper_data.set(gxml->xml, helper, g_object_unref);
 
     g_object_set_data (G_OBJECT (gxml->xml), "moo-file-selector-plugin", plugin);
     return GTK_WIDGET (page);
@@ -204,12 +205,12 @@ save_store (MooTreeHelper *helper,
 static void
 prefs_page_apply (PrefsPageXml *gxml)
 {
-    gpointer store = gtk_tree_view_get_model (gxml->treeview);
-    MooTreeHelper *helper = g_object_get_data (G_OBJECT (gxml->xml), "moo-tree-helper");
+    GtkTreeModel *store = gtk_tree_view_get_model (gxml->treeview);
+    MooTreeHelper *helper = tree_helper_data.get(gxml->xml);
 
     _moo_tree_helper_update_model (helper, NULL, NULL);
     save_store (helper, store);
-    _moo_file_selector_update_tools (g_object_get_data (G_OBJECT (gxml->xml), "moo-file-selector-plugin"));
+    _moo_file_selector_update_tools ((MooPlugin*) g_object_get_data (G_OBJECT (gxml->xml), "moo-file-selector-plugin"));
 }
 
 
@@ -272,11 +273,11 @@ populate_store (GtkListStore *store)
 static void
 prefs_page_init (PrefsPageXml *gxml)
 {
-    gpointer store = gtk_tree_view_get_model (gxml->treeview);
-    populate_store (store);
+    GtkTreeModel *store = gtk_tree_view_get_model (gxml->treeview);
+    populate_store (GTK_LIST_STORE (store));
     _moo_tree_view_select_first (gxml->treeview);
-    _moo_tree_helper_update_widgets (g_object_get_data (G_OBJECT (gxml->xml), "moo-tree-helper"));
-    _moo_tree_helper_set_modified (g_object_get_data (G_OBJECT (gxml->xml), "moo-tree-helper"), FALSE);
+    _moo_tree_helper_update_widgets (tree_helper_data.get(gxml->xml));
+    _moo_tree_helper_set_modified (tree_helper_data.get(gxml->xml), FALSE);
 }
 
 

@@ -78,7 +78,7 @@
 /* XXX Shift-Command-W is Close File on Mac */
 #define MOO_EDIT_ACCEL_CLOSE_ALL MOO_ACCEL_CTRL "<Shift>W"
 
-#define MOO_EDIT_ACCEL_STOP "Escape"
+#define MOO_EDIT_ACCEL_STOP "<Ctrl>Cancel"
 
 #define MOO_EDIT_ACCEL_COMPLETE "<Ctrl>Space"
 

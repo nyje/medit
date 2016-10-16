@@ -19,8 +19,6 @@
 
 #include <glib.h>
 
-MOO_DEFINE_FLAGS(GSignalFlags)
-
 template<typename Data, typename Obj>
 inline Data* object_get_data_cast(Obj* obj, const char* key)
 {

@@ -92,7 +92,7 @@ typedef struct {
 static GHashTable *action_checks; /* char* -> ActionCheck* */
 static std::unordered_set<MooEditWindow*> windows;
 
-using MooNotebookPtr = moo::ObjectPtr<MooNotebook>;
+using MooNotebookPtr = ObjectPtr<MooNotebook>;
 
 struct MooEditWindowPrivate {
     MooEditor *editor;
@@ -1036,7 +1036,7 @@ moo_edit_window_constructor (GType                  type,
         if (i == 0)
             gtk_widget_show (notebook);
 
-        window->priv->notebooks.push_back(moo::ref_obj(MOO_NOTEBOOK(notebook)));
+        window->priv->notebooks.push_back(g::ref_obj(MOO_NOTEBOOK(notebook)));
 
         if (i == 0)
             gtk_paned_pack1 (GTK_PANED (window->priv->doc_paned), notebook, TRUE, FALSE);

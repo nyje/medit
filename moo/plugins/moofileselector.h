@@ -13,14 +13,10 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_FILE_SELECTOR_H
-#define MOO_FILE_SELECTOR_H
+#pragma once
 
 #include "mooedit/mooplugin.h"
 #include "moofileview/moofileview-impl.h"
-
-G_BEGIN_DECLS
-
 
 #define MOO_FILE_SELECTOR_PLUGIN_ID "FileSelector"
 
@@ -74,8 +70,3 @@ G_STMT_START {                                                                  
         filesel = NULL;                                                         \
     }                                                                           \
 } G_STMT_END
-
-
-G_END_DECLS
-
-#endif /* MOO_FILE_SELECTOR_H */
