@@ -202,7 +202,7 @@ moo_file_selector_set_property (GObject        *object,
     switch (prop_id)
     {
         case PROP_WINDOW:
-            sel->window = g_value_get_object (value);
+            sel->window = (MooEditWindow*) g_value_get_object (value);
             break;
 
         default:
@@ -489,7 +489,7 @@ file_selector_create_file (MooFileSelector *filesel)
             goto out;
         }
 
-        dir = selected->data;
+        dir = (char*) selected->data;
         g_list_free (selected);
         selected = NULL;
 
@@ -513,7 +513,7 @@ file_selector_create_file (MooFileSelector *filesel)
     if (!path)
         goto out;
 
-    info = moo_open_info_new (path, NULL, -1, 0);
+    info = moo_open_info_new (path, NULL, -1, MOO_OPEN_FLAGS_NONE);
     doc = moo_editor_new_file (moo_edit_window_get_editor (filesel->window),
                                info, GTK_WIDGET (filesel), NULL);
     g_object_unref (info);
@@ -545,7 +545,7 @@ file_selector_open_files (MooFileSelector *filesel)
 
     while (selected)
     {
-        char *filename = selected->data;
+        char *filename = (char*) selected->data;
 
         if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
             files = g_list_prepend (files, filename);
@@ -560,7 +560,7 @@ file_selector_open_files (MooFileSelector *filesel)
     while (files)
     {
         moo_editor_open_path (moo_edit_window_get_editor (filesel->window),
-                              files->data, NULL, -1, filesel->window);
+                              (const char*) files->data, NULL, -1, filesel->window);
         g_free (files->data);
         files = g_list_delete_link (files, files);
     }
@@ -714,7 +714,7 @@ moo_file_selector_drop_data_received (MooFileView    *fileview,
         goto error;
     }
 
-    tab = moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
+    tab = (MooEditTab*) moo_selection_data_get_pointer (data, MOO_EDIT_TAB_ATOM);
 
     if (!MOO_IS_EDIT_TAB (tab))
     {
@@ -1011,12 +1011,12 @@ drop_item_activated (GObject         *item,
     gboolean alternate;
 
     data = g_object_get_data (item, "moo-file-selector-drop-action");
-    doc = g_object_get_data (item, "moo-file-selector-drop-doc");
-    destdir = g_object_get_data (item, "moo-file-selector-drop-destdir");
+    doc = (MooEdit*) g_object_get_data (item, "moo-file-selector-drop-doc");
+    destdir = (char*) g_object_get_data (item, "moo-file-selector-drop-destdir");
     alternate = GPOINTER_TO_INT (g_object_get_data (item, "moo-menu-item-alternate"));
     g_return_if_fail (doc != NULL && destdir != NULL);
 
-    action = GPOINTER_TO_INT (data);
+    action = (DropDocAction) GPOINTER_TO_INT (data);
 
     switch (action)
     {
@@ -1084,17 +1084,17 @@ alternate_toggled (GtkWidget *menu)
     mask = _moo_get_modifiers (menu);
     alternate = (mask & GDK_SHIFT_MASK) != 0;
 
-    items = g_object_get_data (G_OBJECT (menu), "moo-menu-items");
+    items = (GSList*) g_object_get_data (G_OBJECT (menu), "moo-menu-items");
 
     for (l = items; l != NULL; l = l->next)
     {
-        GtkWidget *item = l->data;
+        GtkWidget *item = (GtkWidget*) l->data;
         const char *label;
 
         if (alternate)
-            label = g_object_get_data (G_OBJECT (item), "moo-menu-item-alternate-label");
+            label = (char*) g_object_get_data (G_OBJECT (item), "moo-menu-item-alternate-label");
         else
-            label = g_object_get_data (G_OBJECT (item), "moo-menu-item-label");
+            label = (char*) g_object_get_data (G_OBJECT (item), "moo-menu-item-label");
 
         g_object_set_data (G_OBJECT (item), "moo-menu-item-alternate",
                            GINT_TO_POINTER (alternate));
@@ -1254,10 +1254,11 @@ file_selector_plugin_attach (MooPlugin     *mplugin,
         plugin->bookmark_mgr = _moo_bookmark_mgr_new ();
 
     /* it attaches itself to window */
-    filesel = g_object_new (MOO_TYPE_FILE_SELECTOR,
-                            "bookmark-mgr", plugin->bookmark_mgr,
-                            "window", window,
-                            (const char*) NULL);
+    filesel = GTK_WIDGET (
+        g_object_new (MOO_TYPE_FILE_SELECTOR,
+                      "bookmark-mgr", plugin->bookmark_mgr,
+                      "window", window,
+                      (const char*) NULL));
 
     plugin->instances = g_slist_prepend (plugin->instances, filesel);
 }
@@ -1282,7 +1283,7 @@ _moo_file_selector_update_tools (MooPlugin *plugin)
 {
     GSList *l;
     for (l = ((Plugin*)plugin)->instances; l != NULL; l = l->next)
-        _moo_file_view_tools_load (l->data);
+        _moo_file_view_tools_load ((MooFileView*) l->data);
 }
 
 

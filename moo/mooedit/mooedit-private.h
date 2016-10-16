@@ -13,28 +13,27 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_EDIT_PRIVATE_H
-#define MOO_EDIT_PRIVATE_H
+#pragma once
 
 #include "mooedit/mooedit-impl.h"
 #include "mooedit/mooeditprogress.h"
-
-G_BEGIN_DECLS
+#include "moocpp/gobjptr.h"
 
 #define MOO_EDIT_IS_UNTITLED(edit) (!(edit)->priv->file)
 
-struct MooEditPrivate {
+struct MooEditPrivate
+{
     MooEditor *editor;
 
     GtkTextBuffer *buffer;
     MooEditViewArray *views;
     MooEditView *active_view;
-    gboolean dead_active_view;
+    bool dead_active_view;
 
     gulong changed_handler_id;
     gulong modified_changed_handler_id;
     guint apply_config_idle;
-    gboolean in_recheck_config;
+    bool in_recheck_config;
 
     /***********************************************************************/
     /* Document
@@ -50,8 +49,8 @@ struct MooEditPrivate {
     MooEditStatus status;
 
     guint file_monitor_id;
-    gboolean modified_on_disk;
-    gboolean deleted_from_disk;
+    bool modified_on_disk;
+    bool deleted_from_disk;
 
     // file sync event source ID
     guint sync_timeout_id;
@@ -62,7 +61,7 @@ struct MooEditPrivate {
     /***********************************************************************/
     /* Bookmarks
      */
-    gboolean enable_bookmarks;
+    bool enable_bookmarks;
     GSList *bookmarks; /* sorted by line number */
     guint update_bookmarks_idle;
 
@@ -70,10 +69,12 @@ struct MooEditPrivate {
     /* Actions
      */
     MooActionCollection *actions;
+
+    MooEditPrivate();
+    ~MooEditPrivate();
+
+    MooEditPrivate(const MooEditPrivate&) = delete;
+    MooEditPrivate& operator=(const MooEditPrivate&) = delete;
 };
 
 void    _moo_edit_remove_untitled   (MooEdit    *doc);
-
-G_END_DECLS
-
-#endif /* MOO_EDIT_PRIVATE_H */

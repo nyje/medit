@@ -80,7 +80,7 @@ moo_edit_set_enable_bookmarks (MooEdit  *edit,
 
     enable = enable != 0;
 
-    if (enable != edit->priv->enable_bookmarks)
+    if ((bool) enable != edit->priv->enable_bookmarks)
     {
         edit->priv->enable_bookmarks = enable;
 

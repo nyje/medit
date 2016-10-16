@@ -129,7 +129,7 @@ find_in_files_cb (MooEditWindow *window)
     WindowStuff *stuff;
     int response;
 
-    stuff = moo_win_plugin_lookup (FIND_PLUGIN_ID, window);
+    stuff = (WindowStuff*) moo_win_plugin_lookup (FIND_PLUGIN_ID, window);
     g_return_if_fail (stuff != NULL);
 
     if (!stuff->grep_dialog)
@@ -154,7 +154,7 @@ find_file_cb (MooEditWindow *window)
     WindowStuff *stuff;
     int response;
 
-    stuff = moo_win_plugin_lookup (FIND_PLUGIN_ID, window);
+    stuff = (WindowStuff*) moo_win_plugin_lookup (FIND_PLUGIN_ID, window);
     g_return_if_fail (stuff != NULL);
 
     if (!stuff->find_dialog)
@@ -185,10 +185,11 @@ ensure_output (WindowStuff *stuff)
 
     label = moo_pane_label_new (MOO_STOCK_FIND_IN_FILES, NULL,
                                 _("Search Results"), _("Search Results"));
-    stuff->output = g_object_new (MOO_TYPE_CMD_VIEW,
-                                  "highlight-current-line", TRUE,
-                                  "highlight-current-line-unfocused", TRUE,
-                                  (const char*) NULL);
+    stuff->output = MOO_CMD_VIEW (
+        g_object_new (MOO_TYPE_CMD_VIEW,
+                      "highlight-current-line", TRUE,
+                      "highlight-current-line-unfocused", TRUE,
+                      (const char*) NULL));
 
     moo_edit_window_add_stop_client (window, G_OBJECT (stuff->output));
     g_signal_connect_swapped (stuff->output, "activate",
@@ -241,7 +242,7 @@ find_window_plugin_create (WindowStuff *stuff)
 static gboolean
 find_plugin_init (FindPlugin *plugin)
 {
-    MooWindowClass *klass = g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
+    MooWindowClass *klass = (MooWindowClass*) g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
     MooEditor *editor = moo_editor_instance ();
     MooUiXml *xml = moo_editor_get_ui_xml (editor);
 
@@ -287,7 +288,7 @@ find_plugin_init (FindPlugin *plugin)
 static void
 find_plugin_deinit (FindPlugin *plugin)
 {
-    MooWindowClass *klass = g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
+    MooWindowClass *klass = (MooWindowClass*) g_type_class_ref (MOO_TYPE_EDIT_WINDOW);
     MooEditor *editor = moo_editor_instance ();
     MooUiXml *xml = moo_editor_get_ui_xml (editor);
 
@@ -323,11 +324,12 @@ setup_file_combo (MooHistoryCombo *hist_combo)
     g_object_set (hist_combo, "enable-completion", FALSE, NULL);
 
     entry = MOO_COMBO (hist_combo)->entry;
-    completion = g_object_new (MOO_TYPE_FILE_ENTRY_COMPLETION,
-                               "directories-only", TRUE,
-                               "case-sensitive", !moo_os_win32 (),
-                               "show-hidden", FALSE,
-                               (const char*) NULL);
+    completion = MOO_FILE_ENTRY_COMPLETION (
+        g_object_new (MOO_TYPE_FILE_ENTRY_COMPLETION,
+                      "directories-only", TRUE,
+                      "case-sensitive", !moo_os_win32 (),
+                      "show-hidden", FALSE,
+                      (const char*) NULL));
     _moo_file_entry_completion_set_entry (completion, GTK_ENTRY (entry));
     g_object_set_data_full (G_OBJECT (entry), "find-plugin-file-completion",
                             completion, g_object_unref);
@@ -451,7 +453,7 @@ init_dir_entry (MooHistoryCombo *hist_combo,
         GFile *file;
         char *filename;
 
-        completion = g_object_get_data (G_OBJECT (entry), "find-plugin-file-completion");
+        completion = (MooFileEntryCompletion*) g_object_get_data (G_OBJECT (entry), "find-plugin-file-completion");
 
         file = doc ? moo_edit_get_file (doc) : NULL;
         filename = file ? g_file_get_path (file) : NULL;
@@ -544,7 +546,7 @@ get_directories (MooHistoryCombo *combo)
     g_return_val_if_fail (combo != NULL, NULL);
     entry = MOO_COMBO (combo)->entry;
 
-    completion = g_object_get_data (G_OBJECT (entry), "find-plugin-file-completion");
+    completion = (MooFileEntryCompletion*) g_object_get_data (G_OBJECT (entry), "find-plugin-file-completion");
     text = _moo_file_entry_completion_get_path (completion);
 
     if (!text)
@@ -644,7 +646,7 @@ do_find (MooEditWindow *window,
     {
         moo_line_view_clear (MOO_LINE_VIEW (stuff->output));
         moo_big_paned_present_pane (window->paned, pane);
-        execute_find (pattern, dirs->data, skip, stuff);
+        execute_find (pattern, (const char*) dirs->data, skip, stuff);
     }
 
     g_slist_foreach (dirs, (GFunc) g_free, NULL);
@@ -963,7 +965,7 @@ execute_grep (const char     *pattern,
 
     while (dirs)
     {
-        char *dir = dirs->data;
+        const char *dir = (const char*) dirs->data;
         if (dir && *dir)
         {
             char *quoted_dir = g_shell_quote (dir);
@@ -1112,7 +1114,7 @@ output_activate (WindowStuff    *stuff,
     MooEditor *editor;
     FileLinePair *line_data;
 
-    line_data = moo_line_view_get_data (MOO_LINE_VIEW (stuff->output), line);
+    line_data = (FileLinePair*) moo_line_view_get_data (MOO_LINE_VIEW (stuff->output), line);
 
     if (!line_data || (stuff->cmd == CMD_GREP && line_data->line < 0))
         return FALSE;

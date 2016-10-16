@@ -1,12 +1,12 @@
 SET(plugins_sources
     plugins/plugins.cmake
-    plugins/moofileselector-prefs.c
-    plugins/moofileselector.c
+    plugins/moofileselector-prefs.cpp
+    plugins/moofileselector.cpp
     plugins/moofileselector.h
     plugins/mooplugin-builtin.h
-    plugins/mooplugin-builtin.c
-    plugins/moofilelist.c
-    plugins/moofind.c
+    plugins/mooplugin-builtin.cpp
+    plugins/moofilelist.cpp
+    plugins/moofind.cpp
 )
 
 foreach(input_file
