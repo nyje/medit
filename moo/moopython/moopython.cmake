@@ -42,7 +42,7 @@ set(moopython_extra_dist
 )
 
 list(APPEND built_moopython_sources
-    moopython/pygtk/moo-mod.c
+    moopython/pygtk/moo-mod.cpp
     moopython/pygtk/moo-mod.h
 )
 
@@ -69,15 +69,15 @@ set(codegen ${PYTHON_EXECUTABLE} ${codegen_script} ${codegen_platform}
     --codeafter ${CMAKE_CURRENT_SOURCE_DIR}/moopython/pygtk/codeafter.c
 )
 
-add_custom_command(OUTPUT moopython/pygtk/moo-mod.c
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo-mod.c
+add_custom_command(OUTPUT moopython/pygtk/moo-mod.cpp
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo-mod.cpp
         ${codegen} --prefix _moo
             --load-types ${CMAKE_CURRENT_SOURCE_DIR}/moopython/codegen/argtypes_m.py
             --register ${PYGOBJECT_DEFS_DIR}/gio-types.defs
             --register ${PYGTK_DEFS_DIR}/gtk-types.defs
             --register ${PYGTK_DEFS_DIR}/gdk-types.defs
             --override ${CMAKE_CURRENT_SOURCE_DIR}/moopython/pygtk/moo.override
-            --outfilename moopython/pygtk/moo-mod.c
+            --outfilename moopython/pygtk/moo-mod.cpp
             moopython/pygtk/moo.defs
     MAIN_DEPENDENCY moopython/pygtk/moo.defs
     DEPENDS ${moo_override_files} ${codegen_files}
