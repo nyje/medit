@@ -4,6 +4,7 @@
 #include "moolua/lua/lua.h"
 #include "moolua/lua/lauxlib.h"
 #include "mooutils/mooarray.h"
+#include "moocpp/gstr.h"
 #include <gtk/gtk.h>
 #include <stdarg.h>
 
@@ -237,6 +238,8 @@ int             moo_lua_push_utf8               (lua_State          *L,
                                                  char               *value);
 int             moo_lua_push_utf8_copy          (lua_State          *L,
                                                  const char         *value);
+int             moo_lua_push_gstr               (lua_State          *L,
+                                                 const gstr         &value);
 int             moo_lua_push_filename           (lua_State          *L,
                                                  char               *value);
 int             moo_lua_push_filename_copy      (lua_State          *L,

@@ -28,23 +28,19 @@ G_BEGIN_DECLS
 #define MOO_IS_COMMAND_SCRIPT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), MOO_TYPE_COMMAND_SCRIPT))
 #define MOO_COMMAND_SCRIPT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), MOO_TYPE_COMMAND_SCRIPT, MooCommandScriptClass))
 
-typedef struct _MooCommandScript        MooCommandScript;
 typedef struct _MooCommandScriptPrivate MooCommandScriptPrivate;
-typedef struct _MooCommandScriptClass   MooCommandScriptClass;
 
 typedef enum {
     MOO_SCRIPT_LUA,
     MOO_SCRIPT_PYTHON
 } MooScriptType;
 
-struct _MooCommandScript {
-    MooCommand base;
+struct MooCommandScript : public MooCommand {
     MooScriptType type;
     char *code;
 };
 
-struct _MooCommandScriptClass {
-    MooCommandClass base_class;
+struct MooCommandScriptClass : public MooCommandClass {
 };
 
 

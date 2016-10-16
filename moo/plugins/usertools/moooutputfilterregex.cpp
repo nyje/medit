@@ -217,7 +217,7 @@ find_file (const char           *file,
         real_file = g_strdup (file);
 
     if (!real_file && filter->priv->dir_stack)
-        real_file = find_file_in_dir (file, filter->priv->dir_stack->data);
+        real_file = find_file_in_dir (file, (const char*) filter->priv->dir_stack->data);
 
     if (!real_file)
         real_file = find_file_in_dirs (file, moo_output_filter_get_active_dirs (MOO_OUTPUT_FILTER (filter)));
@@ -245,7 +245,7 @@ parse_file_line (MooOutputFilterRegex *filter,
         return NULL;
 
     if (!file && filter->priv->file_stack)
-        file = filter->priv->file_stack->data;
+        file = (const char*) filter->priv->file_stack->data;
 
     if (!file)
         file = moo_output_filter_get_active_file (MOO_OUTPUT_FILTER (filter));
@@ -321,7 +321,7 @@ find_match (const char   *text,
     if (!re_all)
         return FALSE;
 
-    if (!g_regex_match_full (re_all, text, -1, pos, 0, &match_info, NULL))
+    if (!g_regex_match_full (re_all, text, -1, pos, (GRegexMatchFlags) 0, &match_info, NULL))
     {
         g_match_info_free (match_info);
         return FALSE;
@@ -438,7 +438,7 @@ process_action (MooOutputFilterRegex *filter,
             if (!data)
             {
                 if (*list)
-                    data = g_strdup ((*list)->data);
+                    data = g_strdup ((const char*) (*list)->data);
                 else
                     data = g_strdup (moo_output_filter_get_active_file (MOO_OUTPUT_FILTER (filter)));
             }
@@ -520,7 +520,7 @@ process_line (MooOutputFilterRegex  *filter,
         line_data = process_location (filter, pattern, text, view, line_no);
 
         for (l = pattern->actions; l != NULL; l = l->next)
-            process_action (filter, pattern, l->data, text);
+            process_action (filter, pattern, (ActionInfo*) l->data, text);
 
         if (pattern->span)
         {
@@ -608,12 +608,12 @@ filter_factory_func (const char *id,
     FilterInfo *info;
     MooOutputFilterRegex *filter;
 
-    info = data;
+    info = (FilterInfo*) data;
 
     g_return_val_if_fail (id != NULL, NULL);
     g_return_val_if_fail (!strcmp (info->id, id), NULL);
 
-    filter = g_object_new (MOO_TYPE_OUTPUT_FILTER_REGEX, (const char*) NULL);
+    filter = (MooOutputFilterRegex*) g_object_new (MOO_TYPE_OUTPUT_FILTER_REGEX, (const char*) NULL);
     filter->priv->filter = filter_info_ref (info);
     filter->priv->state = info->state;
 
@@ -655,7 +655,7 @@ pattern_info_new (OutputType  type,
     PatternInfo *info;
     GError *error = NULL;
 
-    re = g_regex_new (pattern, 0, 0, &error);
+    re = g_regex_new (pattern, (GRegexCompileFlags) 0, (GRegexMatchFlags) 0, &error);
 
     if (!re)
     {
@@ -703,7 +703,7 @@ get_re_all (GSList    *patterns,
     {
         PatternInfo *pat;
 
-        pat = patterns->data;
+        pat = (PatternInfo*) patterns->data;
         patterns = patterns->next;
 
         if (pat->type != type && pat->type != OUTPUT_ALL)
@@ -720,7 +720,7 @@ get_re_all (GSList    *patterns,
     if (!str)
         return NULL;
 
-    regex = g_regex_new (str->str, G_REGEX_DUPNAMES, 0, &error);
+    regex = g_regex_new (str->str, G_REGEX_DUPNAMES, (GRegexMatchFlags) 0, &error);
 
     if (!regex)
     {
@@ -746,7 +746,7 @@ filter_state_new (GSList *patterns)
     state->patterns = g_new0 (PatternInfo*, state->n_patterns);
 
     for (i = 0; patterns != NULL; ++i, patterns = patterns->next)
-        state->patterns[i] = patterns->data;
+        state->patterns[i] = (PatternInfo*) patterns->data;
 
     return state;
 }

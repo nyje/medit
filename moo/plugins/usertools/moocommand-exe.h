@@ -29,17 +29,13 @@ G_BEGIN_DECLS
 #define MOO_IS_COMMAND_EXE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), MOO_TYPE_COMMAND_EXE))
 #define MOO_COMMAND_EXE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), MOO_TYPE_COMMAND_EXE, MooCommandExeClass))
 
-typedef struct _MooCommandExe        MooCommandExe;
 typedef struct _MooCommandExePrivate MooCommandExePrivate;
-typedef struct _MooCommandExeClass   MooCommandExeClass;
 
-struct _MooCommandExe {
-    MooCommand base;
+struct MooCommandExe : public MooCommand {
     MooCommandExePrivate *priv;
 };
 
-struct _MooCommandExeClass {
-    MooCommandClass base_class;
+struct MooCommandExeClass : public MooCommandClass {
 };
 
 

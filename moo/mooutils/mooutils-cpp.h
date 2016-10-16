@@ -19,11 +19,15 @@
 
 #ifdef __cplusplus
 
+namespace g {
+
 template<typename T>
 inline T *object_ref(T *obj)
 {
     return static_cast<T*>(g_object_ref(obj));
 }
+
+} // namespace g
 
 #define MOO_DEFINE_FLAGS(Flags)                                                                                 \
     inline Flags operator | (Flags f1, Flags f2) { return static_cast<Flags>(static_cast<int>(f1) | f2); }      \
@@ -35,6 +39,8 @@ inline T *object_ref(T *obj)
 
 template<typename GObjType>
 struct ObjectTraits;
+
+namespace g {
 
 template<typename GObjType>
 inline GObjType* object_new()
@@ -53,6 +59,8 @@ inline GObjType* object_new(const char* prop1, Arg1 arg1, const char* prop2, Arg
 {
     return (GObjType*) g_object_new (ObjectTraits<GObjType>::gtype(), prop1, arg1, prop2, arg2, nullptr);
 }
+
+} // namespace g
 
 #define MOO_DEFINE_GOBJ_TRAITS(FooObject, FOO_TYPE_OBJECT)      \
     template<>                                                  \

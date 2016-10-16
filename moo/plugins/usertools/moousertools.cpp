@@ -111,7 +111,7 @@ unload_user_tools (int type)
 
     while (list)
     {
-        ToolInfo *info = list->data;
+        ToolInfo *info = (ToolInfo*) list->data;
 
         if (info->xml)
         {
@@ -120,9 +120,9 @@ unload_user_tools (int type)
         }
 
         if (type == MOO_USER_TOOL_MENU)
-            moo_window_class_remove_action (klass, info->id);
+            moo_window_class_remove_action ((MooWindowClass*) klass, info->id);
         else
-            moo_edit_class_remove_action (klass, info->id);
+            moo_edit_class_remove_action ((MooEditClass*) klass, info->id);
 
         g_free (info->id);
         g_free (info);
@@ -390,10 +390,10 @@ load_tool (MooUserToolInfo *info)
         case MOO_USER_TOOL_MENU:
             klass = g_type_class_peek (MOO_TYPE_EDIT_WINDOW);
 
-            if (!moo_window_class_find_group (klass, "Tools"))
-                moo_window_class_new_group (klass, "Tools", _("Tools"));
+            if (!moo_window_class_find_group ((MooWindowClass*) klass, "Tools"))
+                moo_window_class_new_group ((MooWindowClass*) klass, "Tools", _("Tools"));
 
-            moo_window_class_new_action (klass, info->id, "Tools",
+            moo_window_class_new_action ((MooWindowClass*) klass, info->id, "Tools",
                                          "action-type::", MOO_TYPE_TOOL_ACTION,
                                          "display-name", name,
                                          "label", label,
@@ -410,7 +410,7 @@ load_tool (MooUserToolInfo *info)
 
         case MOO_USER_TOOL_CONTEXT:
             klass = g_type_class_peek (MOO_TYPE_EDIT);
-            moo_edit_class_new_action (klass, info->id,
+            moo_edit_class_new_action ((MooEditClass*) klass, info->id,
                                        "action-type::", MOO_TYPE_TOOL_ACTION,
                                        "display-name", name,
                                        "label", label,
@@ -482,8 +482,8 @@ _moo_edit_load_user_tools_type (MooUserToolType type)
 
     while (list)
     {
-        load_tool (list->data);
-        _moo_user_tool_info_unref (list->data);
+        load_tool ((MooUserToolInfo*) list->data);
+        _moo_user_tool_info_unref ((MooUserToolInfo*) list->data);
         list = g_slist_delete_link (list, list);
     }
 }
@@ -599,8 +599,8 @@ static int
 cmp_filenames (const void *p1,
                const void *p2)
 {
-    const char *const *sp1 = p1;
-    const char *const *sp2 = p2;
+    const char *const *sp1 = (const char *const *) p1;
+    const char *const *sp2 = (const char *const *) p2;
     return strcmp (*sp1, *sp2);
 }
 
@@ -640,7 +640,7 @@ load_directory (const char       *path,
         char *filename;
 
         filename = g_build_filename (path, names->pdata[i], NULL);
-        load_file (filename, names->pdata[i], type, list, ids);
+        load_file (filename, (const char*) names->pdata[i], type, list, ids);
 
         g_free (filename);
         g_free (names->pdata[i]);
@@ -849,8 +849,8 @@ add_info (MooUserToolInfo *info,
     MooUserToolInfo *old_info;
     GSList *old_link;
 
-    old_link = g_hash_table_lookup (ids, info->id);
-    old_info = old_link ? old_link->data : NULL;
+    old_link = (GSList*) g_hash_table_lookup (ids, info->id);
+    old_info = old_link ? (MooUserToolInfo*) old_link->data : NULL;
 
     if (old_link)
     {
@@ -896,7 +896,7 @@ parse_file (const char     *filename,
     {
         MooUserToolInfo *info;
 
-        info = new_list->data;
+        info = (MooUserToolInfo*) new_list->data;
         g_return_if_fail (info->id != NULL);
 
         add_info (info, list, ids);
@@ -983,7 +983,7 @@ assign_missing_ids (GSList *list)
 
     for (l = list; l != NULL; l = l->next)
     {
-        MooUserToolInfo *info = l->data;
+        MooUserToolInfo *info = (MooUserToolInfo*) l->data;
 
         if (info->id)
             g_hash_table_insert (ids, g_strdup (info->id), l);
@@ -991,7 +991,7 @@ assign_missing_ids (GSList *list)
 
     for (l = list; l != NULL; l = l->next)
     {
-        MooUserToolInfo *info = l->data;
+        MooUserToolInfo *info = (MooUserToolInfo*) l->data;
 
         if (!info->id)
         {
@@ -1055,14 +1055,14 @@ generate_real_list (MooUserToolType  type,
     while (list)
     {
         MooUserToolInfo *new_info = NULL;
-        MooUserToolInfo *info = list->data;
+        MooUserToolInfo *info = (MooUserToolInfo*) list->data;
         GSList *sys_link;
 
-        sys_link = g_hash_table_lookup (sys_ids, info->id);
+        sys_link = (GSList*) g_hash_table_lookup (sys_ids, info->id);
 
         if (sys_link)
         {
-            MooUserToolInfo *sys_info = sys_link->data;
+            MooUserToolInfo *sys_info = (MooUserToolInfo*) sys_link->data;
 
             if (info_equal (sys_info, info))
             {
@@ -1124,7 +1124,7 @@ _moo_edit_save_user_tools (MooUserToolType  type,
 
     while (list)
     {
-        MooUserToolInfo *info = list->data;
+        MooUserToolInfo *info = (MooUserToolInfo*) list->data;
 
         moo_file_writer_printf (writer, "  <%s %s=\"%s\"", ELEMENT_COMMAND, KEY_ID, info->id);
 
@@ -1229,7 +1229,7 @@ moo_tool_action_set_property (GObject      *object,
         case PROP_COMMAND:
             if (action->cmd)
                 g_object_unref (action->cmd);
-            action->cmd = g_value_get_object (value);
+            action->cmd = (MooCommand*) g_value_get_object (value);
             if (action->cmd)
                 g_object_ref (action->cmd);
             break;
@@ -1291,7 +1291,7 @@ moo_tool_action_activate (GtkAction *gtkaction)
     }
     else
     {
-        window = _moo_action_get_window (action);
+        window = (MooEditWindow*) _moo_action_get_window (action);
         g_return_if_fail (MOO_IS_EDIT_WINDOW (window));
         doc = moo_edit_window_get_active_doc (window);
     }

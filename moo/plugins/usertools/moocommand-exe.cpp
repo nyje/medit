@@ -446,7 +446,7 @@ get_extension (const char *string,
 
     g_return_if_fail (string != NULL);
 
-    dot = strrchr (string, '.');
+    dot = strrchr ((char*) string, '.');
 
     if (dot)
     {
@@ -546,7 +546,7 @@ run_sync (const char  *base_cmd_line,
 {
     GError *error = NULL;
     gboolean result = FALSE;
-    GSpawnFlags flags = RUN_CMD_FLAGS | MOO_SPAWN_WIN32_HIDDEN_CONSOLE;
+    GSpawnFlags flags = (GSpawnFlags) (RUN_CMD_FLAGS | MOO_SPAWN_WIN32_HIDDEN_CONSOLE);
     char **argv;
     char **real_env;
     char *cmd_line;
@@ -819,7 +819,7 @@ _moo_command_exe_class_init (MooCommandExeClass *klass)
 
     g_type_class_add_private (klass, sizeof (MooCommandExePrivate));
 
-    factory = g_object_new (_moo_command_factory_exe_get_type (), (const char*) NULL);
+    factory = (MooCommandFactory*) g_object_new (_moo_command_factory_exe_get_type (), (const char*) NULL);
     moo_command_factory_register ("exe", _("Shell command"),
                                   factory, (char**) data_keys,
                                   SCRIPT_EXTENSION);
@@ -846,7 +846,7 @@ _moo_command_exe_new (const char         *cmd_line,
     g_return_val_if_fail (input < MOO_COMMAND_EXE_MAX_INPUT, NULL);
     g_return_val_if_fail (output < MOO_COMMAND_EXE_MAX_OUTPUT, NULL);
 
-    cmd = g_object_new (MOO_TYPE_COMMAND_EXE, "options", options, (const char*) NULL);
+    cmd = (MooCommandExe*) g_object_new (MOO_TYPE_COMMAND_EXE, "options", options, (const char*) NULL);
 
     cmd->priv->cmd_line = g_strdup (cmd_line);
     cmd->priv->input = input;
@@ -938,7 +938,7 @@ unx_factory_create_command (G_GNUC_UNUSED MooCommandFactory *factory,
 
     cmd = _moo_command_exe_new (cmd_line,
                                 moo_parse_command_options (options),
-                                input, output,
+                                (MooCommandExeInput) input, (MooCommandExeOutput) output,
                                 moo_command_data_get (data, KEY_FILTER));
     g_return_val_if_fail (cmd != NULL, NULL);
 
@@ -993,9 +993,9 @@ init_filter_combo (GtkComboBox *combo)
     while (ids)
     {
         const char *name;
-        char *id = ids->data;
+        char *id;
 
-        id = ids->data;
+        id = (char*) ids->data;
         ids = g_slist_delete_link (ids, ids);
         name = moo_command_filter_lookup (id);
 

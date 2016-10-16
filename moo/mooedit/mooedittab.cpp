@@ -106,8 +106,8 @@ _moo_edit_tab_new (MooEdit *doc)
 
     g_return_val_if_fail (moo_edit_get_n_views (doc) == 1, NULL);
 
-    tab = object_new<MooEditTab>();
-    tab->doc = object_ref (doc);
+    tab = g::object_new<MooEditTab>();
+    tab->doc = g::object_ref (doc);
 
     view = moo_edit_get_view (doc);
     _moo_edit_view_set_tab (view, tab);

@@ -1155,6 +1155,13 @@ moo_lua_push_utf8_copy (lua_State  *L,
 }
 
 int
+moo_lua_push_gstr (lua_State  *L,
+                   const gstr &value)
+{
+    return moo_lua_push_string_copy (L, value.get());
+}
+
+int
 moo_lua_push_filename (lua_State *L,
                        char      *value)
 {

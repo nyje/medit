@@ -13,8 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_COMMAND_H
-#define MOO_COMMAND_H
+#pragma once
 
 #include <gtk/gtk.h>
 #include "../support/moooutputfilter.h"
@@ -180,4 +179,10 @@ MooOutputFilter    *moo_command_filter_create       (const char         *id);
 
 G_END_DECLS
 
-#endif /* MOO_COMMAND_H */
+#ifdef __cplusplus
+
+#include "mooutils/mooutils-cpp.h"
+
+MOO_DEFINE_GOBJ_TRAITS(MooCommandContext, MOO_TYPE_COMMAND_CONTEXT)
+
+#endif // __cplusplus
