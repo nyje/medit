@@ -85,6 +85,11 @@ public:
         return result;
     }
 
+    gstr dup() const
+    {
+        return take(m_p ? g_strdup(m_p) : nullptr); 
+    }
+
     gstr& operator=(const gstr& other)
     {
         if (this != &other)
