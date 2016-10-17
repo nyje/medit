@@ -32,8 +32,7 @@ public:
 
     ~ObjectPtr()
     {
-        if (m_p != nullptr)
-            g_object_unref(m_p);
+        reset();
     }
 
     ObjectPtr(FooObject* obj, ObjectMemPolicy policy)
@@ -65,6 +64,13 @@ public:
         return *m_p;
     }
 
+    void reset()
+    {
+        if (m_p != nullptr)
+            g_object_unref(m_p);
+        m_p = nullptr;
+    }
+
     FooObject* get() const
     {
         return m_p;
@@ -78,6 +84,12 @@ public:
     static ObjectPtr ref(FooObject* obj)
     {
         return ObjectPtr(obj, ObjectMemPolicy::CopyReference);
+    }
+
+    ObjectPtr& operator=(nullptr_t)
+    {
+        reset();
+        return *this;
     }
 
     ObjectPtr& operator=(const ObjectPtr& p)
@@ -102,6 +114,7 @@ public:
         p.m_p = nullptr;
         if (tmp != nullptr)
             g_object_unref(tmp);
+        return *this;
     }
 
     operator bool() const
