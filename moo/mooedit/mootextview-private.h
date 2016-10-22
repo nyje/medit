@@ -106,7 +106,9 @@ struct MooTextViewPrivate {
     /***********************************************************************/
     /* Drawing
      */
+#ifndef MOO_USE_SCI
     MooTextStyleScheme *style_scheme;
+#endif
     guint tab_width;
     gboolean color_settings[MOO_TEXT_VIEW_N_COLORS];
     char *colors[MOO_TEXT_VIEW_N_COLORS];

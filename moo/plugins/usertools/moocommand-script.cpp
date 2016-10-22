@@ -186,13 +186,17 @@ script_factory_create_command (MooCommandFactory *factory_base,
 static GtkWidget *
 script_factory_create_widget (MooCommandFactory *factory_base)
 {
+#ifndef MOO_USE_SCI
     MooCommandFactoryScript *factory = (MooCommandFactoryScript*) factory_base;
+#endif
+
     ScriptPageXml *xml;
 
     xml = script_page_xml_new ();
 
     moo_text_view_set_font_from_string (xml->textview, "Monospace");
 
+#ifndef MOO_USE_SCI
     switch (factory->type)
     {
         case MOO_SCRIPT_LUA:
@@ -202,6 +206,7 @@ script_factory_create_widget (MooCommandFactory *factory_base)
             moo_text_view_set_lang_by_id (xml->textview, "python");
             break;
     }
+#endif // !MOO_USE_SCI
 
     return GTK_WIDGET (xml->ScriptPage);
 }

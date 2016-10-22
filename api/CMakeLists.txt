@@ -47,8 +47,8 @@ SET(source_files
     ../moo/mooedit/mooeditaction-factory.c
     ../moo/mooedit/mooeditaction-factory.h
     ../moo/mooedit/mooeditaction.h
-    ../moo/mooedit/mooeditbookmark.c
-    ../moo/mooedit/mooeditbookmark.h
+    ../moo/mooedit/native/mooeditbookmark.cpp
+    ../moo/mooedit/native/mooeditbookmark.h
     ../moo/mooedit/mooedit.cpp
     ../moo/mooedit/mooeditconfig.c
     ../moo/mooedit/mooeditconfig.h

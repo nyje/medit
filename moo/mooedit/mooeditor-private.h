@@ -44,7 +44,9 @@ struct MooEditorPrivate {
     GType                window_type;
     GType                doc_type;
 
+#ifndef MOO_USE_SCI
     MooLangMgr          *lang_mgr;
+#endif
 };
 
 G_END_DECLS

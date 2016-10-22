@@ -36,7 +36,9 @@
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooeditaction.h"
-#include "mooedit/mooeditbookmark.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/mooeditbookmark.h"
+#endif
 #include "mooutils/moonotebook.h"
 #include "mooutils/moostock.h"
 #include "marshals.h"
@@ -195,9 +197,11 @@ static void          edit_encoding_changed              (MooEditWindow      *win
 static void          edit_line_end_changed              (MooEditWindow      *window,
                                                          GParamSpec         *pspec,
                                                          MooEdit            *doc);
+#ifndef MOO_USE_SCI
 static void          edit_lang_changed                  (MooEditWindow      *window,
                                                          GParamSpec         *pspec,
                                                          MooEdit            *doc);
+#endif
 static void          view_overwrite_changed             (MooEditWindow      *window,
                                                          GParamSpec         *pspec,
                                                          MooEditView        *view);
@@ -215,7 +219,9 @@ static void          update_tab_labels                  (MooEditWindow      *win
 static void          view_cursor_moved                  (MooEditWindow      *window,
                                                          GtkTextIter        *iter,
                                                          MooEditView        *view);
+#ifndef MOO_USE_SCI
 static void          update_lang_menu                   (MooEditWindow      *window);
+#endif
 static void          update_doc_view_actions            (MooEditWindow      *window);
 static void          update_split_view_actions          (MooEditWindow      *window);
 
@@ -226,7 +232,9 @@ static MooEditTab   *get_nth_tab                        (MooNotebook        &not
 static MooEdit      *get_nth_doc                        (MooNotebook        *notebook,
                                                          guint               n);
 
+#ifndef MOO_USE_SCI
 static GtkAction    *create_lang_action                 (MooEditWindow      *window);
+#endif
 
 static void          create_paned                       (MooEditWindow      *window);
 static void          save_paned_config                  (MooEditWindow      *window);
@@ -276,11 +284,13 @@ static void action_next_tab_in_view             (MooEditWindow      *window);
 static void action_switch_to_tab                (MooEditWindow      *window,
                                                  guint               n);
 
+#ifndef MOO_USE_SCI
 static void action_toggle_bookmark              (MooEditWindow      *window);
 static void action_next_bookmark                (MooEditWindow      *window);
 static void action_prev_bookmark                (MooEditWindow      *window);
 static GtkAction *create_goto_bookmark_action   (MooWindow          *window,
                                                  gpointer            data);
+#endif
 
 static void action_find_now_f                   (MooEditWindow      *window);
 static void action_find_now_b                   (MooEditWindow      *window);
@@ -319,7 +329,9 @@ enum {
     /* aux properties */
     PROP_CAN_RELOAD,
     PROP_HAS_OPEN_DOCUMENT,
+#ifndef MOO_USE_SCI
     PROP_HAS_COMMENTS,
+#endif
     PROP_HAS_JOBS_RUNNING,
     PROP_HAS_STOP_CLIENTS,
     PROP_CAN_MOVE_TO_SPLIT_NOTEBOOK
@@ -419,7 +431,9 @@ moo_edit_window_class_init (MooEditWindowClass *klass)
 
     INSTALL_PROP (PROP_CAN_RELOAD, "can-reload");
     INSTALL_PROP (PROP_HAS_OPEN_DOCUMENT, "has-open-document");
+#ifndef MOO_USE_SCI
     INSTALL_PROP (PROP_HAS_COMMENTS, "has-comments");
+#endif
     INSTALL_PROP (PROP_HAS_JOBS_RUNNING, "has-jobs-running");
     INSTALL_PROP (PROP_HAS_STOP_CLIENTS, "has-stop-clients");
     INSTALL_PROP (PROP_CAN_MOVE_TO_SPLIT_NOTEBOOK, "can-move-to-split-notebook");
@@ -706,6 +720,7 @@ moo_edit_window_class_init (MooEditWindowClass *klass)
         g_free (action_id);
     }
 
+#ifndef MOO_USE_SCI
     for (i = 1; i < 10; ++i)
     {
         char *action_id = g_strdup_printf (MOO_EDIT_GOTO_BOOKMARK_ACTION "%u", i);
@@ -740,7 +755,9 @@ moo_edit_window_class_init (MooEditWindowClass *klass)
                                  "connect-accel", TRUE,
                                  "closure-callback", action_prev_bookmark,
                                  NULL);
+#endif // !MOO_USE_SCI
 
+#ifndef MOO_USE_SCI
     moo_window_class_new_action (window_class, "Comment", NULL,
                                  /* action */
                                  "display-name", _("Comment"),
@@ -760,6 +777,7 @@ moo_edit_window_class_init (MooEditWindowClass *klass)
                                  "closure-proxy-func", moo_edit_window_get_active_doc,
                                  "condition::sensitive", "has-comments",
                                  NULL);
+#endif // !MOO_USE_SCI
 
     moo_window_class_new_action (window_class, "Indent", NULL,
                                  "display-name", GTK_STOCK_INDENT,
@@ -827,9 +845,11 @@ moo_edit_window_class_init (MooEditWindowClass *klass)
                                  NULL);
 #endif
 
+#ifndef MOO_USE_SCI
     moo_window_class_new_action_custom (window_class, LANG_ACTION_ID, NULL,
                                         (MooWindowActionFunc) create_lang_action,
                                         NULL, NULL);
+#endif
 
     {
         GValue val = { 0 };
@@ -976,10 +996,12 @@ static void     moo_edit_window_get_property(GObject        *object,
         case PROP_CAN_MOVE_TO_SPLIT_NOTEBOOK:
             g_value_set_boolean (value, can_move_to_split_notebook (window));
             break;
+#ifndef MOO_USE_SCI
         case PROP_HAS_COMMENTS:
             doc = ACTIVE_DOC (window);
             g_value_set_boolean (value, doc && _moo_edit_has_comments (doc, NULL, NULL));
             break;
+#endif
         case PROP_HAS_JOBS_RUNNING:
             g_value_set_boolean (value, window->priv->jobs != NULL);
             break;
@@ -1721,6 +1743,8 @@ action_abort_jobs (MooEditWindow *window)
 }
 
 
+#ifndef MOO_USE_SCI
+
 static void
 action_toggle_bookmark (MooEditWindow *window)
 {
@@ -1818,15 +1842,21 @@ create_goto_bookmark_action (MooWindow *window,
     return action;
 }
 
+#endif // !MOO_USE_SCI
+
 
 namespace {
 
+#ifndef MOO_USE_SCI
 const ObjectDataAccessor<GtkWidget, MooEditBookmark*> widget_bookmark("moo-bookmark");
+#endif
 const ObjectDataAccessor<GtkWidget, MooEdit*> widget_doc("moo-edit");
 const ObjectDataAccessor<GtkWidget, MooEditView*> widget_view("moo-edit-view");
 const ObjectDataAccessor<GtkWidget, MooEditTab*> data_moo_edit_tab("moo-edit-tab");
 
 } // anonymous namespace
+
+#ifndef MOO_USE_SCI
 
 static void
 bookmark_item_activated (GtkWidget *item)
@@ -1954,16 +1984,19 @@ doc_item_selected (MooWindow   *window,
     populate_bookmark_menu (MOO_EDIT_WINDOW (window), menu, next_bk_item);
 }
 
+#endif // !MOO_USE_SCI
+
 
 static void
 moo_edit_window_connect_menubar (MooWindow *window)
 {
-    GtkWidget *doc_item;
     GtkWidget *win_item;
 
     if (!window->menubar)
         return;
 
+#ifndef MOO_USE_SCI
+    GtkWidget *doc_item;
     doc_item = moo_ui_xml_get_widget (moo_window_get_ui_xml (window),
                                       window->menubar,
                                       "Editor/Menubar/Document");
@@ -1971,6 +2004,7 @@ moo_edit_window_connect_menubar (MooWindow *window)
     g_signal_connect_swapped (doc_item, "select",
                               G_CALLBACK (doc_item_selected),
                               window);
+#endif
 
     win_item = moo_ui_xml_get_widget (moo_window_get_ui_xml (window),
                                       window->menubar,
@@ -2545,16 +2579,20 @@ edit_changed (MooEditWindow *window,
         g_object_freeze_notify (G_OBJECT (window));
         g_object_notify (G_OBJECT (window), "can-reload");
         g_object_notify (G_OBJECT (window), "has-open-document");
+#ifndef MOO_USE_SCI
         g_object_notify (G_OBJECT (window), "has-comments");
+#endif
         g_object_thaw_notify (G_OBJECT (window));
 
         update_split_view_actions (window);
         update_window_title (window);
         update_statusbar (window);
+#ifndef MOO_USE_SCI
         update_lang_menu (window);
+#endif
         update_doc_view_actions (window);
         update_doc_encoding_item (window);
-	update_doc_line_end_item (window);
+	    update_doc_line_end_item (window);
     }
 
     if (doc)
@@ -3108,10 +3146,12 @@ _moo_edit_window_insert_tab (MooEditWindow *window,
                               G_CALLBACK (edit_line_end_changed), window);
     g_signal_connect_swapped (doc, "filename_changed",
                               G_CALLBACK (edit_filename_changed), window);
+#ifndef MOO_USE_SCI
     g_signal_connect_swapped (doc, "notify::has-comments",
                               G_CALLBACK (proxy_boolean_property), window);
     g_signal_connect_swapped (doc, "notify::lang",
                               G_CALLBACK (edit_lang_changed), window);
+#endif
 
     for (i = 0; i < moo_edit_view_array_get_size (views); ++i)
         connect_view (window, views->elms[i]);
@@ -3172,7 +3212,9 @@ _moo_edit_window_remove_doc (MooEditWindow *window,
     g_signal_handlers_disconnect_by_func (doc, (gpointer) edit_changed, window);
     g_signal_handlers_disconnect_by_func (doc, (gpointer) edit_filename_changed, window);
     g_signal_handlers_disconnect_by_func (doc, (gpointer) proxy_boolean_property, window);
+#ifndef MOO_USE_SCI
     g_signal_handlers_disconnect_by_func (doc, (gpointer) edit_lang_changed, window);
+#endif
 
     for (i = 0; i < views->n_elms; ++i)
         disconnect_view (window, views->elms[i]);
@@ -3976,6 +4018,8 @@ create_statusbar (MooEditWindow *window)
 }
 
 
+#ifndef MOO_USE_SCI
+
 /*****************************************************************************/
 /* Language menu
  */
@@ -4100,6 +4144,8 @@ edit_lang_changed (MooEditWindow      *window,
         moo_edit_window_check_actions (window);
     }
 }
+
+#endif // !MOO_USE_SCI
 
 
 /*****************************************************************************/

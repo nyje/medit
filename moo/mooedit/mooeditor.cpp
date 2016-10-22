@@ -366,10 +366,12 @@ moo_editor_constructor (GType                  type,
     moo_ui_xml_add_ui_from_string (editor->priv->doc_ui_xml,
                                    mooedit_ui_xml, -1);
 
+#ifndef MOO_USE_SCI
     editor->priv->lang_mgr = g::object_ref (moo_lang_mgr_default ());
     g_signal_connect_swapped (editor->priv->lang_mgr, "loaded",
                               G_CALLBACK (_moo_editor_apply_prefs),
                               editor);
+#endif
 
     editor->priv->history = NULL;
     if (!is_embedded (editor))
@@ -477,7 +479,9 @@ moo_editor_finalize (GObject *object)
         g_object_unref (editor->priv->ui_xml);
     if (editor->priv->history)
         g_object_unref (editor->priv->history);
+#ifndef MOO_USE_SCI
     g_object_unref (editor->priv->lang_mgr);
+#endif
     g_object_unref (editor->priv->doc_ui_xml);
 
     if (editor->priv->file_watch)
@@ -2980,7 +2984,6 @@ void
 _moo_editor_apply_prefs (MooEditor *editor)
 {
     gboolean backups;
-    const char *color_scheme;
 
     _moo_edit_window_update_title ();
     _moo_edit_window_set_use_tabs ();
@@ -2988,10 +2991,12 @@ _moo_editor_apply_prefs (MooEditor *editor)
     _moo_edit_update_global_config ();
     _moo_edit_queue_recheck_config_all ();
 
-    color_scheme = moo_prefs_get_string (moo_edit_setting (MOO_EDIT_PREFS_COLOR_SCHEME));
+#ifndef MOO_USE_SCI
+    const char *color_scheme = moo_prefs_get_string (moo_edit_setting (MOO_EDIT_PREFS_COLOR_SCHEME));
 
     if (color_scheme)
         _moo_lang_mgr_set_active_scheme (editor->priv->lang_mgr, color_scheme);
+#endif
 
     backups = moo_prefs_get_bool (moo_edit_setting (MOO_EDIT_PREFS_MAKE_BACKUPS));
 

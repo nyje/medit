@@ -100,8 +100,10 @@ static void     moo_text_view_paste_clipboard (GtkTextView      *text_view);
 static void     moo_text_view_populate_popup(GtkTextView        *text_view,
                                              GtkMenu            *menu);
 
+#ifndef MOO_USE_SCI
 static void     moo_text_view_apply_style_scheme (MooTextView   *view,
                                              MooTextStyleScheme *scheme);
+#endif
 
 static void     invalidate_gcs              (MooTextView        *view);
 static void     update_gcs                  (MooTextView        *view);
@@ -237,7 +239,9 @@ enum {
     PROP_CAN_REDO,
     PROP_MANAGE_CLIPBOARD,
     PROP_SMART_HOME_END,
+#ifndef MOO_USE_SCI
     PROP_ENABLE_HIGHLIGHT,
+#endif
     PROP_SHOW_LINE_NUMBERS,
     PROP_SHOW_LINE_MARKS,
     PROP_ENABLE_FOLDING,
@@ -298,7 +302,9 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
     klass->replace_interactive = replace_interactive;
     klass->goto_line_interactive = goto_line_interactive;
     klass->char_inserted = moo_text_view_char_inserted;
+#ifndef MOO_USE_SCI
     klass->apply_style_scheme = moo_text_view_apply_style_scheme;
+#endif
     klass->get_text_cursor = moo_text_view_get_text_cursor;
 
     g_object_class_install_property (gobject_class,
@@ -446,6 +452,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                              TRUE,
                                              (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class,
                                      PROP_ENABLE_HIGHLIGHT,
                                      g_param_spec_boolean ("enable-highlight",
@@ -453,6 +460,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                              "enable-highlight",
                                              TRUE,
                                              (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+#endif
 
     g_object_class_install_property (gobject_class,
                                      PROP_SHOW_LINE_NUMBERS,
@@ -843,11 +851,13 @@ moo_text_view_dispose (GObject *object)
     while (view->priv->line_marks)
         remove_line_mark (view, view->priv->line_marks->data);
 
+#ifndef MOO_USE_SCI
     if (view->priv->style_scheme)
     {
         g_object_unref (view->priv->style_scheme);
         view->priv->style_scheme = NULL;
     }
+#endif
 
     if (view->priv->move_cursor_idle)
     {
@@ -1150,11 +1160,13 @@ moo_text_view_set_property (GObject        *object,
             g_object_notify (object, "smart-home-end");
             break;
 
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_HIGHLIGHT:
             moo_text_buffer_set_highlight (get_moo_buffer (view),
                                            g_value_get_boolean (value));
             g_object_notify (object, "enable-highlight");
             break;
+#endif
 
         case PROP_SHOW_LINE_NUMBERS:
             moo_text_view_set_show_line_numbers (view, g_value_get_boolean (value));
@@ -1266,9 +1278,11 @@ moo_text_view_get_property (GObject        *object,
         case PROP_SMART_HOME_END:
             g_value_set_boolean (value, view->priv->smart_home_end != 0);
             break;
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_HIGHLIGHT:
             g_value_set_boolean (value, moo_text_buffer_get_highlight (get_moo_buffer (view)));
             break;
+#endif
         case PROP_SHOW_LINE_NUMBERS:
             g_value_set_boolean (value, view->priv->lm.show_numbers);
             break;
@@ -2597,6 +2611,7 @@ moo_text_tag_get_cursor (GtkTextTag *tag)
 #endif
 
 
+#ifndef MOO_USE_SCI
 void
 moo_text_view_set_lang (MooTextView    *view,
                         MooLang        *lang)
@@ -2607,12 +2622,12 @@ moo_text_view_set_lang (MooTextView    *view,
 }
 
 
-/**
- * moo_text_view_set_lang_by_id: (moo.private 1)
- *
- * @view:
- * @lang_id: (type const-utf8)
- */
+//**
+ /* moo_text_view_set_lang_by_id: (moo.private 1)
+ /*
+ /* @view:
+ /* @lang_id: (type const-utf8)
+ /*/
 void
 moo_text_view_set_lang_by_id (MooTextView *view,
                               const char  *lang_id)
@@ -2670,6 +2685,7 @@ moo_text_view_get_style_scheme (MooTextView *view)
     g_return_val_if_fail (MOO_IS_TEXT_VIEW (view), NULL);
     return view->priv->style_scheme;
 }
+#endif // !MOO_USE_SCI
 
 
 static void

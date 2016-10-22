@@ -46,6 +46,7 @@ typedef struct PrefsPage PrefsPage;
 static void     prefs_page_apply_lang_prefs (MooPrefsPage       *page);
 static void     apply_filter_settings       (PrefsFiltersXml    *gxml);
 
+#ifndef MOO_USE_SCI
 static void     scheme_combo_init           (GtkComboBox        *combo);
 static void     scheme_combo_data_func      (GtkCellLayout      *layout,
                                              GtkCellRenderer    *cell,
@@ -57,16 +58,21 @@ static void     scheme_combo_set_scheme     (GtkComboBox        *combo,
 static void     lang_combo_init             (GtkComboBox        *combo,
                                              MooPrefsPage       *page,
                                              PrefsLangsXml      *gxml);
+#endif
 
 static void     filter_treeview_init        (PrefsFiltersXml    *gxml);
 
+#ifndef MOO_USE_SCI
 static GtkTreeModel *create_lang_model      (void);
+#endif
 
 static void     save_encoding_combo_init    (PrefsFileXml       *gxml);
 static void     save_encoding_combo_apply   (PrefsFileXml       *gxml);
 
+#ifndef MOO_USE_SCI
 static GtkTreeModel *page_get_lang_model    (MooPrefsPage       *page);
 static MooTextStyleScheme *page_get_scheme  (PrefsGeneralXml    *gxml);
+#endif
 
 
 static GtkWidget *
@@ -140,21 +146,26 @@ page_general_init (MooPrefsPage *page)
                       gxml->indent_width);
 
     {
+#ifndef MOO_USE_SCI
         MooTextStyleScheme *scheme;
+#endif
 
         g_object_set (gxml->fontbutton, "monospace", TRUE, NULL);
 
+#ifndef MOO_USE_SCI
         scheme = moo_lang_mgr_get_active_scheme (moo_lang_mgr_default ());
         g_return_if_fail (scheme != NULL);
 
         scheme_combo_init (gxml->color_scheme_combo);
         scheme_combo_set_scheme (gxml->color_scheme_combo, scheme);
+#endif // !MOO_USE_SCI
     }
 }
 
 static void
 page_general_apply (MooPrefsPage *page)
 {
+#ifndef MOO_USE_SCI
     PrefsGeneralXml *gxml = (PrefsGeneralXml*) g_object_get_data (G_OBJECT (page), "moo-edit-prefs-page-xml");
     MooTextStyleScheme *scheme = page_get_scheme (gxml);
 
@@ -164,6 +175,7 @@ page_general_apply (MooPrefsPage *page)
                               moo_text_style_scheme_get_id (scheme));
         g_object_unref (scheme);
     }
+#endif // !MOO_USE_SCI
 }
 
 GtkWidget *
@@ -321,6 +333,8 @@ moo_edit_prefs_page_new_3 (MooEditor *editor)
                            page_file_apply);
 }
 
+
+#ifndef MOO_USE_SCI
 
 static void
 page_langs_init_ui (MooPrefsPage *page)
@@ -810,6 +824,8 @@ prefs_page_apply_lang_prefs (MooPrefsPage *page)
     _moo_lang_mgr_save_config (mgr);
     _moo_edit_queue_recheck_config_all ();
 }
+
+#endif // !MOO_USE_SCI
 
 
 /*********************************************************************/

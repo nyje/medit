@@ -1,6 +1,8 @@
 LIST(APPEND moo_edit_enum_headers mooedit/mooedit-enums.h)
 
 SET(mooedit_gtksourceview_sources
+    mooedit/native/mooeditbookmark.cpp
+    mooedit/native/mooeditbookmark.h
     mooedit/native/moolang-private.h
     mooedit/native/moolang.cpp
     mooedit/native/moolang.h	
@@ -33,8 +35,6 @@ SET(mooedit_sources
     mooedit/mooeditaction-factory.h
     mooedit/mooeditaction.cpp
     mooedit/mooeditaction.h
-    mooedit/mooeditbookmark.cpp
-    mooedit/mooeditbookmark.h
     mooedit/mooeditconfig.cpp
     mooedit/mooeditconfig.h
     mooedit/mooeditdialogs.cpp
