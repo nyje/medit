@@ -872,13 +872,13 @@ moo_edit_get_display_basename (MooEdit *edit)
 /**
  * moo_edit_get_uri:
  *
- * Returns: (type gstr)
+ * Returns: (type utf8)
  **/
-gstr
+char*
 moo_edit_get_uri (MooEdit *edit)
 {
-    g_return_val_if_fail (MOO_IS_EDIT (edit), gstr());
-    return edit->priv->file ? gstr::take (g_file_get_uri (edit->priv->file)) : nullptr;
+    g_return_val_if_fail (MOO_IS_EDIT (edit), nullptr);
+    return edit->priv->file ? g_file_get_uri (edit->priv->file) : nullptr;
 }
 
 /**

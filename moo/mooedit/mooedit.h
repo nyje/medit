@@ -79,6 +79,7 @@ GtkTextBuffer       *moo_edit_get_buffer                (MooEdit            *doc
 GFile               *moo_edit_get_file                  (MooEdit            *edit);
 
 char                *moo_edit_get_filename              (MooEdit            *edit);
+char                *moo_edit_get_uri                   (MooEdit            *edit);
 const char          *moo_edit_get_display_name          (MooEdit            *edit);
 const char          *moo_edit_get_display_basename      (MooEdit            *edit);
 
@@ -127,7 +128,5 @@ G_END_DECLS
 #include <moocpp/gstr.h>
 
 MOO_DEFINE_GOBJ_TRAITS(MooEdit, MOO_TYPE_EDIT);
-
-gstr                moo_edit_get_uri                   (MooEdit            *edit);
 
 #endif // __cplusplus

@@ -279,7 +279,7 @@ file_get_uri (File *file)
     if (file->uri)
         return gstr::copy (file->uri);
     else
-        return moo_edit_get_uri (file->doc);
+        return gstr::take (moo_edit_get_uri (file->doc));
 }
 
 static void
@@ -656,7 +656,7 @@ file_list_add_doc (FileList *list,
     DEBUG_ASSERT (!new_ || !get_doc_row (list, doc));
     DEBUG_ASSERT (new_ == !g_slist_find (list->docs, doc));
 
-    gstr uri = moo_edit_get_uri (doc);
+    gstr uri = gstr::take (moo_edit_get_uri (doc));
 
     if (!uri.empty() && file_list_find_uri (list, uri.get(), &iter))
     {
@@ -726,7 +726,7 @@ file_list_update_doc (FileList *list,
     DEBUG_ASSERT (ITEM_IS_FILE (item) && FILE_ITEM (item)->doc == doc);
     DEBUG_ASSERT (FILE_ITEM (item)->uri != NULL);
 
-    gstr new_uri = moo_edit_get_uri (doc);
+    gstr new_uri = gstr::take (moo_edit_get_uri (doc));
 
     if (new_uri.empty() || strcmp (new_uri.get(), FILE_ITEM (item)->uri) != 0)
     {
