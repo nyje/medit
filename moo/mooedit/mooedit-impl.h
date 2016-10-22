@@ -57,6 +57,7 @@ void             _moo_edit_class_init_actions       (MooEditClass   *klass);
 
 void             _moo_edit_status_changed           (MooEdit        *edit);
 
+#ifndef MOO_USE_SCI
 gboolean         _moo_edit_has_comments             (MooEdit        *edit,
                                                      gboolean       *single_line,
                                                      gboolean       *multi_line);
@@ -71,12 +72,15 @@ void             _moo_edit_line_mark_deleted        (MooEdit        *edit,
 gboolean         _moo_edit_line_mark_clicked        (MooTextView    *view,
                                                      int             line);
 void             _moo_edit_update_bookmarks_style   (MooEdit        *edit);
+#endif // !MOO_USE_SCI
 
 /***********************************************************************/
 /* Preferences
  */
 enum {
+#ifndef MOO_USE_SCI
     MOO_EDIT_SETTING_LANG,
+#endif
     MOO_EDIT_SETTING_INDENT,
     MOO_EDIT_SETTING_STRIP,
     MOO_EDIT_SETTING_ADD_NEWLINE,

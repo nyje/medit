@@ -33,6 +33,7 @@ struct MooTextBufferPrivate {
     gboolean has_selection;
     gboolean has_text;
 
+#ifndef MOO_USE_SCI
     MooTextStyleScheme *style_scheme;
     GtkSourceEngine *engine;
     MooLang *lang;
@@ -47,6 +48,7 @@ struct MooTextBufferPrivate {
     GtkTextTag *incorrect_match_tag;
     GtkTextMark *bracket_mark[4];
     MooBracketMatchType bracket_found;
+#endif
 
     LineBuffer *line_buf;
     MooFoldTree *fold_tree;
@@ -90,6 +92,7 @@ static void     moo_text_buffer_begin_user_action   (GtkTextBuffer      *buffer)
 static void     moo_text_buffer_end_user_action     (GtkTextBuffer      *buffer);
 static void     moo_text_buffer_modified_changed    (GtkTextBuffer      *buffer);
 
+#ifndef MOO_USE_SCI
 static void     moo_text_buffer_highlight_brackets  (MooTextBuffer      *buffer,
                                                      const GtkTextIter  *insert);
 static void     moo_text_buffer_unhighlight_brackets(MooTextBuffer      *buffer);
@@ -102,6 +105,7 @@ static void     emit_cursor_moved                   (MooTextBuffer      *buffer,
                                                      const GtkTextIter  *iter);
 static void     freeze_cursor_moved                 (MooTextBuffer      *buffer);
 static void     thaw_cursor_moved                   (MooTextBuffer      *buffer);
+#endif // !MOO_USE_SCI
 
 
 static guint    INSERT_ACTION_TYPE;
@@ -128,8 +132,10 @@ static void     line_mark_deleted                   (MooTextBuffer      *buffer,
 
 
 enum {
+#ifndef MOO_USE_SCI
     HIGHLIGHT_UPDATED, /* GtkSourceBuffer's */
     CURSOR_MOVED,
+#endif
     SELECTION_CHANGED,
     LINE_MARK_ADDED,
     LINE_MARK_MOVED,
@@ -145,14 +151,18 @@ static guint signals[LAST_SIGNAL];
 
 enum {
     PROP_0,
+#ifndef MOO_USE_SCI
     PROP_HIGHLIGHT_SYNTAX, /* mimic GtkSourceBuffer */
     PROP_HIGHLIGHT_MATCHING_BRACKETS,
     PROP_HIGHLIGHT_MISMATCHING_BRACKETS,
     PROP_BRACKET_MATCH_STYLE,
     PROP_BRACKET_MISMATCH_STYLE,
+#endif
     PROP_HAS_TEXT,
     PROP_HAS_SELECTION,
+#ifndef MOO_USE_SCI
     PROP_LANG,
+#endif
     PROP_CAN_UNDO,
     PROP_CAN_REDO
 };
@@ -181,10 +191,13 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
     buffer_class->end_user_action = moo_text_buffer_end_user_action;
     buffer_class->modified_changed = moo_text_buffer_modified_changed;
 
+#ifndef MOO_USE_SCI
     klass->cursor_moved = moo_text_buffer_cursor_moved;
+#endif
 
     g_type_class_add_private (klass, sizeof (MooTextBufferPrivate));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class,
                                      PROP_HIGHLIGHT_SYNTAX,
                                      g_param_spec_boolean ("highlight-syntax",
@@ -224,6 +237,7 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
                                              "bracket-mismatch-style",
                                              MOO_TYPE_TEXT_STYLE,
                                              (GParamFlags) (G_PARAM_CONSTRUCT | G_PARAM_WRITABLE)));
+#endif
 
     g_object_class_install_property (gobject_class,
                                      PROP_HAS_TEXT,
@@ -241,6 +255,7 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
                                              FALSE,
                                              G_PARAM_READABLE));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class,
                                      PROP_LANG,
                                      g_param_spec_object ("lang",
@@ -248,6 +263,7 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
                                              "lang",
                                              MOO_TYPE_LANG,
                                              (GParamFlags) G_PARAM_READWRITE));
+#endif
 
     g_object_class_install_property (gobject_class,
                                      PROP_CAN_UNDO,
@@ -265,6 +281,7 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
                                              FALSE,
                                              G_PARAM_READABLE));
 
+#ifndef MOO_USE_SCI
     signals[HIGHLIGHT_UPDATED] =
             g_signal_new ("highlight_updated",
                           G_OBJECT_CLASS_TYPE (klass),
@@ -284,6 +301,7 @@ moo_text_buffer_class_init (MooTextBufferClass *klass)
                           _moo_marshal_VOID__BOXED,
                           G_TYPE_NONE, 1,
                           GTK_TYPE_TEXT_ITER);
+#endif
 
     signals[SELECTION_CHANGED] =
             g_signal_new ("selection-changed",
@@ -362,8 +380,10 @@ moo_text_buffer_init (MooTextBuffer *buffer)
     buffer->priv = G_TYPE_INSTANCE_GET_PRIVATE (buffer, MOO_TYPE_TEXT_BUFFER, MooTextBufferPrivate);
 
     buffer->priv->line_buf = _moo_line_buffer_new ();
+#ifndef MOO_USE_SCI
     buffer->priv->do_highlight = TRUE;
     buffer->priv->bracket_found = MOO_BRACKET_MATCH_NONE;
+#endif
 
     buffer->priv->fold_tree = _moo_fold_tree_new (buffer);
 
@@ -391,7 +411,9 @@ moo_text_buffer_init (MooTextBuffer *buffer)
     g_signal_connect_swapped (buffer->priv->undo_stack, "notify::can-redo",
                               G_CALLBACK (proxy_notify_can_undo_redo), buffer);
 
+#ifndef MOO_USE_SCI
     moo_text_buffer_set_brackets (buffer, NULL);
+#endif
 }
 
 
@@ -407,6 +429,7 @@ moo_text_buffer_dispose (GObject *object)
         buffer->priv->fold_tree = NULL;
     }
 
+#ifndef MOO_USE_SCI
     if (buffer->priv->engine)
     {
     	_gtk_source_engine_attach_buffer (buffer->priv->engine, NULL);
@@ -425,6 +448,7 @@ moo_text_buffer_dispose (GObject *object)
     	g_object_unref (buffer->priv->lang);
     	buffer->priv->engine = NULL;
     }
+#endif
 
     if (buffer->priv->line_buf)
     {
@@ -432,10 +456,12 @@ moo_text_buffer_dispose (GObject *object)
         buffer->priv->line_buf = NULL;
     }
 
+#ifndef MOO_USE_SCI
     g_free (buffer->priv->left_brackets);
     g_free (buffer->priv->right_brackets);
     buffer->priv->left_brackets = NULL;
     buffer->priv->right_brackets = NULL;
+#endif
 
 #if 0
     g_signal_handlers_disconnect_by_func (buffer->priv->undo_stack,
@@ -552,8 +578,10 @@ moo_text_buffer_mark_set (GtkTextBuffer      *text_buffer,
 
     if (mark == insert)
     {
+#ifndef MOO_USE_SCI
         moo_text_buffer_unhighlight_brackets (buffer);
         emit_cursor_moved (buffer, iter);
+#endif
     }
 }
 
@@ -575,7 +603,7 @@ moo_text_buffer_insert_text (GtkTextBuffer      *text_buffer,
     MooTextBuffer *buffer = MOO_TEXT_BUFFER (text_buffer);
     GtkTextTag *tag;
     int first_line, last_line;
-    int start_offset, end_offset;
+    int start_offset;
     gboolean starts_line, ins_line;
 
     if (!text[0])
@@ -607,7 +635,9 @@ moo_text_buffer_insert_text (GtkTextBuffer      *text_buffer,
         moo_undo_stack_add_action (buffer->priv->undo_stack, INSERT_ACTION_TYPE, action);
     }
 
+#ifndef MOO_USE_SCI
     moo_text_buffer_unhighlight_brackets (buffer);
+#endif
 
     GTK_TEXT_BUFFER_CLASS(moo_text_buffer_parent_class)->insert_text (text_buffer, pos, text, length);
 
@@ -627,12 +657,14 @@ moo_text_buffer_insert_text (GtkTextBuffer      *text_buffer,
         g_slist_free (marks);
     }
 
+#ifndef MOO_USE_SCI
     emit_cursor_moved (buffer, pos);
 
-    end_offset = gtk_text_iter_get_offset (pos);
+    int end_offset = gtk_text_iter_get_offset (pos);
 
     if (buffer->priv->engine)
         _gtk_source_engine_text_inserted (buffer->priv->engine, start_offset, end_offset);
+#endif
 
     if (!buffer->priv->has_text)
     {
@@ -710,6 +742,7 @@ moo_text_buffer_delete_range (GtkTextBuffer      *text_buffer,
         gtk_text_buffer_remove_tag (text_buffer, tag, &tag_start, &tag_end);
     }
 
+#ifndef MOO_USE_SCI
     moo_text_buffer_unhighlight_brackets (buffer);
 
 #define MANY_LINES 1000
@@ -719,6 +752,7 @@ moo_text_buffer_delete_range (GtkTextBuffer      *text_buffer,
         gtk_text_buffer_remove_all_tags (text_buffer, start, end);
     }
 #undef MANY_LINES
+#endif
 
     if (!moo_undo_stack_frozen (buffer->priv->undo_stack))
     {
@@ -754,7 +788,9 @@ moo_text_buffer_delete_range (GtkTextBuffer      *text_buffer,
     g_slist_free (moved_marks);
 
     update_selection (buffer);
+#ifndef MOO_USE_SCI
     emit_cursor_moved (buffer, start);
+#endif
 
     if (buffer->priv->has_text)
     {
@@ -763,8 +799,10 @@ moo_text_buffer_delete_range (GtkTextBuffer      *text_buffer,
             g_object_notify (G_OBJECT (buffer), "has-text");
     }
 
+#ifndef MOO_USE_SCI
     if (buffer->priv->engine != NULL)
         _gtk_source_engine_text_deleted (buffer->priv->engine, offset, length);
+#endif
 }
 
 
@@ -812,6 +850,7 @@ proxy_notify_can_undo_redo (MooTextBuffer *buffer,
 }
 
 
+#ifndef MOO_USE_SCI
 void
 moo_text_buffer_set_lang (MooTextBuffer  *buffer,
                           MooLang        *lang)
@@ -884,6 +923,7 @@ moo_text_buffer_get_highlight (MooTextBuffer *buffer)
     g_return_val_if_fail (MOO_IS_TEXT_BUFFER (buffer), FALSE);
     return buffer->priv->do_highlight;
 }
+#endif // !MOO_USE_SCI
 
 
 static void
@@ -892,10 +932,13 @@ moo_text_buffer_set_property (GObject        *object,
                               const GValue   *value,
                               GParamSpec     *pspec)
 {
+#ifndef MOO_USE_SCI
     MooTextBuffer *buffer = MOO_TEXT_BUFFER (object);
+#endif
 
     switch (prop_id)
     {
+#ifndef MOO_USE_SCI
         case PROP_HIGHLIGHT_SYNTAX:
             moo_text_buffer_set_highlight (buffer, g_value_get_boolean (value));
             break;
@@ -921,6 +964,7 @@ moo_text_buffer_set_property (GObject        *object,
         case PROP_LANG:
             moo_text_buffer_set_lang (buffer, g_value_get_object (value));
             break;
+#endif // MOO_USE_SCI
 
         default:
             G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -939,6 +983,7 @@ moo_text_buffer_get_property (GObject        *object,
 
     switch (prop_id)
     {
+#ifndef MOO_USE_SCI
         case PROP_HIGHLIGHT_SYNTAX:
             g_value_set_boolean (value, buffer->priv->do_highlight);
             break;
@@ -954,6 +999,7 @@ moo_text_buffer_get_property (GObject        *object,
         case PROP_LANG:
             g_value_set_object (value, buffer->priv->lang);
             break;
+#endif // !MOO_USE_SCI
 
         case PROP_HAS_TEXT:
             g_value_set_boolean (value, moo_text_buffer_has_text (buffer));
@@ -990,6 +1036,7 @@ moo_text_buffer_has_selection (MooTextBuffer *buffer)
 }
 
 
+#ifndef MOO_USE_SCI
 void
 _moo_text_buffer_update_highlight (MooTextBuffer      *buffer,
                                    const GtkTextIter  *start,
@@ -1045,13 +1092,16 @@ _moo_text_buffer_set_style_scheme (MooTextBuffer      *buffer,
         _gtk_source_engine_set_style_scheme (buffer->priv->engine,
                                              GTK_SOURCE_STYLE_SCHEME (scheme));
 }
+#endif // !MOO_USE_SCI
 
 
 void
 moo_text_buffer_freeze (MooTextBuffer *buffer)
 {
     g_return_if_fail (MOO_IS_TEXT_BUFFER (buffer));
+#ifndef MOO_USE_SCI
     freeze_cursor_moved (buffer);
+#endif
 }
 
 
@@ -1059,7 +1109,9 @@ void
 moo_text_buffer_thaw (MooTextBuffer *buffer)
 {
     g_return_if_fail (MOO_IS_TEXT_BUFFER (buffer));
+#ifndef MOO_USE_SCI
     thaw_cursor_moved (buffer);
+#endif
 }
 
 
@@ -1157,6 +1209,8 @@ moo_text_iter_set_visual_line_offset (GtkTextIter *iter,
 /*****************************************************************************/
 /* Matching brackets
  */
+
+#ifndef MOO_USE_SCI
 
 #define FIND_BRACKETS_LIMIT 3000
 
@@ -1551,6 +1605,8 @@ moo_text_iter_find_matching_bracket (GtkTextIter *iter,
 
     return MOO_BRACKET_MATCH_NONE;
 }
+
+#endif // !MOO_USE_SCI
 
 
 /*****************************************************************************/

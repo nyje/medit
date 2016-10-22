@@ -38,7 +38,9 @@
 #include "mooedit/mooeditaction-factory.h"
 #include "mooedit/mooedit-private.h"
 #include "mooedit/mooeditview-impl.h"
-#include "mooedit/mooeditbookmark.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/mooeditbookmark.h"
+#endif
 #include "mooedit/mooeditdialogs.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mootextbuffer.h"
@@ -95,7 +97,9 @@ static void     changed_cb                      (GtkTextBuffer  *buffer,
 static void     modified_changed_cb             (GtkTextBuffer  *buffer,
                                                  MooEdit        *edit);
 
+#ifndef MOO_USE_SCI
 static MooLang *moo_edit_get_lang               (MooEdit        *doc);
+#endif
 
 static void     moo_edit_apply_prefs            (MooEdit        *doc);
 static void     moo_edit_freeze_notify          (MooEdit        *doc);
@@ -117,10 +121,14 @@ static guint signals[LAST_SIGNAL];
 enum {
     PROP_0,
     PROP_EDITOR,
+#ifndef MOO_USE_SCI
     PROP_ENABLE_BOOKMARKS,
+#endif
     PROP_HAS_COMMENTS,
     PROP_LINE_END_TYPE,
+#ifndef MOO_USE_SCI
     PROP_LANG,
+#endif
     PROP_ENCODING
 };
 
@@ -146,9 +154,11 @@ moo_edit_class_init (MooEditClass *klass)
         g_param_spec_object ("editor", "editor", "editor",
                              MOO_TYPE_EDITOR, (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class, PROP_ENABLE_BOOKMARKS,
         g_param_spec_boolean ("enable-bookmarks", "enable-bookmarks", "enable-bookmarks",
                               TRUE, (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+#endif
 
     g_object_class_install_property (gobject_class, PROP_HAS_COMMENTS,
         g_param_spec_boolean ("has-comments", "has-comments", "has-comments",
@@ -163,9 +173,11 @@ moo_edit_class_init (MooEditClass *klass)
         g_param_spec_string ("encoding", "encoding", "encoding",
                              NULL, (GParamFlags) G_PARAM_READWRITE));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class, PROP_LANG,
         g_param_spec_object ("lang", "lang", "lang",
                              MOO_TYPE_LANG, G_PARAM_READABLE));
+#endif
 
     signals[DOC_STATUS_CHANGED] =
             g_signal_new ("doc-status-changed",
@@ -295,9 +307,11 @@ MooEditPrivate::MooEditPrivate()
     , sync_timeout_id(0)
     , state(MOO_EDIT_STATE_NORMAL)
     , progress(nullptr)
+#ifndef MOO_USE_SCI
     , enable_bookmarks(false)
     , bookmarks(nullptr)
     , update_bookmarks_idle(0)
+#endif
     , actions(nullptr)
 {
 }
@@ -360,12 +374,14 @@ moo_edit_constructor (GType                  type,
 
     _moo_edit_set_file (doc, NULL, NULL);
 
+#ifndef MOO_USE_SCI
     g_signal_connect_swapped (doc->priv->buffer, "line-mark-moved",
                               G_CALLBACK (_moo_edit_line_mark_moved),
                               doc);
     g_signal_connect_swapped (doc->priv->buffer, "line-mark-deleted",
                               G_CALLBACK (_moo_edit_line_mark_deleted),
                               doc);
+#endif
 
     return object;
 }
@@ -430,6 +446,7 @@ _moo_edit_closed (MooEdit *doc)
         doc->priv->sync_timeout_id = 0;
     }
 
+#ifndef MOO_USE_SCI
     if (doc->priv->update_bookmarks_idle)
     {
         g_source_remove (doc->priv->update_bookmarks_idle);
@@ -437,6 +454,7 @@ _moo_edit_closed (MooEdit *doc)
     }
 
     _moo_edit_delete_bookmarks (doc, TRUE);
+#endif
 
     if (doc->priv->actions)
     {
@@ -749,9 +767,11 @@ moo_edit_set_property (GObject        *object,
             edit->priv->editor = (MooEditor*) g_value_get_object (value);
             break;
 
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_BOOKMARKS:
             moo_edit_set_enable_bookmarks (edit, g_value_get_boolean (value));
             break;
+#endif
 
         case PROP_ENCODING:
             moo_edit_set_encoding (edit, g_value_get_string (value));
@@ -782,6 +802,7 @@ moo_edit_get_property (GObject        *object,
             g_value_set_object (value, edit->priv->editor);
             break;
 
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_BOOKMARKS:
             g_value_set_boolean (value, edit->priv->enable_bookmarks);
             break;
@@ -789,14 +810,17 @@ moo_edit_get_property (GObject        *object,
         case PROP_HAS_COMMENTS:
             g_value_set_boolean (value, _moo_edit_has_comments (edit, NULL, NULL));
             break;
+#endif
 
         case PROP_ENCODING:
             g_value_set_string (value, edit->priv->encoding);
             break;
 
+#ifndef MOO_USE_SCI
         case PROP_LANG:
             g_value_set_object (value, moo_edit_get_lang (edit));
             break;
+#endif
 
         case PROP_LINE_END_TYPE:
             g_value_set_enum (value, edit->priv->line_end_type);
@@ -1117,6 +1141,7 @@ set_emacs_var (MooEdit    *edit,
     }
 }
 
+#ifndef MOO_USE_SCI
 static void
 parse_emacs_mode_string (MooEdit *edit,
                          char    *string)
@@ -1132,7 +1157,7 @@ parse_emacs_mode_string (MooEdit *edit,
     else
         parse_mode_string (edit, string, ":", set_emacs_var);
 }
-
+#endif
 
 static void
 parse_moo_mode_string (MooEdit *edit,
@@ -1159,6 +1184,7 @@ try_mode_string (MooEdit    *edit,
         return;
     }
 
+#ifndef MOO_USE_SCI
     if ((start = strstr (string, EMACS_MODE_STRING)))
     {
         start += strlen (EMACS_MODE_STRING);
@@ -1170,6 +1196,7 @@ try_mode_string (MooEdit    *edit,
             return;
         }
     }
+#endif
 
     if ((start = strstr (string, MOO_MODE_STRING)))
     {
@@ -1241,6 +1268,7 @@ update_config_from_mode_lines (MooEdit *edit)
 }
 
 
+#ifndef MOO_USE_SCI
 static MooLang *
 moo_edit_get_lang (MooEdit *doc)
 {
@@ -1249,12 +1277,12 @@ moo_edit_get_lang (MooEdit *doc)
     return moo_text_buffer_get_lang (MOO_TEXT_BUFFER (doc->priv->buffer));
 }
 
-/**
- * moo_edit_get_lang_id:
- *
- * Returns: (type utf8): id of language currently used in the document. If no language
- * is used, then string "none" is returned.
- */
+//**
+ /* moo_edit_get_lang_id:
+ /*
+ /* Returns: (type utf8): id of language currently used in the document. If no language
+ /* is used, then string "none" is returned.
+ /*/
 char *
 moo_edit_get_lang_id (MooEdit *doc)
 {
@@ -1274,6 +1302,7 @@ moo_edit_get_lang_id (MooEdit *doc)
 
     return g_strdup (_moo_lang_id (lang));
 }
+#endif // !MOO_USE_SCI
 
 static gboolean
 moo_edit_apply_config_all_in_idle (void)
@@ -1297,6 +1326,7 @@ _moo_edit_queue_recheck_config_all (void)
 }
 
 
+#ifndef MOO_USE_SCI
 static void
 update_lang_config_from_lang_globs (MooEdit *doc)
 {
@@ -1312,6 +1342,7 @@ update_lang_config_from_lang_globs (MooEdit *doc)
     moo_edit_config_set (doc->config, MOO_EDIT_CONFIG_SOURCE_FILENAME,
                          "lang", lang_id, (char*) NULL);
 }
+#endif
 
 static void
 update_config_from_filter_settings (MooEdit *doc)
@@ -1327,6 +1358,7 @@ update_config_from_filter_settings (MooEdit *doc)
     g_free (filter_config);
 }
 
+#ifndef MOO_USE_SCI
 static void
 update_config_from_lang (MooEdit *doc)
 {
@@ -1334,11 +1366,13 @@ update_config_from_lang (MooEdit *doc)
     _moo_lang_mgr_update_config (moo_lang_mgr_default (), doc->config, lang_id);
     g_free (lang_id);
 }
+#endif
 
 static void
 moo_edit_apply_config (MooEdit *doc)
 {
     guint i;
+#ifndef MOO_USE_SCI
     const char *lang_id = moo_edit_config_get_string (doc->config, "lang");
     MooLangMgr *mgr = moo_lang_mgr_default ();
     MooLang *lang = lang_id ? _moo_lang_mgr_find_lang (mgr, lang_id) : NULL;
@@ -1347,6 +1381,7 @@ moo_edit_apply_config (MooEdit *doc)
 
     g_object_notify (G_OBJECT (doc), "has-comments");
     g_object_notify (G_OBJECT (doc), "lang");
+#endif
 
     for (i = 0; i < doc->priv->views->n_elms; ++i)
         _moo_edit_view_apply_config (doc->priv->views->elms[i]);
@@ -1372,8 +1407,10 @@ moo_edit_recheck_config (MooEdit *doc)
     // First global settings
     moo_edit_apply_prefs (doc);
 
+#ifndef MOO_USE_SCI
     // then language from globs
     update_lang_config_from_lang_globs (doc);
+#endif
 
     // then settings from mode lines, these may change lang
     update_config_from_mode_lines (doc);
@@ -1381,8 +1418,10 @@ moo_edit_recheck_config (MooEdit *doc)
     // then filter settings, these also may change lang
     update_config_from_filter_settings (doc);
 
+#ifndef MOO_USE_SCI
     // update config for lang
     update_config_from_lang (doc);
+#endif
 
     // finally apply config
     moo_edit_apply_config (doc);
@@ -1610,6 +1649,8 @@ _moo_edit_set_state (MooEdit        *doc,
     }
 }
 
+
+#ifndef MOO_USE_SCI
 
 /*****************************************************************************/
 /* Comment/uncomment
@@ -1915,6 +1956,8 @@ moo_edit_uncomment_selection (MooEdit *edit)
 
     gtk_text_buffer_end_user_action (buffer);
 }
+
+#endif // !MOO_USE_SCI
 
 
 void
