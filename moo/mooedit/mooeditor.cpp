@@ -1003,7 +1003,7 @@ update_history_item_for_doc (MooEditor *editor,
     if (is_embedded (editor))
         return;
 
-    gstr uri = moo_edit_get_uri (doc);
+    gstr uri = gstr::take (moo_edit_get_uri (doc));
     if (uri.empty())
         return;
 
@@ -1896,7 +1896,7 @@ save_doc_session (MooEdit       *doc,
     const char *encoding;
     MooMarkupNode *node;
 
-    gstr uri = moo_edit_get_uri (doc);
+    gstr uri = gstr::take (moo_edit_get_uri (doc));
     encoding = moo_edit_get_encoding (doc);
 
     if (!uri.empty())

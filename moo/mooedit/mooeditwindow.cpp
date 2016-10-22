@@ -1158,7 +1158,7 @@ parse_title_format(const std::string& format, MooEdit *doc)
                         g_critical ("%s: %%u used without document", G_STRFUNC);
                     else
                     {
-                        gstr tmp = moo_edit_get_uri (doc);
+                        gstr tmp = gstr::take (moo_edit_get_uri (doc));
                         if (!tmp.empty())
                             g_string_append (str, tmp.get());
                         else
@@ -3388,7 +3388,7 @@ tab_icon_drag_data_get (GtkWidget      *evbox,
     else if (info == TARGET_URI_LIST)
     {
         const char *uris[] = { nullptr, nullptr };
-        gstr uri = moo_edit_get_uri (doc);
+        gstr uri = gstr::take (moo_edit_get_uri (doc));
         if (!uri.empty())
             uris[0] = uri.get();
         gtk_selection_data_set_uris (data, (char**) uris);

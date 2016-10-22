@@ -120,7 +120,6 @@ _pod_ret_helpers['glong'] = ('long', 'int64')
 _pod_ret_helpers['gulong'] = ('gulong', 'uint64')
 _pod_ret_helpers['gboolean'] = ('gboolean', 'bool')
 _pod_ret_helpers['index'] = ('int', 'index')
-_pod_ret_helpers['gstr'] = ('gstr', 'gstr')
 def find_pod_ret_helper(name):
     return _pod_ret_helpers[name]
 
