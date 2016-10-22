@@ -13,7 +13,9 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mooedit/mootextstylescheme.h"
+#ifndef MOO_USE_SCI
+#include <mooedit/native/mootextstylescheme.h>
+#endif // !MOO_USE_SCI
 #include "mooedit/mootextview.h"
 #include "mooutils/mooi18n.h"
 #include "gtksourceview/gtksourceview-api.h"

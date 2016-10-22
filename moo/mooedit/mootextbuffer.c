@@ -19,8 +19,10 @@
 
 #include "mooedit/mootextiter.h"
 #include "mooedit/mootext-private.h"
-#include "mooedit/moolang-private.h"
-#include "mooedit/mootextstylescheme.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/moolang-private.h"
+#include <mooedit/native/mootextstylescheme.h>
+#endif // !MOO_USE_SCI
 #include "marshals.h"
 #include "mooutils/mooundo.h"
 #include "mooutils/mooutils-gobject.h"

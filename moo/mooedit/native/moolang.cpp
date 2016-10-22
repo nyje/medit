@@ -16,7 +16,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include "mooedit/moolang-private.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/moolang-private.h"
+#endif // !MOO_USE_SCI
 #include "mooutils/mooi18n.h"
 #include <mooglib/moo-glib.h>
 #include <sys/stat.h>
