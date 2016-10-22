@@ -17,7 +17,9 @@
 #define MOO_TEXT_BUFFER_H
 
 #include <gtk/gtk.h>
-#include <mooedit/moolang.h>
+#ifndef MOO_USE_SCI
+#include "mooedit/native/moolang.h"
+#endif // !MOO_USE_SCI
 #include <mooedit/moolinemark.h>
 
 G_BEGIN_DECLS

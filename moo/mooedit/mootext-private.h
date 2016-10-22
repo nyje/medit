@@ -18,7 +18,9 @@
 
 #include "mooedit/moofold.h"
 #include "mooedit/moolinebuffer.h"
-#include "mooedit/mootextstylescheme.h"
+#ifndef MOO_USE_SCI
+#include <mooedit/native/mootextstylescheme.h>
+#endif // !MOO_USE_SCI
 
 G_BEGIN_DECLS
 

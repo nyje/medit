@@ -16,7 +16,9 @@
 #include "mooedit/mooeditfiltersettings.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooeditaction.h"
-#include "mooedit/moolang.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/moolang.h"
+#endif // !MOO_USE_SCI
 #include "mooedit/mooeditconfig.h"
 #include "mooedit/mooedit.h"
 #include "mooutils/mooprefs.h"

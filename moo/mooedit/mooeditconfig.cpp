@@ -14,7 +14,9 @@
  */
 
 #include "mooedit/mooeditconfig.h"
-#include "mooedit/moolang.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/moolang.h"
+#endif // !MOO_USE_SCI
 #include "mooedit/mooeditprefs.h"
 #include "mooutils/mooutils-gobject.h"
 #include "mooutils/mooutils-debug.h"
