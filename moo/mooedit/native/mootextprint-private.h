@@ -16,6 +16,10 @@
 #ifndef MOO_TEXT_PRINT_PRIVATE_H
 #define MOO_TEXT_PRINT_PRIVATE_H
 
+#ifdef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #include <mooedit/native/mootextprint.h>
 
 G_BEGIN_DECLS

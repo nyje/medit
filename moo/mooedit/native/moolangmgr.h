@@ -16,6 +16,10 @@
 #ifndef MOO_LANG_MGR_H
 #define MOO_LANG_MGR_H
 
+#ifdef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #ifndef MOO_USE_SCI
 #include "mooedit/native/moolang.h"
 #include <mooedit/native/mootextstylescheme.h>

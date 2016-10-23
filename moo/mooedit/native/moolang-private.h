@@ -16,6 +16,10 @@
 #ifndef MOO_LANG_PRIVATE_H
 #define MOO_LANG_PRIVATE_H
 
+#ifdef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #include "gtksourceview/gtksourceview-api.h"
 #ifndef MOO_USE_SCI
 #include "mooedit/native/moolang.h"

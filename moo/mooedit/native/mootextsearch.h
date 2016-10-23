@@ -16,6 +16,10 @@
 #ifndef MOO_TEXT_SEARCH_H
 #define MOO_TEXT_SEARCH_H
 
+#ifdef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #include <mooedit/mootextiter.h>
 #include <mooedit/mooedit-enums.h>
 

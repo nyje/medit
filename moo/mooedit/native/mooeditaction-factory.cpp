@@ -13,7 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mooedit/mooeditaction-factory.h"
+#include "mooedit/native/mooeditaction-factory.h"
 #include "mooedit/mooeditaction.h"
 #include "mooedit/mooedit-private.h"
 #include "mooutils/mooutils-gobject.h"

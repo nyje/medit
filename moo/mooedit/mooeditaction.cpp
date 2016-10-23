@@ -18,7 +18,9 @@
  **/
 
 #include "mooedit/mooeditaction.h"
-#include "mooedit/mooeditaction-factory.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/mooeditaction-factory.h"
+#endif
 #include "mooedit/mooeditfiltersettings.h"
 #include "mooedit/mooedit-impl.h"
 #include "mooutils/mooutils.h"
@@ -367,6 +369,8 @@ moo_edit_action_check_state (MooEditAction *action)
 }
 
 
+#ifndef MOO_USE_SCI
+
 void
 _moo_edit_check_actions (MooEdit     *edit,
                          MooEditView *view)
@@ -384,6 +388,8 @@ _moo_edit_check_actions (MooEdit     *edit,
         actions = g_list_delete_link (actions, actions);
     }
 }
+
+#endif // !MOO_USE_SCI
 
 
 static void

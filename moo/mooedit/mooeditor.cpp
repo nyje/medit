@@ -25,7 +25,11 @@
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooedit-impl.h"
-#include "mooedit/mooeditview-impl.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/mooeditview-impl.h"
+#else
+#include "mooedit/sci/mooeditview-impl.h"
+#endif
 #include "mooedit/mooedit-accels.h"
 #include "mooedit/mooeditfiltersettings.h"
 #include "mooedit/mooeditfileinfo-impl.h"

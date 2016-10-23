@@ -116,7 +116,7 @@ if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
         OUTPUT_STRIP_TRAILING_WHITESPACE
         RESULT_VARIABLE RESULT)
     if(NOT RESULT EQUAL 0)
-	    MESSAGE(FATAL_ERROR "Could not find glib-mkenums")
+        MESSAGE(FATAL_ERROR "Could not find glib-mkenums")
     endif()
 
     pkg_check_modules(XLIB x11 xext xrender ice sm)
@@ -128,8 +128,8 @@ else()
     set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
 
         set(GTK_LIBRARIES libgtk-win32-2.0-0 libatk-1.0-0 libgdk-win32-2.0-0 libgdk_pixbuf-2.0-0
-		    libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
-		    libgio-2.0-0 libgobject-2.0-0 libgmodule-2.0-0 libgthread-2.0-0 libglib-2.0-0 libintl-8
+            libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
+            libgio-2.0-0 libgobject-2.0-0 libgmodule-2.0-0 libgthread-2.0-0 libglib-2.0-0 libintl-8
             libmooglib-0)
         set(LIBXML2_LIBRARIES "libxml2-2")
     else()
