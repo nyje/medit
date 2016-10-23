@@ -49,10 +49,12 @@ void        _moo_line_mark_set_fold                 (MooLineMark        *mark,
                                                      MooFold            *fold);
 MooFold    *_moo_line_mark_get_fold                 (MooLineMark        *mark);
 
+#ifndef MOO_USE_SCI
 void        _moo_text_buffer_update_highlight       (MooTextBuffer      *buffer,
                                                      const GtkTextIter  *start,
                                                      const GtkTextIter  *end,
                                                      gboolean            synchronous);
+#endif // !MOO_USE_SCI
 gpointer    _moo_text_buffer_get_undo_stack         (MooTextBuffer      *buffer);
 gboolean    _moo_text_buffer_is_bracket_tag         (MooTextBuffer      *buffer,
                                                      GtkTextTag         *tag);

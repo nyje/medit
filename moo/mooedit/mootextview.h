@@ -20,8 +20,8 @@
 #ifndef MOO_USE_SCI
 #include "mooedit/native/moolangmgr.h"
 #include <mooedit/native/mootextstylescheme.h>
+#include <mooedit/native/mootextsearch.h>
 #endif // !MOO_USE_SCI
-#include <mooedit/mootextsearch.h>
 #include <mooedit/mooedit-enums.h>
 
 G_BEGIN_DECLS
@@ -57,6 +57,7 @@ struct MooTextViewClass
     gboolean (* line_mark_clicked)  (MooTextView    *view,
                                      int             line);
 
+#ifndef MOO_USE_SCI
     /* these are made signals for convenience */
     void (* find_interactive)       (MooTextView    *view);
     void (* replace_interactive)    (MooTextView    *view);
@@ -65,6 +66,7 @@ struct MooTextViewClass
     void (* goto_line_interactive)  (MooTextView    *view);
     void (* find_word_at_cursor)    (MooTextView    *view,
                                      gboolean        forward);
+#endif // !MOO_USE_SCI
 
     /* methods */
     /* adjusts start and end so that selection bound goes to start

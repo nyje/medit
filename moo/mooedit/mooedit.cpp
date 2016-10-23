@@ -1863,7 +1863,7 @@ block_uncomment (GtkTextBuffer *buffer,
 }
 
 
-/**
+//**
  * moo_edit_comment_selection:
  **/
 void
@@ -1922,7 +1922,7 @@ moo_edit_comment_selection (MooEdit *edit)
 }
 
 
-/**
+//**
  * moo_edit_uncomment_selection:
  **/
 void

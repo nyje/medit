@@ -21,14 +21,15 @@
 #include "mooedit/mootextview-private.h"
 #include "mooedit/mootextview.h"
 #include "mooedit/mootextbuffer.h"
-#include "mooedit/mootextfind.h"
 #include "mooedit/mootext-private.h"
 #include "mooedit/mooeditprefs.h"
 #ifndef MOO_USE_SCI
+#include "mooedit/native/mootextfind.h"
 #include "mooedit/native/moolangmgr.h"
 #endif // !MOO_USE_SCI
 #include "mooedit/mooeditwindow.h"
 #include "mooedit/mooedit.h"
+#include "mooedit/mootextiter.h"
 #include "marshals.h"
 #include "mooutils/mooutils-misc.h"
 #include "mooutils/mooundo.h"
@@ -128,9 +129,11 @@ static void     find_interactive            (MooTextView        *view);
 static void     replace_interactive         (MooTextView        *view);
 static void     find_next_interactive       (MooTextView        *view);
 static void     find_prev_interactive       (MooTextView        *view);
+#ifndef MOO_USE_SCI
 static void     goto_line_interactive       (MooTextView        *view);
 static gboolean start_quick_search          (MooTextView        *view);
 static void     moo_text_view_stop_quick_search (MooTextView    *view);
+#endif
 
 static void     insert_text_cb              (MooTextView        *view,
                                              GtkTextIter        *iter,
@@ -205,7 +208,9 @@ enum {
     CURSOR_MOVED,
     CHAR_INSERTED,
     LINE_MARK_CLICKED,
+#ifndef MOO_USE_SCI
     START_QUICK_SEARCH,
+#endif
     UNDO,
     REDO,
     LAST_SIGNAL
@@ -245,8 +250,10 @@ enum {
     PROP_SHOW_LINE_NUMBERS,
     PROP_SHOW_LINE_MARKS,
     PROP_ENABLE_FOLDING,
+#ifndef MOO_USE_SCI
     PROP_ENABLE_QUICK_SEARCH,
-    PROP_QUICK_SEARCH_FLAGS
+    PROP_QUICK_SEARCH_FLAGS,
+#endif
 };
 
 
@@ -295,12 +302,14 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
     text_view_class->populate_popup = moo_text_view_populate_popup;
 
     klass->extend_selection = _moo_text_view_extend_selection;
+#ifndef MOO_USE_SCI
     klass->find_word_at_cursor = find_word_at_cursor;
     klass->find_interactive = find_interactive;
     klass->find_next_interactive = find_next_interactive;
     klass->find_prev_interactive = find_prev_interactive;
     klass->replace_interactive = replace_interactive;
     klass->goto_line_interactive = goto_line_interactive;
+#endif // !MOO_USE_SCI
     klass->char_inserted = moo_text_view_char_inserted;
 #ifndef MOO_USE_SCI
     klass->apply_style_scheme = moo_text_view_apply_style_scheme;
@@ -486,6 +495,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                              FALSE,
                                              (GParamFlags) G_PARAM_READWRITE));
 
+#ifndef MOO_USE_SCI
     g_object_class_install_property (gobject_class,
                                      PROP_ENABLE_QUICK_SEARCH,
                                      g_param_spec_boolean ("enable-quick-search",
@@ -502,6 +512,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                              MOO_TYPE_TEXT_SEARCH_FLAGS,
                                              MOO_TEXT_SEARCH_CASELESS,
                                              (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT)));
+#endif // !MOO_USE_SCI
 
     g_object_class_install_property (gobject_class,
                                      PROP_AUTO_INDENT,
@@ -557,6 +568,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                 _moo_marshal_VOID__VOID,
                                 G_TYPE_NONE, 0);
 
+#ifndef MOO_USE_SCI
     signals[FIND_WORD_AT_CURSOR] =
             g_signal_new ("find-word-at-cursor",
                           G_OBJECT_CLASS_TYPE (klass),
@@ -611,6 +623,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                           NULL, NULL,
                           _moo_marshal_VOID__VOID,
                           G_TYPE_NONE, 0);
+#endif // !MOO_USE_SCI
 
     signals[CHAR_INSERTED] =
             g_signal_new ("char-inserted",
@@ -642,6 +655,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                           G_TYPE_BOOLEAN, 1,
                           G_TYPE_INT);
 
+#ifndef MOO_USE_SCI
     signals[START_QUICK_SEARCH] =
             _moo_signal_new_cb ("start-quick-search",
                                 G_OBJECT_CLASS_TYPE (klass),
@@ -650,6 +664,7 @@ static void moo_text_view_class_init (MooTextViewClass *klass)
                                 NULL, NULL,
                                 _moo_marshal_BOOL__VOID,
                                 G_TYPE_BOOLEAN, 0);
+#endif
 
     binding_set = gtk_binding_set_by_class (klass);
     gtk_binding_entry_add_signal (binding_set, GDK_z, MOO_ACCEL_CTRL_MASK,
@@ -915,6 +930,8 @@ msg_to_statusbar (const char *message,
 }
 
 
+#ifndef MOO_USE_SCI
+
 static void
 find_word_at_cursor (MooTextView *view,
                      gboolean     forward)
@@ -956,6 +973,8 @@ goto_line_interactive (MooTextView *view)
 {
     moo_text_view_run_goto_line (GTK_TEXT_VIEW (view));
 }
+
+#endif // !MOO_USE_SCI
 
 
 /**
@@ -1180,6 +1199,7 @@ moo_text_view_set_property (GObject        *object,
             set_enable_folding (view, g_value_get_boolean (value));
             break;
 
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_QUICK_SEARCH:
             view->priv->qs.enable = g_value_get_boolean (value) != 0;
             g_object_notify (object, "enable-quick-search");
@@ -1189,6 +1209,7 @@ moo_text_view_set_property (GObject        *object,
             view->priv->qs.flags = g_value_get_flags (value);
             g_object_notify (object, "quick-search-flags");
             break;
+#endif // !MOO_USE_SCI
 
         case PROP_AUTO_INDENT:
             view->priv->enter_indents = g_value_get_boolean (value);
@@ -1292,12 +1313,14 @@ moo_text_view_get_property (GObject        *object,
         case PROP_ENABLE_FOLDING:
             g_value_set_boolean (value, view->priv->enable_folding);
             break;
+#ifndef MOO_USE_SCI
         case PROP_ENABLE_QUICK_SEARCH:
             g_value_set_boolean (value, view->priv->qs.enable);
             break;
         case PROP_QUICK_SEARCH_FLAGS:
             g_value_set_flags (value, view->priv->qs.flags);
             break;
+#endif // !MOO_USE_SCI
         case PROP_AUTO_INDENT:
             g_value_set_boolean (value, view->priv->enter_indents != 0);
             break;
@@ -2448,6 +2471,7 @@ moo_text_view_expose (GtkWidget      *widget,
     else if (event->window == text_window)
         draw_marks_background (view, event);
 
+#ifndef MOO_USE_SCI
     if (event->window == text_window)
     {
         GdkRectangle visible_rect;
@@ -2460,6 +2484,7 @@ moo_text_view_expose (GtkWidget      *widget,
 
         _moo_text_buffer_update_highlight (get_moo_buffer (view), &start, &end, FALSE);
     }
+#endif // !MOO_USE_SCI
 
     handled = GTK_WIDGET_CLASS(moo_text_view_parent_class)->expose_event (widget, event);
 
@@ -3794,6 +3819,8 @@ moo_text_view_remove (GtkContainer *container,
 }
 
 
+#ifndef MOO_USE_SCI
+
 /***************************************************************************/
 /* Search
  */
@@ -4132,3 +4159,5 @@ start_quick_search (MooTextView *view)
         return FALSE;
     }
 }
+
+#endif // !MOO_USE_SCI

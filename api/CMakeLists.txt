@@ -112,16 +112,16 @@ SET(source_files
     ../moo/mooedit/mootextbtree.c
     ../moo/mooedit/mootextbtree.h
     ../moo/mooedit/mootextbuffer.c
-    ../moo/mooedit/mootextfind.c
-    ../moo/mooedit/mootextfind.h
+    ../moo/mooedit/native/mootextfind.c
+    ../moo/mooedit/native/mootextfind.h
     ../moo/mooedit/mootextiter.h
-    ../moo/mooedit/mootextprint.c
-    ../moo/mooedit/mootextprint.h
-    ../moo/mooedit/mootextprint-private.h
+    ../moo/mooedit/native/mootextprint.c
+    ../moo/mooedit/native/mootextprint.h
+    ../moo/mooedit/native/mootextprint-private.h
     ../moo/mooedit/mootext-private.h
-    ../moo/mooedit/mootextsearch.c
-    ../moo/mooedit/mootextsearch.h
-    ../moo/mooedit/mootextsearch-private.h
+    ../moo/mooedit/native/mootextsearch.c
+    ../moo/mooedit/native/mootextsearch.h
+    ../moo/mooedit/native/mootextsearch-private.h
     ../moo/mooedit/native/mootextstylescheme.c
     ../moo/mooedit/native/mootextstylescheme.h
     ../moo/mooedit/mootextview.c
