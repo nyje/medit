@@ -11,6 +11,14 @@ SET(mooedit_gtksourceview_sources
     mooedit/native/moolangmgr.h	
     mooedit/native/mootextstylescheme.c
     mooedit/native/mootextstylescheme.h
+    mooedit/native/mootextprint-private.h
+    mooedit/native/mootextprint.c	
+    mooedit/native/mootextprint.h
+    mooedit/native/mootextsearch-private.h
+    mooedit/native/mootextsearch.c	
+    mooedit/native/mootextsearch.h
+    mooedit/native/mootextfind.c
+    mooedit/native/mootextfind.h
 )
 
 SET(mooedit_sci_sources
@@ -89,15 +97,7 @@ SET(mooedit_sources
     mooedit/mootextbtree.h	
     mooedit/mootextbuffer.c	
     mooedit/mootextbuffer.h
-    mooedit/mootextfind.c	
-    mooedit/mootextfind.h
     mooedit/mootextiter.h
-    mooedit/mootextprint-private.h
-    mooedit/mootextprint.c	
-    mooedit/mootextprint.h
-    mooedit/mootextsearch-private.h
-    mooedit/mootextsearch.c	
-    mooedit/mootextsearch.h
     mooedit/mootextview-input.c
     mooedit/mootextview-private.h
     mooedit/mootextview.c	

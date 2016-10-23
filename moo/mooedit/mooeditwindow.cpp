@@ -36,6 +36,7 @@
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooeditaction.h"
+#include "mooedit/mootextiter.h"
 #ifndef MOO_USE_SCI
 #include "mooedit/native/mooeditbookmark.h"
 #endif
@@ -60,8 +61,10 @@
 #include <string>
 #include <unordered_set>
 
+#ifndef MOO_USE_SCI
 #define ENABLE_PRINTING
-#include "mooedit/mootextprint.h"
+#include "mooedit/native/mootextprint.h"
+#endif // !MOO_USE_SCI
 
 #define ACTIVE_DOC moo_edit_window_get_active_doc
 #define ACTIVE_VIEW moo_edit_window_get_active_view

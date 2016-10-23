@@ -32,6 +32,7 @@
 #include "mooedit/mooedithistoryitem.h"
 #include "mooedit/mooedit-ui.h"
 #include "mooedit/medit-ui.h"
+#include "mooedit/mootextiter.h"
 #include "mooutils/moomenuaction.h"
 #include "marshals.h"
 #include "mooutils/mooutils-cpp.h"
