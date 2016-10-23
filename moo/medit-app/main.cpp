@@ -822,7 +822,7 @@ medit_main (int argc, char *argv[])
 #else
     {
         fputs ("medit was built without project support\n", stderr);
-	exit (EXIT_FAILURE);
+    exit (EXIT_FAILURE);
     }
 #endif
     else

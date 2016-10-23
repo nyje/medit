@@ -60,7 +60,7 @@ moo_gtype_lcopy_value (const GValue   *value,
                        GTypeCValue    *collect_values,
                        G_GNUC_UNUSED guint collect_flags)
 {
-    GType *ptr = collect_values->v_pointer;
+    GType *ptr = (GType*) collect_values->v_pointer;
     *ptr = _moo_value_get_gtype (value);
     return NULL;
 }
@@ -99,11 +99,11 @@ _moo_gtype_get_type (void)
             &val_table
         };
 
-        static GTypeFundamentalInfo finfo = { 0 };
+        static GTypeFundamentalInfo finfo = { (GTypeFundamentalFlags) 0 };
 
         type = g_type_register_fundamental (g_type_fundamental_next (),
                                             "MooGType",
-                                            &info, &finfo, 0);
+                                            &info, &finfo, (GTypeFlags) 0);
     }
 
     return type;
@@ -189,7 +189,7 @@ _moo_param_gtype_get_type (void)
             param_gtype_cmp,            /* values_cmp */
         };
 
-		info.value_type = MOO_TYPE_GTYPE;
+        info.value_type = MOO_TYPE_GTYPE;
         type = g_param_type_register_static ("MooParamGType", &info);
     }
 
@@ -432,7 +432,7 @@ _moo_value_convert (const GValue *src,
         if (src_type == GDK_TYPE_COLOR)
         {
             char string[14];
-            const GdkColor *color = g_value_get_boxed (src);
+            const GdkColor *color = (const GdkColor*) g_value_get_boxed (src);
 
             if (!color)
             {
@@ -677,8 +677,8 @@ _moo_value_equal (const GValue *a,
     {
         const GdkColor *ca, *cb;
 
-        ca = g_value_get_boxed (a);
-        cb = g_value_get_boxed (b);
+        ca = (const GdkColor*) g_value_get_boxed (a);
+        cb = (const GdkColor*) g_value_get_boxed (b);
 
         if (!ca || !cb)
             return ca == cb;
@@ -1180,9 +1180,7 @@ test_misc (void)
 void
 moo_test_gobject (void)
 {
-    MooTestSuite *suite;
-
-    suite = moo_test_suite_new ("mooutils-gobject", "mooutils/mooutils-gobject.c", NULL, NULL, NULL);
+    MooTestSuite& suite = moo_test_suite_new ("mooutils-gobject", "mooutils/mooutils-gobject.c", NULL, NULL, NULL);
 
     moo_test_suite_add_test (suite, "convert", "test of converting values", (MooTestFunc) test_misc, NULL);
 }
@@ -1573,9 +1571,9 @@ watch_alloc (gsize          size,
     g_return_val_if_fail (G_IS_OBJECT (source), NULL);
     g_return_val_if_fail (G_IS_OBJECT (target), NULL);
 
-    w = g_malloc0 (size);
-    w->source = _moo_object_ptr_new (source, (GWeakNotify) watch_source_died, w);
-    w->target = _moo_object_ptr_new (target, (GWeakNotify) watch_target_died, w);
+    w = (Watch*) g_malloc0 (size);
+    w->source = _moo_object_ptr_new (G_OBJECT (source), (GWeakNotify) watch_source_died, w);
+    w->target = _moo_object_ptr_new (G_OBJECT (target), (GWeakNotify) watch_target_died, w);
     w->klass = klass;
     w->notify = notify;
     w->notify_data = notify_data;
@@ -1628,8 +1626,8 @@ prop_watch_new (GObject            *target,
     g_return_val_if_fail (source_prop != NULL, NULL);
     g_return_val_if_fail (transform != NULL, NULL);
 
-    target_class = g_type_class_peek (G_OBJECT_TYPE (target));
-    source_class = g_type_class_peek (G_OBJECT_TYPE (source));
+    target_class = (GObjectClass*) g_type_class_peek (G_OBJECT_TYPE (target));
+    source_class = (GObjectClass*) g_type_class_peek (G_OBJECT_TYPE (source));
 
     source_pspec = g_object_class_find_property (source_class, source_prop);
     target_pspec = g_object_class_find_property (target_class, target_prop);
@@ -1695,7 +1693,8 @@ _moo_add_property_watch (gpointer            target,
     g_return_val_if_fail (source_prop != NULL, 0);
     g_return_val_if_fail (transform != NULL, 0);
 
-    watch = prop_watch_new (target, target_prop, source, source_prop,
+    watch = prop_watch_new (G_OBJECT (target), target_prop, 
+                            G_OBJECT (source), source_prop,
                             NULL, transform, transform_data,
                             destroy_notify, transform_data);
 
@@ -2228,7 +2227,7 @@ _moo_data_get_value (MooData        *data,
     g_return_val_if_fail (data != NULL, FALSE);
     g_return_val_if_fail (!dest || dest->g_type == 0, FALSE);
 
-    value = g_hash_table_lookup (data->hash, key);
+    value = (GValue*) g_hash_table_lookup (data->hash, key);
 
     if (value && dest)
     {
@@ -2249,12 +2248,12 @@ _moo_data_get_ptr (MooData  *data,
 
     g_return_val_if_fail (data != NULL, NULL);
 
-    value = g_hash_table_lookup (data->hash, key);
+    value = (GValue*) g_hash_table_lookup (data->hash, key);
 
     if (value)
     {
         g_return_val_if_fail (G_VALUE_TYPE (value) == MOO_TYPE_PTR, NULL);
-        ptr = g_value_get_boxed (value);
+        ptr = (MooPtr*) g_value_get_boxed (value);
         return ptr->data;
     }
     else

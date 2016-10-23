@@ -448,7 +448,7 @@ moo_keymap_translate_keyboard_state (GdkKeymap           *keymap,
                                      GdkModifierType     *consumed_modifiers_p)
 {
     guint keyval = 0;
-    GdkModifierType consumed_modifiers = 0;
+    GdkModifierType consumed_modifiers = (GdkModifierType) 0;
     gboolean retval = 
         gdk_keymap_translate_keyboard_state (keymap, hardware_keycode, state, group,
                                              &keyval, effective_group, level,
@@ -458,7 +458,7 @@ moo_keymap_translate_keyboard_state (GdkKeymap           *keymap,
     if ((state & GDK_SHIFT_MASK) && (consumed_modifiers & GDK_SHIFT_MASK) && 
         need_workaround_for_671562 (keyval))
     {
-        consumed_modifiers &= ~GDK_SHIFT_MASK;
+        consumed_modifiers = (GdkModifierType) (consumed_modifiers & ~GDK_SHIFT_MASK);
     }
 
     if (keyval_p)
@@ -724,9 +724,9 @@ _moo_accel_parse (const char      *accel,
         goto out;
     }
 
-    if ((p = strchr (accel, '+')) && p != accel + len - 1)
+    if ((p = (char*) strchr (accel, '+')) && p != accel + len - 1)
         return accel_parse_sep (accel, "+", keyval, modifiers);
-    else if ((p = strchr (accel, '-')) && p != accel + len - 1)
+    else if ((p = (char*) strchr (accel, '-')) && p != accel + len - 1)
         return accel_parse_sep (accel, "-", keyval, modifiers);
 
     key = parse_key (accel);
@@ -1009,7 +1009,7 @@ delete_prefs_keys (void)
     GSList *keys = moo_prefs_list_keys (MOO_PREFS_RC);
     while (keys)
     {
-        char *key = keys->data;
+        char *key = (char*) keys->data;
 
         if (g_str_has_prefix (key, "Shortcuts/Foobar/"))
             moo_prefs_delete_key (key);
@@ -1035,7 +1035,7 @@ test_suite_cleanup (void)
 void
 moo_test_mooaccel (void)
 {
-    MooTestSuite *suite = moo_test_suite_new ("mooaccel", "mooutils/mooaccel.c",
+    MooTestSuite& suite = moo_test_suite_new ("mooaccel", "mooutils/mooaccel.c",
                                               (MooTestSuiteInit) test_suite_init,
                                               (MooTestSuiteCleanup) test_suite_cleanup,
                                               NULL);

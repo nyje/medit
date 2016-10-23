@@ -52,9 +52,9 @@ endif()
 
 list(APPEND built_moopython_sources moopython/pygtk/moo.defs)
     add_custom_command(OUTPUT moopython/pygtk/moo.defs
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo.defs
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/getoutput.py moopython/pygtk/moo.defs
         ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/api/gendefs.py ${CMAKE_SOURCE_DIR}/api/moo.xml
-	DEPENDS ${gendefs_files} ${CMAKE_SOURCE_DIR}/api/moo.xml)
+    DEPENDS ${gendefs_files} ${CMAKE_SOURCE_DIR}/api/moo.xml)
 
 set(codegen_files
     moopython/codegen/codegen.py
@@ -149,7 +149,7 @@ list(APPEND moopython_sources
     moopython/moopython-utils.h
     moopython/moopython-utils.c
     moopython/moopython-tests.h
-    moopython/moopython-tests.c
+    moopython/moopython-tests.cpp
 )
 
 list(APPEND moopython_sources

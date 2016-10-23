@@ -62,7 +62,7 @@ moo_test_run_lua_file (const char *basename)
     char *contents;
     char *filename;
 
-    filename = g_build_filename (moo_test_get_data_dir (), "test-lua", basename, (char*) NULL);
+    filename = g_build_filename (moo_test_get_data_dir ().get(), "test-lua", basename, (char*) NULL);
 
     if ((contents = moo_test_load_data_file (filename)))
     {
@@ -72,7 +72,7 @@ moo_test_run_lua_file (const char *basename)
         g_assert (lua_gettop (L) == 0);
 
         {
-            char *testdir = g_build_filename (moo_test_get_data_dir (), "test-lua", "lua", (char*) NULL);
+            char *testdir = g_build_filename (moo_test_get_data_dir ().get(), "test-lua", "lua", (char*) NULL);
             lua_addpath (L, (char**) &testdir, 1);
             g_free (testdir);
         }
@@ -115,14 +115,13 @@ void
 moo_test_lua (MooTestOptions opts)
 {
     MooLuaTestData *data;
-    MooTestSuite *suite;
     char **p;
 
     if (!(opts & MOO_TEST_INSTALLED))
         return;
 
     data = moo_lua_test_data_new ();
-    suite = moo_test_suite_new ("MooLua", "Lua scripting tests", NULL, moo_lua_test_data_free, data);
+    MooTestSuite& suite = moo_test_suite_new("MooLua", "Lua scripting tests", NULL, moo_lua_test_data_free, data);
 
     data->files = moo_test_list_data_files ("test-lua");
 

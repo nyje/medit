@@ -16,112 +16,63 @@
 #pragma once
 
 #include <glib.h>
+#include <string.h>
+#include <vector>
 
 class gstr
 {
 public:
-    gstr()
-        : m_p(nullptr)
-    {
-    }
+    gstr();
+    gstr(nullptr_t);
+    gstr(const char* s);
+    gstr(char* s, bool);
+    ~gstr();
 
-    gstr(nullptr_t)
-        : gstr()
-    {
-    }
+    gstr(const gstr& s);
+    gstr(gstr&& s);
 
-    ~gstr()
-    {
-        g_free(m_p);
-    }
+    const char* get() const;
 
-    gstr(const char* s)
-        : gstr()
-    {
-        *this = s;
-    }
+    void steal(char* s);
+    static gstr take(char* src);
 
-    gstr(const gstr& s)
-        : gstr()
-    {
-        *this = s;
-    }
+    gstr& operator=(const gstr& other);
+    gstr& operator=(const char* other);
+    gstr& operator=(gstr&& other);
 
-    gstr(gstr&& s)
-        : gstr()
-    {
-        steal(s.m_p);
-        s.m_p = nullptr;
-    }
+    void clear();
+    bool empty() const;
 
-    const char* get() const
-    {
-        return m_p ? m_p : "";
-    }
-
-    void steal(char* s)
-    {
-        g_free(m_p);
-        m_p = s ? g_strdup(s) : nullptr;
-    }
-
-    static gstr take(char* src)
-    {
-        gstr result;
-        result.steal(src);
-        return result;
-    }
-
-    gstr& operator=(const gstr& other)
-    {
-        if (this != &other)
-            *this = other.m_p;
-        return *this;
-    }
-
-    gstr& operator=(const char* other)
-    {
-        if (m_p != other)
-        {
-            g_free(m_p);
-            m_p = other ? g_strdup(other) : nullptr;
-        }
-        return *this;
-    }
-
-    gstr& operator=(gstr&& other)
-    {
-        steal(other.m_p);
-        other.m_p = nullptr;
-        return *this;
-    }
-
-    bool empty() const
-    {
-        return !m_p || !*m_p;
-    }
-
-    bool operator==(const gstr& other) const
-    {
-        return strcmp(get(), other.get()) == 0;
-    }
-
-    bool operator==(const char* other) const
-    {
-        return strcmp(get(), other ? other : "") == 0;
-    }
-
-    bool operator==(nullptr_t) const
-    {
-        return empty();
-    }
-
+    bool operator==(const gstr& other) const;
+    bool operator==(const char* other) const;
+    bool operator==(nullptr_t) const;
+    
     template<typename T>
     bool operator!=(const T& other) const
     {
         return !(*this == other);
     }
 
+    bool operator<(const gstr& other) const;
+
+    static std::vector<gstr> from_strv(char** strv);
+
+    std::vector<gstr> split(const char* separator, int max_pieces) const;
+
 private:
     char* m_p;
 };
+
+namespace std
+{
+
+template<>
+struct hash<gstr>
+{
+    size_t operator()(const gstr& s) const
+    {
+        return g_str_hash(s.get());
+    }
+};
+
+} // namespace std

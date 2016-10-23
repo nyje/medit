@@ -16,36 +16,51 @@
 #include "moo-test-macros.h"
 #include "mooutils/mooutils-fs.h"
 #include "mooutils/mooutils-messages.h"
+#include "moocpp/gstr.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
-typedef struct {
-    char *text;
-    char *file;
+struct TestAssertInfo
+{
+    gstr text;
+    gstr file;
     int line;
-} TestAssertInfo;
 
-typedef struct {
-    char *name;
-    char *description;
+    TestAssertInfo(const char* text,
+                   const char* file,
+                   int line)
+        : text(text)
+        , file(file)
+        , line(line)
+    {
+    }
+};
+
+struct MooTest
+{
+    gstr name;
+    gstr description;
     MooTestFunc func;
     gpointer data;
-    GSList *failed_asserts;
-} MooTest;
+    std::vector<TestAssertInfo> failed_asserts;
+};
 
-struct MooTestSuite {
-    char *name;
-    char *description;
-    GSList *tests;
+struct MooTestSuite
+{
+    gstr name;
+    gstr description;
+    std::vector<MooTest> tests;
     MooTestSuiteInit init_func;
     MooTestSuiteCleanup cleanup_func;
     gpointer data;
 };
 
-typedef struct {
-    char *data_dir;
-    GSList *test_suites;
+struct MooTestRegistry
+{
+    gstr data_dir;
+    std::vector<MooTestSuite> test_suites;
     MooTestSuite *current_suite;
     MooTest *current_test;
     struct TestRun {
@@ -56,148 +71,88 @@ typedef struct {
         guint tests_passed;
         guint asserts_passed;
     } tr;
-} MooTestRegistry;
+};
 
 static MooTestRegistry registry;
 
-static TestAssertInfo *
-test_assert_info_new (const char *text,
-                      const char *file,
-                      int         line)
+MooTestSuite&
+moo_test_suite_new(const char         *name,
+                   const char         *description,
+                   MooTestSuiteInit    init_func,
+                   MooTestSuiteCleanup cleanup_func,
+                   gpointer            data)
 {
-    TestAssertInfo *ai = g_new0 (TestAssertInfo, 1);
-    ai->file = g_strdup (file);
-    ai->text = g_strdup (text);
-    ai->line = line;
-    return ai;
-}
+    MooTestSuite ts;
+    ts.name = name;
+    ts.description = description;
+    ts.init_func = init_func;
+    ts.cleanup_func = cleanup_func;
+    ts.data = data;
 
-static void
-test_assert_info_free (TestAssertInfo *ai)
-{
-    if (ai)
-    {
-        g_free (ai->file);
-        g_free (ai->text);
-        g_free (ai);
-    }
-}
-
-MooTestSuite *
-moo_test_suite_new (const char         *name,
-                    const char         *description,
-                    MooTestSuiteInit    init_func,
-                    MooTestSuiteCleanup cleanup_func,
-                    gpointer            data)
-{
-    MooTestSuite *ts;
-
-    g_return_val_if_fail (name != NULL, NULL);
-
-    ts = g_new0 (MooTestSuite, 1);
-    ts->name = g_strdup (name);
-    ts->description = g_strdup (description);
-    ts->init_func = init_func;
-    ts->cleanup_func = cleanup_func;
-    ts->data = data;
-    ts->tests = NULL;
-
-    registry.test_suites = g_slist_append (registry.test_suites, ts);
-
-    return ts;
+    registry.test_suites.push_back(std::move(ts));
+    return registry.test_suites.back();
 }
 
 void
-moo_test_suite_add_test (MooTestSuite *ts,
-                         const char   *name,
-                         const char   *description,
-                         MooTestFunc   test_func,
-                         gpointer      data)
+moo_test_suite_add_test(MooTestSuite &ts,
+                        const char   *name,
+                        const char   *description,
+                        MooTestFunc   test_func,
+                        gpointer      data)
 {
-    MooTest *test;
+    g_return_if_fail(name != NULL);
+    g_return_if_fail(test_func != NULL);
 
-    g_return_if_fail (ts != NULL);
-    g_return_if_fail (name != NULL);
-    g_return_if_fail (test_func != NULL);
+    MooTest test;
+    test.name = name;
+    test.description = description;
+    test.func = test_func;
+    test.data = data;
 
-    test = g_new0 (MooTest, 1);
-    test->name = g_strdup (name);
-    test->description = g_strdup (description);
-    test->func = test_func;
-    test->data = data;
-
-    ts->tests = g_slist_append (ts->tests, test);
-}
-
-static void
-moo_test_suite_free (MooTestSuite *ts)
-{
-    if (ts)
-    {
-        GSList *l;
-        for (l = ts->tests; l != NULL; l = l->next)
-        {
-            MooTest *test = l->data;
-            g_slist_foreach (test->failed_asserts,
-                             (GFunc) test_assert_info_free,
-                             NULL);
-            g_slist_free (test->failed_asserts);
-            g_free (test->description);
-            g_free (test->name);
-            g_free (test);
-        }
-        g_slist_free (ts->tests);
-        g_free (ts->description);
-        g_free (ts->name);
-        g_free (ts);
-    }
+    ts.tests.push_back(std::move(test));
 }
 
 static gboolean
-run_test (MooTest        *test,
-          MooTestSuite   *ts,
-          MooTestOptions  opts)
+run_test(MooTest        &test,
+         MooTestSuite   &ts,
+         MooTestOptions  opts)
 {
-    MooTestEnv env;
     gboolean failed;
 
     if (opts & MOO_TEST_LIST_ONLY)
     {
-        fprintf (stdout, "  Test: %s - %s\n", test->name, test->description);
+        fprintf (stdout, "  Test: %s - %s\n", test.name.get(), test.description.get());
         return TRUE;
     }
 
-    env.suite_data = ts->data;
-    env.test_data = test->data;
+    MooTestEnv env;
+    env.suite_data = ts.data;
+    env.test_data = test.data;
 
-    fprintf (stdout, "  Test: %s ... ", test->name);
-    fflush (stdout);
+    fprintf(stdout, "  Test: %s ... ", test.name.get());
+    fflush(stdout);
 
-    registry.current_test = test;
-    test->func (&env);
+    registry.current_test = &test;
+    test.func(&env);
     registry.current_test = NULL;
 
-    failed = test->failed_asserts != NULL;
+    failed = !test.failed_asserts.empty();
 
     if (failed)
         fprintf (stdout, "FAILED\n");
     else
         fprintf (stdout, "passed\n");
 
-    if (test->failed_asserts)
+    if (!test.failed_asserts.empty())
     {
-        GSList *l;
-        int count;
-
-        test->failed_asserts = g_slist_reverse (test->failed_asserts);
-
-        for (l = test->failed_asserts, count = 1; l != NULL; l = l->next, count++)
+        int count = 1;
+        for (const auto& ai: test.failed_asserts)
         {
-            TestAssertInfo *ai = l->data;
-            fprintf (stdout, "    %d. %s", count, ai->file ? ai->file : "<unknown>");
-            if (ai->line > -1)
-                fprintf (stdout, ":%d", ai->line);
-            fprintf (stdout, " - %s\n", ai->text ? ai->text : "FAILED");
+            fprintf (stdout, "    %d. %s", count, !ai.file.empty() ? ai.file.get() : "<unknown>");
+            if (ai.line > -1)
+                fprintf (stdout, ":%d", ai.line);
+            fprintf (stdout, " - %s\n", !ai.text.empty() ? ai.text.get() : "FAILED");
+            ++count;
         }
     }
 
@@ -209,29 +164,32 @@ run_test (MooTest        *test,
 }
 
 static void
-run_suite (MooTestSuite   *ts,
+run_suite (MooTestSuite   &ts,
            MooTest        *single_test,
            MooTestOptions  opts)
 {
-    GSList *l;
     gboolean run = !(opts & MOO_TEST_LIST_ONLY);
     gboolean passed = TRUE;
 
-    if (run && ts->init_func && !ts->init_func (ts->data))
+    if (run && ts.init_func && !ts.init_func(ts.data))
         return;
 
-    registry.current_suite = ts;
+    registry.current_suite = &ts;
 
-    g_print ("Suite: %s\n", ts->name);
+    g_print ("Suite: %s\n", ts.name.get());
 
     if (single_test)
-        passed = run_test (single_test, ts, opts) && passed;
+    {
+        passed = run_test(*single_test, ts, opts) && passed;
+    }
     else
-        for (l = ts->tests; l != NULL; l = l->next)
-            passed = run_test (l->data, ts, opts) && passed;
+    {
+        for (auto& t: ts.tests)
+            passed = run_test(t, ts, opts) && passed;
+    }
 
-    if (run && ts->cleanup_func)
-        ts->cleanup_func (ts->data);
+    if (run && ts.cleanup_func)
+        ts.cleanup_func(ts.data);
 
     registry.current_suite = NULL;
     registry.tr.suites += 1;
@@ -240,58 +198,45 @@ run_suite (MooTestSuite   *ts,
 }
 
 static gboolean
-find_test (const char    *name,
+find_test (const gstr&    name,
            MooTestSuite **ts_p,
            MooTest      **test_p)
 {
-    GSList *l;
-    char **pieces;
-    const char *suite_name = NULL;
-    const char *test_name = NULL;
-    gboolean retval = FALSE;
+    *ts_p = nullptr;
+    *test_p = nullptr;
 
-    g_return_val_if_fail (name != NULL, FALSE);
+    std::vector<gstr> pieces = name.split("/", 2);
+    g_return_val_if_fail (!pieces.empty(), FALSE);
 
-    pieces = g_strsplit (name, "/", 2);
-    g_return_val_if_fail (pieces != NULL && pieces[0] != NULL, FALSE);
+    const gstr& suite_name = pieces[0];
+    const gstr& test_name = pieces.size() > 1 ? pieces[1] : gstr();
 
-    suite_name = pieces[0];
-    test_name = pieces[1];
-
-    for (l = registry.test_suites; l != NULL; l = l->next)
+    for (auto& ts: registry.test_suites)
     {
-        MooTestSuite *ts = l->data;
-        GSList *tl;
-
-        if (strcmp (ts->name, suite_name) != 0)
-            continue;
-
-        if (!test_name)
+        if (ts.name == suite_name)
         {
-            *ts_p = ts;
-            *test_p = NULL;
-            retval = TRUE;
-            goto out;
-        }
-
-        for (tl = ts->tests; tl != NULL; tl = tl->next)
-        {
-            MooTest *test = tl->data;
-            if (strcmp (test->name, test_name) == 0)
+            if (test_name.empty())
             {
-                *ts_p = ts;
-                *test_p = test;
-                retval = TRUE;
-                goto out;
+                *ts_p = &ts;
+                *test_p = NULL;
+                return true;
             }
-        }
 
-        break;
+            for (auto& test : ts.tests)
+            {
+                if (test.name == test_name)
+                {
+                    *ts_p = &ts;
+                    *test_p = &test;
+                    return true;
+                }
+            }
+
+            break;
+        }
     }
 
-out:
-    g_strfreev (pieces);
-    return retval;
+    return false;
 }
 
 gboolean
@@ -318,14 +263,13 @@ moo_test_run_tests (char          **tests,
                 exit (EXIT_FAILURE);
             }
 
-            run_suite (single_ts, single_test, opts);
+            run_suite (*single_ts, single_test, opts);
         }
     }
     else
     {
-        GSList *l;
-        for (l = registry.test_suites; l != NULL; l = l->next)
-            run_suite (l->data, NULL, opts);
+        for (auto& ts: registry.test_suites)
+            run_suite(ts, nullptr, opts);
     }
 
     fprintf (stdout, "\n");
@@ -354,14 +298,10 @@ moo_test_run_tests (char          **tests,
 void
 moo_test_cleanup (void)
 {
-    GSList *l;
     GError *error = NULL;
 
-    for (l = registry.test_suites; l != NULL; l = l->next)
-        moo_test_suite_free (l->data);
-
-    g_free (registry.data_dir);
-    registry.data_dir = NULL;
+    registry.test_suites.clear();
+    registry.data_dir.clear();
 
     if (g_file_test (moo_test_get_working_dir (), G_FILE_TEST_IS_DIR) &&
         !_moo_remove_dir (moo_test_get_working_dir (), TRUE, &error))
@@ -399,9 +339,7 @@ moo_test_assert_impl (gboolean    passed,
     if (passed)
         registry.tr.asserts_passed += 1;
     else
-        registry.current_test->failed_asserts =
-            g_slist_prepend (registry.current_test->failed_asserts,
-                             test_assert_info_new (text, file, line));
+        registry.current_test->failed_asserts.push_back(TestAssertInfo(text, file, line));
 }
 
 void
@@ -435,7 +373,7 @@ moo_test_assert_msg (gboolean    passed,
 }
 
 
-const char *
+const gstr&
 moo_test_get_data_dir (void)
 {
     return registry.data_dir;
@@ -444,8 +382,6 @@ moo_test_get_data_dir (void)
 void
 moo_test_set_data_dir (const char *dir)
 {
-    char *tmp;
-
     g_return_if_fail (dir != NULL);
 
     if (!g_file_test (dir, G_FILE_TEST_IS_DIR))
@@ -454,9 +390,7 @@ moo_test_set_data_dir (const char *dir)
         return;
     }
 
-    tmp = registry.data_dir;
-    registry.data_dir = _moo_normalize_file_path (dir);
-    g_free (tmp);
+    registry.data_dir.steal(_moo_normalize_file_path(dir));
 }
 
 const char *
@@ -465,35 +399,31 @@ moo_test_get_working_dir (void)
     return "test-working-dir";
 }
 
-char *
+gstr
 moo_test_find_data_file (const char *basename)
 {
-    char *fullname;
+    g_return_val_if_fail(!registry.data_dir.empty(), gstr());
 
-    g_return_val_if_fail (registry.data_dir != NULL, NULL);
-
-    if (!_moo_path_is_absolute (basename))
-        fullname = g_build_filename (registry.data_dir, basename, NULL);
+    if (!_moo_path_is_absolute(basename))
+        return gstr::take(g_build_filename(registry.data_dir.get(), basename, NULL));
     else
-        fullname = g_strdup (basename);
-
-    return fullname;
+        return basename;
 }
 
 char **
 moo_test_list_data_files (const char *dir)
 {
     GDir *gdir;
-    char *freeme = NULL;
+    gstr tmp;
     GError *error = NULL;
     const char *name;
     GPtrArray *names = NULL;
 
     if (!_moo_path_is_absolute (dir))
     {
-        g_return_val_if_fail (registry.data_dir != NULL, NULL);
-        freeme = g_build_filename (registry.data_dir, dir, NULL);
-        dir = freeme;
+        g_return_val_if_fail (registry.data_dir != nullptr, NULL);
+        tmp.steal(g_build_filename(registry.data_dir.get(), dir, NULL));
+        dir = tmp.get();
     }
 
     if (!(gdir = g_dir_open (dir, 0, &error)))
@@ -512,7 +442,6 @@ moo_test_list_data_files (const char *dir)
     if (gdir)
         g_dir_close (gdir);
 
-    g_free (freeme);
     return (char**) g_ptr_array_free (names, FALSE);
 }
 
@@ -523,10 +452,10 @@ moo_test_load_data_file (const char *basename)
     char *contents = NULL;
     GError *error = NULL;
 
-    g_return_val_if_fail (registry.data_dir != NULL, NULL);
+    g_return_val_if_fail (registry.data_dir != nullptr, NULL);
 
     if (!_moo_path_is_absolute (basename))
-        fullname = g_build_filename (registry.data_dir, basename, NULL);
+        fullname = g_build_filename (registry.data_dir.get(), basename, NULL);
     else
         fullname = g_strdup (basename);
 
@@ -560,7 +489,7 @@ add_func (gpointer key,
           G_GNUC_UNUSED gpointer value,
           GString *string)
 {
-    g_string_append (string, key);
+    g_string_append (string, (const char*) key);
     g_string_append (string, "\n");
 }
 

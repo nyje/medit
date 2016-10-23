@@ -5,14 +5,12 @@
 static void
 moo_test_run_python_file (const char *basename)
 {
-    char *filename = moo_test_find_data_file (basename);
+    gstr filename = moo_test_find_data_file (basename);
 
-    if (!filename)
+    if (filename.empty())
         TEST_FAILED_MSG ("could not find file `%s'", basename);
-    else if (!medit_python_run_file (filename, TRUE))
+    else if (!medit_python_run_file (filename.get(), TRUE))
         TEST_FAILED_MSG ("error running file `%s'", basename);
-
-    g_free (filename);
 }
 
 static void
@@ -24,7 +22,7 @@ test_func (MooTestEnv *env)
     {
         char *dir;
         been_here = TRUE;
-        dir = g_build_filename (moo_test_get_data_dir (), "test-python", NULL);
+        dir = g_build_filename (moo_test_get_data_dir ().get(), "test-python", NULL);
         moo_python_add_path (dir);
         g_free (dir);
     }
@@ -33,7 +31,7 @@ test_func (MooTestEnv *env)
 }
 
 static void
-add_test (MooTestSuite *suite, const char *name, const char *description, const char *python_file)
+add_test (MooTestSuite &suite, const char *name, const char *description, const char *python_file)
 {
     moo_test_suite_add_test (suite, name, description, test_func, (void*) python_file);
 }
@@ -43,9 +41,7 @@ moo_test_python (void)
 {
     if (moo_python_enabled ())
     {
-        MooTestSuite *suite;
-
-        suite = moo_test_suite_new ("MooPython", "Python scripting tests", NULL, NULL, NULL);
+        MooTestSuite& suite = moo_test_suite_new ("MooPython", "Python scripting tests", NULL, NULL, NULL);
 
         add_test (suite, "moo", "test of moo module", "test-python/testmoo.py");
     }
