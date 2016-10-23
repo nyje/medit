@@ -1,7 +1,7 @@
 /*
  *   mooeditview.h
  *
- *   Copyright (C) 2004-2010 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
+ *   Copyright (C) 2004-2016 by Yevgen Muntyan <emuntyan@users.sourceforge.net>
  *
  *   This file is part of medit.  medit is free software; you can
  *   redistribute it and/or modify it under the terms of the
@@ -15,7 +15,10 @@
 
 #pragma once
 
-#include <mooedit/mootextview.h>
+#ifndef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #include <mooedit/mooedit.h>
 
 G_BEGIN_DECLS
@@ -32,13 +35,13 @@ typedef struct MooEditViewClass   MooEditViewClass;
 
 struct MooEditView
 {
-    MooTextView parent;
+    GtkWidget parent;
     MooEditViewPrivate *priv;
 };
 
 struct MooEditViewClass
 {
-    MooTextViewClass parent_class;
+    GtkWidgetClass parent_class;
 };
 
 GType            moo_edit_view_get_type     (void) G_GNUC_CONST;

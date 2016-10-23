@@ -14,7 +14,9 @@
  */
 
 #include "mooedit/mootextview-private.h"
-#include "mooedit/mooeditview-impl.h"
+#ifndef MOO_USE_SCI
+#include "mooedit/native/mooeditview-impl.h"
+#endif
 #include "mooedit/mootextiter.h"
 #include "mooedit/mootextbuffer.h"
 #include "mooutils/mooutils-misc.h"
@@ -815,11 +817,13 @@ _moo_text_view_button_press_event (GtkWidget          *widget,
             else
                 view->priv->dnd.type = MOO_TEXT_VIEW_DRAG_SELECT_LINES;
         }
+#ifndef MOO_USE_SCI
         else if (event->button == 3 && MOO_IS_EDIT_VIEW (widget))
         {
             _moo_edit_view_do_popup (MOO_EDIT_VIEW (widget), event);
             return TRUE;
         }
+#endif // !MOO_USE_SCI
         else if (event->button == 2 || event->button == 3)
         {
             return GTK_WIDGET_CLASS (_moo_text_view_parent_class)->

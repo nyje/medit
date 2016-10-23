@@ -16,6 +16,10 @@
 #ifndef MOO_LANG_H
 #define MOO_LANG_H
 
+#ifdef MOO_USE_SCI
+#error "This header must not be used"
+#endif
+
 #include <glib-object.h>
 
 G_BEGIN_DECLS
