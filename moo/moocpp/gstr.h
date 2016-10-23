@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <glib.h>
+
 class gstr
 {
 public:
@@ -33,10 +35,16 @@ public:
         g_free(m_p);
     }
 
+    gstr(const char* s)
+        : gstr()
+    {
+        *this = s;
+    }
+
     gstr(const gstr& s)
         : gstr()
     {
-        copy_from(s.m_p);
+        *this = s;
     }
 
     gstr(gstr&& s)
@@ -48,18 +56,13 @@ public:
 
     const char* get() const
     {
-        return m_p;
-    }
-
-    const char* get_non_null() const
-    {
         return m_p ? m_p : "";
     }
 
     void steal(char* s)
     {
         g_free(m_p);
-        m_p = s;
+        m_p = s ? g_strdup(s) : nullptr;
     }
 
     static gstr take(char* src)
@@ -69,31 +72,20 @@ public:
         return result;
     }
 
-    void copy_from(const char* s)
-    {
-        if (s != m_p)
-        {
-            g_free(m_p);
-            m_p = s ? g_strdup(s) : nullptr;
-        }
-    }
-
-    static gstr copy(const char* s)
-    {
-        gstr result;
-        result.copy_from(s);
-        return result;
-    }
-
-    gstr dup() const
-    {
-        return take(m_p ? g_strdup(m_p) : nullptr); 
-    }
-
     gstr& operator=(const gstr& other)
     {
         if (this != &other)
-            copy_from(other.m_p);
+            *this = other.m_p;
+        return *this;
+    }
+
+    gstr& operator=(const char* other)
+    {
+        if (m_p != other)
+        {
+            g_free(m_p);
+            m_p = other ? g_strdup(other) : nullptr;
+        }
         return *this;
     }
 
@@ -109,24 +101,25 @@ public:
         return !m_p || !*m_p;
     }
 
-    bool is_null() const
+    bool operator==(const gstr& other) const
     {
-        return !m_p;
+        return strcmp(get(), other.get()) == 0;
     }
 
-    bool equal_include_null(const gstr& other) const
+    bool operator==(const char* other) const
     {
-        if (!m_p)
-            return !other.m_p;
-        else if (!other.m_p)
-            return false;
-        else
-            return strcmp(m_p, other.m_p) == 0;
+        return strcmp(get(), other ? other : "") == 0;
     }
 
-    bool equal_ignore_null(const gstr& other) const
+    bool operator==(nullptr_t) const
     {
-        return strcmp(get_non_null(), other.get_non_null()) == 0;
+        return empty();
+    }
+
+    template<typename T>
+    bool operator!=(const T& other) const
+    {
+        return !(*this == other);
     }
 
 private:

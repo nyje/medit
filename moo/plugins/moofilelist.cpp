@@ -277,7 +277,7 @@ static gstr
 file_get_uri (File *file)
 {
     if (file->uri)
-        return gstr::copy (file->uri);
+        return file->uri;
     else
         return gstr::take (moo_edit_get_uri (file->doc));
 }
