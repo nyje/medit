@@ -13,22 +13,20 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MOO_TEST_UTILS_H
-#define MOO_TEST_UTILS_H
+#pragma once
 
 #include <mooglib/moo-glib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <mooutils/mooutils-macros.h>
 #include <mooutils/mooutils-misc.h>
+#include <moocpp/gstr.h>
 
-G_BEGIN_DECLS
-
-
-typedef struct {
+struct MooTestEnv
+{
     gpointer suite_data;
     gpointer test_data;
-} MooTestEnv;
+};
 
 typedef enum {
     MOO_TEST_LIST_ONLY   = 1 << 0,
@@ -41,12 +39,12 @@ typedef gboolean (*MooTestSuiteInit)    (gpointer    data);
 typedef void     (*MooTestSuiteCleanup) (gpointer    data);
 typedef void     (*MooTestFunc)         (MooTestEnv *env);
 
-MooTestSuite    *moo_test_suite_new         (const char         *name,
+MooTestSuite    &moo_test_suite_new         (const char         *name,
                                              const char         *description,
                                              MooTestSuiteInit    init_func,
                                              MooTestSuiteCleanup cleanup_func,
                                              gpointer            data);
-void             moo_test_suite_add_test    (MooTestSuite       *ts,
+void             moo_test_suite_add_test    (MooTestSuite       &ts,
                                              const char         *name,
                                              const char         *description,
                                              MooTestFunc         test_func,
@@ -74,9 +72,9 @@ void             moo_test_assert_msg        (gboolean            passed,
                                              ...) G_GNUC_PRINTF(4, 5);
 
 char            *moo_test_load_data_file    (const char         *basename);
-char            *moo_test_find_data_file    (const char         *basename);
+gstr             moo_test_find_data_file    (const char         *basename);
 void             moo_test_set_data_dir      (const char         *dir);
-const char      *moo_test_get_data_dir      (void);
+const gstr&      moo_test_get_data_dir      (void);
 const char      *moo_test_get_working_dir   (void);
 char           **moo_test_list_data_files   (const char         *subdir);
 
@@ -86,8 +84,3 @@ void             moo_test_coverage_record   (const char         *lang,
                                              const char         *function);
 
 gboolean         moo_test_set_silent_messages   (gboolean        silent);
-
-
-G_END_DECLS
-
-#endif /* MOO_TEST_UTILS_H */

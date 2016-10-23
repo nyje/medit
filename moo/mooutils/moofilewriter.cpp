@@ -100,7 +100,7 @@ moo_file_reader_new_real (const char  *filename,
         return NULL;
     }
 
-    reader = g_object_new (MOO_TYPE_FILE_READER, (const char*) NULL);
+    reader = MOO_FILE_READER (g_object_new (MOO_TYPE_FILE_READER, (const char*) NULL));
     reader->file = file;
 
     return reader;
@@ -304,7 +304,7 @@ moo_local_file_writer_new (GFile               *file,
     if (!stream)
         goto error;
 
-    writer = g_object_new (MOO_TYPE_LOCAL_FILE_WRITER, (const char*) NULL);
+    writer = (MooLocalFileWriter*) g_object_new (MOO_TYPE_LOCAL_FILE_WRITER, (const char*) NULL);
     writer->file = file_copy;
     writer->stream = G_OUTPUT_STREAM (stream);
     writer->flags = flags;
@@ -357,9 +357,9 @@ moo_config_writer_new (const char  *filename,
     g_return_val_if_fail (filename != NULL, NULL);
     g_return_val_if_fail (!error || !*error, NULL);
 
-    flags = MOO_FILE_WRITER_CONFIG_MODE | MOO_FILE_WRITER_TEXT_MODE;
+    flags = (MooFileWriterFlags) (MOO_FILE_WRITER_CONFIG_MODE | MOO_FILE_WRITER_TEXT_MODE);
     if (save_backup)
-        flags |= MOO_FILE_WRITER_SAVE_BACKUP;
+        flags = (MooFileWriterFlags) (flags | MOO_FILE_WRITER_SAVE_BACKUP);
 
     return moo_file_writer_new (filename, flags, error);
 }
@@ -556,7 +556,7 @@ moo_string_writer_init (MooStringWriter *writer)
 MooFileWriter *
 moo_string_writer_new (void)
 {
-    return g_object_new (MOO_TYPE_STRING_WRITER, (const char*) NULL);
+    return (MooFileWriter*) g_object_new (MOO_TYPE_STRING_WRITER, (const char*) NULL);
 }
 
 const char *
@@ -717,9 +717,7 @@ test_moo_file_writer (void)
 void
 moo_test_moo_file_writer (void)
 {
-    MooTestSuite *suite;
-
-    suite = moo_test_suite_new ("MooFileWriter", "MooFileWriter tests", NULL, NULL, NULL);
+    MooTestSuite& suite = moo_test_suite_new ("MooFileWriter", "MooFileWriter tests", NULL, NULL, NULL);
 
     moo_test_suite_add_test (suite, "MooFileWriter", "MooFileWriter tests",
                              (MooTestFunc) test_moo_file_writer, NULL);

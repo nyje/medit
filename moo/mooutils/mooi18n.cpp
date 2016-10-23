@@ -187,9 +187,7 @@ moo_test_i18n (MooTestOptions opts)
 {
     if (opts & MOO_TEST_INSTALLED)
     {
-        MooTestSuite *suite;
-
-        suite = moo_test_suite_new ("mooi18n", "mooutils/mooi18n.c", NULL, NULL, NULL);
+        MooTestSuite& suite = moo_test_suite_new ("mooi18n", "mooutils/mooi18n.c", NULL, NULL, NULL);
 
         moo_test_suite_add_test (suite, "mooi18n", "test of mooi18n",
                                  (MooTestFunc) test_mooi18n, NULL);

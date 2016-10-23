@@ -9,7 +9,7 @@ tmpl_file_start = """\
 %(headers)s
 #include "moolua/moo-lua-api-util.h"
 
-extern "C" void moo_test_coverage_record (const char *lang, const char *function);
+void moo_test_coverage_record (const char *lang, const char *function);
 
 """
 
