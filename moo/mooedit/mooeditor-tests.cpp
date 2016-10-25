@@ -143,7 +143,7 @@ test_encodings_1 (const char *name,
     if ((dot = strchr(name, '.')))
         encoding.steal(g_strndup (name, dot - name));
     else
-        encoding = name;
+        encoding.copy(name);
 
 #ifdef MOO_OS_WIN32
     if (encoding == "UTF-16" || encoding == "UCS-4")
@@ -151,7 +151,7 @@ test_encodings_1 (const char *name,
 #endif
 
     gstr filename = g::build_filename (test_data.encodings_dir, name);
-    gstr filename2 = g_build_filename (working_dir, name, (char*)0);
+    gstr filename2 = g::build_filename (working_dir, name);
 
     editor = moo_editor_instance ();
     doc = moo_editor_open_path (editor, filename.get(), encoding.get(), -1, NULL);
@@ -217,10 +217,8 @@ test_suite_init (G_GNUC_UNUSED gpointer data)
 {
     mgw_errno_t err;
 
-    test_data.working_dir = g_build_filename (moo_test_get_working_dir (),
-                                              "editor-work", (char*)0);
-    test_data.encodings_dir = g::build_filename (moo_test_get_data_dir (),
-                                                 "encodings");
+    test_data.working_dir = g::build_filename (moo_test_get_working_dir (), "editor-work");
+    test_data.encodings_dir = g::build_filename (moo_test_get_data_dir (), "encodings");
 
     if (_moo_mkdir_with_parents (test_data.working_dir.get(), &err) != 0)
     {

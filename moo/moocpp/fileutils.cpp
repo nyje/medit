@@ -17,24 +17,9 @@
 
 #include "moocpp/fileutils.h"
 
-gstr g::build_filename(const gstr& comp1, const gstr& comp2)
+gstr g::build_filename_impl(const char* comp1, const char* comp2, const char* comp3)
 {
-    return gstr::take(g_build_filename(comp1.get(), comp2.get(), nullptr));
-}
-
-gstr g::build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3)
-{
-    return gstr::take(g_build_filename(comp1.get(), comp2.get(), comp3.get(), nullptr));
-}
-
-gstr g::build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3, const gstr& comp4)
-{
-    return gstr::take(g_build_filename(comp1.get(), comp2.get(), comp3.get(), comp4.get(), nullptr));
-}
-
-gstr g::build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3, const gstr& comp4, const gstr& comp5)
-{
-    return gstr::take(g_build_filename(comp1.get(), comp2.get(), comp3.get(), comp4.get(), comp5.get(), nullptr));
+    return gstr::take(g_build_filename(comp1, comp2, comp3, nullptr));
 }
 
 gstr g::build_filenamev(const std::vector<gstr>& components)

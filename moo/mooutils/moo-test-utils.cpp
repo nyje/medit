@@ -83,8 +83,8 @@ moo_test_suite_new(const char         *name,
                    gpointer            data)
 {
     MooTestSuite ts;
-    ts.name = name;
-    ts.description = description;
+    ts.name.copy(name);
+    ts.description.copy(description);
     ts.init_func = init_func;
     ts.cleanup_func = cleanup_func;
     ts.data = data;
@@ -104,8 +104,8 @@ moo_test_suite_add_test(MooTestSuite &ts,
     g_return_if_fail(test_func != NULL);
 
     MooTest test;
-    test.name = name;
-    test.description = description;
+    test.name.copy(name);
+    test.description.copy(description);
     test.func = test_func;
     test.data = data;
 
@@ -240,7 +240,7 @@ find_test (const gstr&    name,
 }
 
 gboolean
-moo_test_run_tests (char          **tests,
+moo_test_run_tests (const gstrvec&  tests,
                     const char     *coverage_file,
                     MooTestOptions  opts)
 {
@@ -249,10 +249,9 @@ moo_test_run_tests (char          **tests,
 
     fprintf (stdout, "\n");
 
-    if (tests && *tests)
+    if (!tests.empty())
     {
-        char *name;
-        while ((name = *tests++))
+        for (const auto& name: tests)
         {
             MooTestSuite *single_ts = NULL;
             MooTest *single_test = NULL;
@@ -407,7 +406,7 @@ moo_test_find_data_file (const char *basename)
     if (!_moo_path_is_absolute(basename))
         return gstr::take(g_build_filename(registry.data_dir.get(), basename, NULL));
     else
-        return basename;
+        return gstr(basename);
 }
 
 char **

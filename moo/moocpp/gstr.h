@@ -19,12 +19,15 @@
 #include <string.h>
 #include <vector>
 
+class gstr;
+using gstrvec = std::vector<gstr>;
+
 class gstr
 {
 public:
     gstr();
     gstr(nullptr_t);
-    gstr(const char* s);
+    explicit gstr(const char* s);
     gstr(char* s, bool);
     ~gstr();
 
@@ -33,11 +36,11 @@ public:
 
     const char* get() const;
 
+    void copy(const char* s);
     void steal(char* s);
     static gstr take(char* src);
 
     gstr& operator=(const gstr& other);
-    gstr& operator=(const char* other);
     gstr& operator=(gstr&& other);
 
     void clear();
@@ -55,12 +58,18 @@ public:
 
     bool operator<(const gstr& other) const;
 
-    static std::vector<gstr> from_strv(char** strv);
+    static gstrvec copy(char** strv);
+    static gstrvec take(char** strv);
 
-    std::vector<gstr> split(const char* separator, int max_pieces) const;
+    gstrvec split(const char* separator, int max_pieces) const;
 
 private:
     char* m_p;
+};
+
+class gstrbuilder
+{
+
 };
 
 namespace std
@@ -76,3 +85,24 @@ struct hash<gstr>
 };
 
 } // namespace std
+
+template<typename T>
+struct ConstCharSource;
+
+template<>
+struct ConstCharSource<const char*>
+{
+    static const char* get(const char* s) { return s; }
+};
+
+template<size_t arr_size>
+struct ConstCharSource<const char[arr_size]>
+{
+    static const char* get(const char s[arr_size]) { return s; }
+};
+
+template<>
+struct ConstCharSource<gstr>
+{
+    static const char* get(const gstr& s) { return s.get(); }
+};
