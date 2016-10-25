@@ -35,7 +35,7 @@ gstr::~gstr()
 gstr::gstr(const char* s)
     : gstr()
 {
-    *this = s;
+    copy(s);
 }
 
 gstr::gstr(char* s, bool)
@@ -74,19 +74,17 @@ gstr gstr::take(char* src)
 
 gstr& gstr::operator=(const gstr& other)
 {
-    if (this != &other)
-        *this = other.m_p;
+    copy(other.m_p);
     return *this;
 }
 
-gstr& gstr::operator=(const char* other)
+void gstr::copy(const char* s)
 {
-    if (m_p != other)
+    if (m_p != s)
     {
         g_free(m_p);
-        m_p = other ? g_strdup(other) : nullptr;
+        m_p = s ? g_strdup(s) : nullptr;
     }
-    return *this;
 }
 
 gstr& gstr::operator=(gstr&& other)
@@ -126,17 +124,28 @@ bool gstr::operator<(const gstr& other) const
     return strcmp(get(), other.get()) < 0;
 }
 
-std::vector<gstr> gstr::from_strv(char** strv)
+gstrvec gstr::copy(char** strv)
 {
     size_t len = strv ? g_strv_length(strv) : 0;
-    std::vector<gstr> result;
+    gstrvec result;
     result.reserve(len);
     for (size_t i = 0; i < len; ++i)
-        result.push_back(strv[i]);
+        result.push_back(gstr(strv[i]));
     return result;
 }
 
-std::vector<gstr> gstr::split(const char* separator, int max_pieces) const
+gstrvec gstr::take(char** strv)
 {
-    return from_strv(g_strsplit(get(), separator, max_pieces));
+    size_t len = strv ? g_strv_length(strv) : 0;
+    gstrvec result;
+    result.reserve(len);
+    for (size_t i = 0; i < len; ++i)
+        result.push_back(gstr::take(strv[i]));
+    g_free(strv);
+    return result;
+}
+
+gstrvec gstr::split(const char* separator, int max_pieces) const
+{
+    return take(g_strsplit(get(), separator, max_pieces));
 }

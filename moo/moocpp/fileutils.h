@@ -21,10 +21,26 @@
 namespace g
 {
 
-gstr build_filename(const gstr& comp1, const gstr& comp2);
-gstr build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3);
-gstr build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3, const gstr& comp4);
-gstr build_filename(const gstr& comp1, const gstr& comp2, const gstr& comp3, const gstr& comp4, const gstr& comp5);
+gstr build_filename_impl(const char* comp1, const char* comp2 = nullptr, const char* comp3 = nullptr);
+
+template<typename T1>
+gstr build_filename(const T1& comp1)
+{
+    return build_filename_impl(ConstCharSource<T1>::get(comp1));
+}
+
+template<typename T1, typename T2>
+gstr build_filename(const T1& comp1, const T2& comp2)
+{
+    return build_filename_impl(ConstCharSource<T1>::get(comp1), ConstCharSource<T2>::get(comp2));
+}
+
+template<typename T1, typename T2, typename T3>
+gstr build_filename(const T1& comp1, const T2& comp2, const T3& comp3)
+{
+    return build_filename_impl(ConstCharSource<T1>::get(comp1), ConstCharSource<T2>::get(comp2), ConstCharSource<T3>::get(comp3));
+}
+
 gstr build_filenamev(const std::vector<gstr>& components);
 gstr get_current_dir();
 gstr path_get_basename(const gchar *file_name);

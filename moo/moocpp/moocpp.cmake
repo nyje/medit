@@ -6,5 +6,7 @@ SET(moocpp_sources
     moocpp/gstr.h
     moocpp/gstr.cpp
     moocpp/moocpp.h
+    moocpp/regex.h
+    moocpp/regex.cpp
     moocpp/util.h
 )

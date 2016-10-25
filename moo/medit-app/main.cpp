@@ -20,6 +20,7 @@
 #include "mooutils/mooutils-fs.h"
 #include "mooutils/mooutils-misc.h"
 #include "mooutils/mootype-macros.h"
+#include "moocpp/regex.h"
 #include "plugins/mooplugin-builtin.h"
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -50,7 +51,7 @@ static struct MeditOpts {
     gboolean log_window;
     const char *exec_string;
     const char *exec_file;
-    char **files;
+    std::vector<gstr> files;
     const char *geometry;
     gboolean show_version;
     const char *debug;
@@ -59,7 +60,7 @@ static struct MeditOpts {
     gboolean ut_list;
     char *ut_dir;
     char *ut_coverage_file;
-    char **ut_tests;
+    std::vector<gstr> ut_tests;
     char **run_script;
     char **send_script;
     gboolean portable;
@@ -107,7 +108,7 @@ parse_use_session (const char *option_name,
     else
     {
         g_set_error (error, G_OPTION_ERROR, G_OPTION_ERROR_BAD_VALUE,
-                     /* error message for wrong commmand line */
+                     /* error message for wrong command line */
                      _("Invalid value '%s' for option %s"), value, option_name);
         return FALSE;
     }
@@ -178,54 +179,34 @@ static GOptionEntry medit_options[] = {
 static void
 check_plus_line_arg (void)
 {
-    gboolean done = FALSE;
-    char **p;
-    GRegex *re = NULL;
+    std::shared_ptr<g::Regex> re = g::Regex::compile("^\\+(?P<line>\\d+)", g::Regex::OPTIMIZE | g::Regex::DUPNAMES);
+    g_return_if_fail (re != nullptr);
 
-    re = g_regex_new ("^\\+(?P<line>\\d+)", GRegexCompileFlags (G_REGEX_OPTIMIZE | G_REGEX_DUPNAMES), GRegexMatchFlags (0), NULL);
-    g_return_if_fail (re != NULL);
-
-    for (p = medit_opts.files; !done && p && *p && **p; ++p)
+    for (size_t i = 0; i < medit_opts.files.size(); ++i)
     {
-        GMatchInfo *match_info = NULL;
-
-        if (g_regex_match (re, *p, GRegexMatchFlags (0), &match_info))
+        const gstr& file = medit_opts.files[i];
+        if (std::unique_ptr<g::MatchInfo> match_info = re->match(file))
         {
             int line = 0;
-            char *line_string = g_match_info_fetch_named (match_info, "line");
+            gstr line_string = match_info->fetch_named("line");
 
             errno = 0;
-            line = strtol (line_string, NULL, 10);
+            line = strtol(line_string.get(), NULL, 10);
             if (errno != 0)
                 line = 0;
 
             // if a file "+10" exists, open it
-            if (line > 0 && g_file_test (*p, G_FILE_TEST_EXISTS))
+            if (line > 0 && g_file_test (file.get(), G_FILE_TEST_EXISTS))
                 line = 0;
 
             if (line > 0)
             {
                 medit_opts.line = line;
-
-                g_free (*p);
-                *p = NULL;
-                if (*(p + 1) != NULL)
-                {
-                    int n = g_strv_length (p + 1);
-                    memcpy (p, p + 1, n * sizeof(*p));
-                    *(p + n) = NULL;
-                }
-
-                done = TRUE;
+                medit_opts.files.erase(medit_opts.files.begin() + i);
+                return;
             }
-
-            g_free (line_string);
         }
-
-        g_match_info_free (match_info);
     }
-
-    g_regex_unref (re);
 }
 
 static gboolean
@@ -244,10 +225,7 @@ post_parse_func (void)
     }
 
     if (medit_opts.ut)
-    {
-        medit_opts.ut_tests = medit_opts.files;
-        medit_opts.files = NULL;
-    }
+        std::swap(medit_opts.ut_tests, medit_opts.files);
 
     if (medit_opts.pid > 0 && medit_opts.instance_name)
     {

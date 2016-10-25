@@ -50,7 +50,7 @@ void             moo_test_suite_add_test    (MooTestSuite       &ts,
                                              MooTestFunc         test_func,
                                              gpointer            data);
 
-gboolean         moo_test_run_tests         (char              **tests,
+gboolean         moo_test_run_tests         (const gstrvec&      tests,
                                              const char         *coverage_file,
                                              MooTestOptions      opts);
 void             moo_test_cleanup           (void);

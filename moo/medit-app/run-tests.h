@@ -30,7 +30,7 @@ add_tests (MooTestOptions opts)
 }
 
 static int
-unit_tests_main (MooTestOptions opts, char **tests, const char *data_dir_arg, const char *coverage_file)
+unit_tests_main(MooTestOptions opts, const gstrvec& tests, const char *data_dir_arg, const char *coverage_file)
 {
     const char *data_dir = NULL;
     gboolean passed;
@@ -56,5 +56,5 @@ unit_tests_main (MooTestOptions opts, char **tests, const char *data_dir_arg, co
 static void
 list_unit_tests (const char *data_dir)
 {
-    unit_tests_main (MOO_TEST_LIST_ONLY, NULL, data_dir, NULL);
+    unit_tests_main(MOO_TEST_LIST_ONLY, gstrvec(), data_dir, NULL);
 }
