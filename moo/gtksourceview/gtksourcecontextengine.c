@@ -4643,7 +4643,7 @@ get_line_info (GtkTextBuffer     *buffer,
 	{
 		line->eol_length = 0;
 		line->char_length = g_utf8_strlen (line->text, -1);
-		line->byte_length = strlen (line->text);
+		line->byte_length = (int) strlen (line->text);
 	}
 	else
 	{

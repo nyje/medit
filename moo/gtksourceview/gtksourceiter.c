@@ -199,8 +199,8 @@ utf8_caselessnmatch (const char *s1, const char *s2,
 	gchar *casefold;
 	gchar *normalized_s1;
 	gchar *normalized_s2;
-	gint len_s1;
-	gint len_s2;
+	gssize len_s1;
+	gssize len_s2;
 	gboolean ret = FALSE;
 
 	g_return_val_if_fail (s1 != NULL, FALSE);

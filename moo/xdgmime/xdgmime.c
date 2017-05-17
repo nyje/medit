@@ -705,7 +705,7 @@ xdg_mime_media_type_equal (const char *mime_a,
 static int
 xdg_mime_is_super_type (const char *mime)
 {
-  int length;
+  gssize length;
   const char *type;
 
   length = strlen (mime);

@@ -37,7 +37,7 @@ lua_push_utf8string (lua_State  *L,
         luaL_error (L, "string is not valid UTF-8");
 
     if (len < 0)
-        len = strlen (s);
+        len = (int) strlen (s);
 
     lua_pushlstring (L, s, len);
 }

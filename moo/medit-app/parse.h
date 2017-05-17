@@ -206,7 +206,7 @@ parse_files (void)
     char *current_dir = NULL;
     MooOpenInfoArray *files;
 
-    if (medit_opts.files.empty() || !(n_files = medit_opts.files.size()))
+    if (medit_opts.files.empty() || !(n_files = (int) medit_opts.files.size()))
         return NULL;
 
     files = moo_open_info_array_new ();

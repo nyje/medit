@@ -1722,7 +1722,7 @@ insert_action_new (GtkTextBuffer    *buffer,
     EditAction *edit_action;
 
     if (length < 0)
-        length = strlen (text);
+        length = (int) strlen (text);
 
     g_return_val_if_fail (length > 0, NULL);
 
