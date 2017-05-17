@@ -35,36 +35,40 @@
 #include <windowsx.h>
 #endif
 
-static struct MeditOpts {
-    int use_session;
-    int pid;
-    gboolean new_app;
-    const char *instance_name;
-    gboolean new_window;
-    gboolean new_tab;
-    gboolean reload;
-    const char *project;
-    gboolean project_mode;
-    int line;
-    const char *encoding;
-    const char *log_file;
-    gboolean log_window;
-    const char *exec_string;
-    const char *exec_file;
-    std::vector<gstr> files;
-    const char *geometry;
-    gboolean show_version;
-    const char *debug;
-    gboolean ut;
-    gboolean ut_uninstalled;
-    gboolean ut_list;
-    char *ut_dir;
-    char *ut_coverage_file;
-    std::vector<gstr> ut_tests;
-    char **run_script;
-    char **send_script;
-    gboolean portable;
-} medit_opts = { -1, -1 };
+struct MeditOpts 
+{
+    int use_session = -1;
+	int pid = -1;
+    gboolean new_app = false;
+    const char *instance_name = nullptr;
+    gboolean new_window = false;
+    gboolean new_tab = false;
+    gboolean reload = false;
+    const char *project = nullptr;
+    gboolean project_mode = false;
+    int line = 0;
+    const char *encoding = nullptr;
+	const char *log_file = nullptr;
+	gboolean log_window = false;
+	const char *exec_string = nullptr;
+	const char *exec_file = nullptr;
+	gstrvec files;
+	char **filesp = nullptr;
+	const char *geometry = nullptr;
+	gboolean show_version = false;
+	const char *debug = nullptr;
+	gboolean ut = false;
+	gboolean ut_uninstalled = false;
+	gboolean ut_list = false;
+	char *ut_dir = nullptr;
+	char *ut_coverage_file = nullptr;
+    gstrvec ut_tests;
+	char **run_script = nullptr;
+	char **send_script = nullptr;
+    gboolean portable = false;
+};
+
+static MeditOpts medit_opts;
 
 #include "parse.h"
 
@@ -114,81 +118,20 @@ parse_use_session (const char *option_name,
     }
 }
 
-static GOptionEntry medit_options[] = {
-    { "new-app", 'n', 0, G_OPTION_ARG_NONE, &medit_opts.new_app,
-            /* help message for command line option --new-app */ N_("Run new instance of application"), NULL },
-    { "use-session", 's', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, (void*) parse_use_session,
-            /* help message for command line option --use-session */ N_("Load and save session"), "yes|no" },
-    { "pid", 0, 0, G_OPTION_ARG_INT, &medit_opts.pid,
-            /* help message for command line option --pid=PID */ N_("Use existing instance with process id PID"),
-            /* "PID" part in "--pid=PID" */ N_("PID") },
-    { "app-name", 0, 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.instance_name,
-            /* help message for command line option --app-name=NAME */ N_("Set instance name to NAME if it's not already running"),
-            /* "NAME" part in "--app-name=NAME" */ N_("NAME") },
-    { "new-window", 'w', 0, G_OPTION_ARG_NONE, &medit_opts.new_window,
-            /* help message for command line option --new-window */ N_("Open file(s) in a new window"), NULL },
-    { "new-tab", 't', 0, G_OPTION_ARG_NONE, &medit_opts.new_tab,
-            /* help message for command line option --new-tab */ N_("Open file(s) in a new tab"), NULL },
-    { "project", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, (gpointer) &medit_opts.project,
-            "Open project file FILE", "FILE" },
-    { "project-mode", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.project_mode,
-            "IDE mode", NULL },
-    { "line", 'l', 0, G_OPTION_ARG_INT, &medit_opts.line,
-            /* help message for command line option --line=LINE */ N_("Open file and position cursor on line LINE"),
-            /* "LINE" part in --line=LINE */ N_("LINE") },
-    { "encoding", 'e', 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.encoding,
-            /* help message for command line option --encoding=ENCODING */ N_("Use character encoding ENCODING"),
-            /* "ENCODING" part in --encoding=ENCODING */ N_("ENCODING") },
-    { "reload", 'r', 0, G_OPTION_ARG_NONE, &medit_opts.reload,
-            /* help message for command line option --reload */ N_("Automatically reload file if it was modified on disk"), NULL },
-    { "run-script", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING_ARRAY, (gpointer) &medit_opts.run_script,
-            "Run SCRIPT", "SCRIPT" },
-    { "send-script", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING_ARRAY, (gpointer) &medit_opts.send_script,
-            "Send SCRIPT to existing instance", "SCRIPT" },
-    { "log-window", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.log_window,
-            "Show debug output", NULL },
-    { "log-file", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, (gpointer) &medit_opts.log_file,
-            "Write debug output to FILE", "FILE" },
-    { "debug", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, (gpointer) &medit_opts.debug,
-            "Run in debug mode", NULL },
-    { "geometry", 0, 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.geometry,
-            /* help message for command line option --geometry=WIDTHxHEIGHT[+X+Y] */ N_("Default window size and position"),
-            /* "WIDTHxHEIGHT[+X+Y]" part in --geometry=WIDTHxHEIGHT[+X+Y] */ N_("WIDTHxHEIGHT[+X+Y]") },
-    { "version", 0, 0, G_OPTION_ARG_NONE, &medit_opts.show_version,
-            /* help message for command line option --version */ N_("Show version information and exit"), NULL },
-    { "ut", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut,
-            "Run unit tests", NULL },
-    { "ut-uninstalled", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut_uninstalled,
-            "Run unit tests in uninstalled medit", NULL },
-    { "ut-dir", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &medit_opts.ut_dir,
-            "Data dir for unit tests", NULL },
-    { "ut-coverage", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, &medit_opts.ut_coverage_file,
-            "File to write coverage data to", NULL },
-    { "ut-list", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut_list,
-            "List unit tests", NULL },
-#ifdef __WIN32__
-    { "portable", 0, G_OPTION_ARG_NONE, G_OPTION_ARG_NONE, &medit_opts.portable,
-            "Run medit in portable mode", NULL },
-#endif
-    { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &medit_opts.files,
-            NULL, /* "FILES" part in "medit [OPTION...] [FILES]" */ N_("FILES") },
-    { NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
-};
-
 /* Check if there is an argument of the form +<number>, and treat it as --line <number> */
 static void
 check_plus_line_arg (void)
 {
-    std::shared_ptr<g::Regex> re = g::Regex::compile("^\\+(?P<line>\\d+)", g::Regex::OPTIMIZE | g::Regex::DUPNAMES);
-    g_return_if_fail (re != nullptr);
+    g::Regex re = g::Regex::compile("^\\+(?P<line>\\d+)", g::Regex::OPTIMIZE | g::Regex::DUPNAMES);
+	g_return_if_fail(re.is_valid());
 
     for (size_t i = 0; i < medit_opts.files.size(); ++i)
     {
         const gstr& file = medit_opts.files[i];
-        if (std::unique_ptr<g::MatchInfo> match_info = re->match(file))
+        if (g::MatchInfo match_info = re.match(file))
         {
             int line = 0;
-            gstr line_string = match_info->fetch_named("line");
+            gstr line_string = match_info.fetch_named("line");
 
             errno = 0;
             line = strtol(line_string.get(), NULL, 10);
@@ -212,6 +155,9 @@ check_plus_line_arg (void)
 static gboolean
 post_parse_func (void)
 {
+	medit_opts.files = gstr::take(medit_opts.filesp);
+	medit_opts.filesp = nullptr;
+
     if (medit_opts.show_version)
     {
         g_print ("medit " MOO_DISPLAY_VERSION "\n");
@@ -251,7 +197,68 @@ parse_args (int argc, char *argv[])
 {
     GOptionContext *ctx;
     GOptionGroup *grp;
-    GError *error = NULL;
+	GError *error = nullptr;
+
+	GOptionEntry medit_options[] = {
+		{ "new-app", 'n', 0, G_OPTION_ARG_NONE, &medit_opts.new_app,
+				/* help message for command line option --new-app */ N_("Run new instance of application"), NULL },
+		{ "use-session", 's', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, (void*) parse_use_session,
+				/* help message for command line option --use-session */ N_("Load and save session"), "yes|no" },
+		{ "pid", 0, 0, G_OPTION_ARG_INT, &medit_opts.pid,
+				/* help message for command line option --pid=PID */ N_("Use existing instance with process id PID"),
+				/* "PID" part in "--pid=PID" */ N_("PID") },
+		{ "app-name", 0, 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.instance_name,
+				/* help message for command line option --app-name=NAME */ N_("Set instance name to NAME if it's not already running"),
+				/* "NAME" part in "--app-name=NAME" */ N_("NAME") },
+		{ "new-window", 'w', 0, G_OPTION_ARG_NONE, &medit_opts.new_window,
+				/* help message for command line option --new-window */ N_("Open file(s) in a new window"), NULL },
+		{ "new-tab", 't', 0, G_OPTION_ARG_NONE, &medit_opts.new_tab,
+				/* help message for command line option --new-tab */ N_("Open file(s) in a new tab"), NULL },
+		{ "project", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, (gpointer) &medit_opts.project,
+				"Open project file FILE", "FILE" },
+		{ "project-mode", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.project_mode,
+				"IDE mode", NULL },
+		{ "line", 'l', 0, G_OPTION_ARG_INT, &medit_opts.line,
+				/* help message for command line option --line=LINE */ N_("Open file and position cursor on line LINE"),
+				/* "LINE" part in --line=LINE */ N_("LINE") },
+		{ "encoding", 'e', 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.encoding,
+				/* help message for command line option --encoding=ENCODING */ N_("Use character encoding ENCODING"),
+				/* "ENCODING" part in --encoding=ENCODING */ N_("ENCODING") },
+		{ "reload", 'r', 0, G_OPTION_ARG_NONE, &medit_opts.reload,
+				/* help message for command line option --reload */ N_("Automatically reload file if it was modified on disk"), NULL },
+		{ "run-script", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING_ARRAY, (gpointer) &medit_opts.run_script,
+				"Run SCRIPT", "SCRIPT" },
+		{ "send-script", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING_ARRAY, (gpointer) &medit_opts.send_script,
+				"Send SCRIPT to existing instance", "SCRIPT" },
+		{ "log-window", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.log_window,
+				"Show debug output", NULL },
+		{ "log-file", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, (gpointer) &medit_opts.log_file,
+				"Write debug output to FILE", "FILE" },
+		{ "debug", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, (gpointer) &medit_opts.debug,
+				"Run in debug mode", NULL },
+		{ "geometry", 0, 0, G_OPTION_ARG_STRING, (gpointer) &medit_opts.geometry,
+				/* help message for command line option --geometry=WIDTHxHEIGHT[+X+Y] */ N_("Default window size and position"),
+				/* "WIDTHxHEIGHT[+X+Y]" part in --geometry=WIDTHxHEIGHT[+X+Y] */ N_("WIDTHxHEIGHT[+X+Y]") },
+		{ "version", 0, 0, G_OPTION_ARG_NONE, &medit_opts.show_version,
+				/* help message for command line option --version */ N_("Show version information and exit"), NULL },
+		{ "ut", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut,
+				"Run unit tests", NULL },
+		{ "ut-uninstalled", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut_uninstalled,
+				"Run unit tests in uninstalled medit", NULL },
+		{ "ut-dir", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &medit_opts.ut_dir,
+				"Data dir for unit tests", NULL },
+		{ "ut-coverage", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_FILENAME, &medit_opts.ut_coverage_file,
+				"File to write coverage data to", NULL },
+		{ "ut-list", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_NONE, &medit_opts.ut_list,
+				"List unit tests", NULL },
+	#ifdef __WIN32__
+		{ "portable", 0, G_OPTION_ARG_NONE, G_OPTION_ARG_NONE, &medit_opts.portable,
+				"Run medit in portable mode", NULL },
+	#endif
+		{ G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &medit_opts.filesp,
+				NULL, /* "FILES" part in "medit [OPTION...] [FILES]" */ N_("FILES") },
+		{ NULL, 0, 0, G_OPTION_ARG_NONE, NULL, NULL, NULL }
+	};
 
     grp = g_option_group_new ("medit", "medit", "medit", NULL, NULL);
     g_option_group_add_entries (grp, medit_options);
