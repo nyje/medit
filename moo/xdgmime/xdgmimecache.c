@@ -759,7 +759,7 @@ _xdg_mime_cache_get_mime_types_from_file_name (const char *file_name,
 static int
 is_super_type (const char *mime)
 {
-  int length;
+  gssize length;
   const char *type;
 
   length = strlen (mime);

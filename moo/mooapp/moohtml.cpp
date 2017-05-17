@@ -655,7 +655,7 @@ _moo_html_load_memory (GtkTextView *view,
     data = moo_html_get_data (view);
 
     if (size < 0)
-        size = strlen (buffer);
+        size = (int) strlen (buffer);
 
     doc = htmlReadMemory (buffer, size, url, encoding,
                           HTML_PARSE_NONET);
@@ -1600,7 +1600,7 @@ moo_html_insert_verbatim (GtkTextView   *view,
     if (text[0] == '\n' && data->new_line)
         text++;
 
-    len = strlen (text);
+    len = (guint) strlen (text);
 
     if (!len)
         return;

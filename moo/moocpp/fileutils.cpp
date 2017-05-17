@@ -24,7 +24,7 @@ gstr g::build_filename_impl(const char* comp1, const char* comp2, const char* co
 
 gstr g::build_filenamev(const std::vector<gstr>& components)
 {
-    GPtrArray* strv = g_ptr_array_new_full(components.size() + 1, nullptr);
+    GPtrArray* strv = g_ptr_array_new_full((guint)components.size() + 1, nullptr);
     for (const auto& comp: components)
         g_ptr_array_add(strv, const_cast<char*>(comp.get()));
     g_ptr_array_add(strv, nullptr);

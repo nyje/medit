@@ -323,7 +323,7 @@ _xdg_mime_magic_parse_magic_line (FILE              *magic_file,
   int c;
   int end_of_file;
   int indent = 0;
-  int bytes_read;
+  gssize bytes_read;
 
   assert (magic_file != NULL);
 

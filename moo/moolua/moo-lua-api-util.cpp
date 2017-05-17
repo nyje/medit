@@ -1352,7 +1352,7 @@ moo_lua_get_arg_object_array (lua_State  *L,
     }
 
     MooObjectArray *array = moo_object_array_new ();
-    for (int i = 0, c = vec.size(); i < c; ++i)
+    for (int i = 0, c = (int) vec.size(); i < c; ++i)
         moo_object_array_append (array, G_OBJECT (vec[i]));
 
     return array;
@@ -1414,7 +1414,7 @@ moo_lua_get_arg_strv (lua_State  *L,
     }
 
     char **strv = g_new (char*, vec.size() + 1);
-    for (int i = 0, c = vec.size(); i < c; ++i)
+    for (int i = 0, c = (int) vec.size(); i < c; ++i)
         strv[i] = g_strdup (vec[i].c_str());
     strv[vec.size()] = NULL;
 

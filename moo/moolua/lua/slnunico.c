@@ -234,7 +234,7 @@ static int unic_len (lua_State *L) {
 	size_t l;
 	const char *s = luaL_checklstring(L, 1, &l);
 	int mode = lua_tointeger(L, lua_upvalueindex(1));
-	if (MODE_MBYTE(mode)) l = (size_t)utf8_count(&s, l, mode-2, -1);
+	if (MODE_MBYTE(mode)) l = (size_t)utf8_count(&s, (int)l, mode-2, -1);
 	lua_pushinteger(L, l);
 	return 1;
 }
@@ -253,7 +253,7 @@ static int unic_sub (lua_State *L) {
 	ptrdiff_t end = luaL_optinteger(L, 3, -1);
 	int mode = lua_tointeger(L, lua_upvalueindex(1));
 
-	if (MODE_MBYTE(mode)) { p=s; l = (size_t)utf8_count(&p, l, mode-2, -1); }
+	if (MODE_MBYTE(mode)) { p = s; l = (size_t)utf8_count(&p, (int)l, mode - 2, -1); }
 	start = posrelat(start, l);
 	end = posrelat(end, l);
 	if (start < 1) start = 1;
@@ -267,7 +267,7 @@ static int unic_sub (lua_State *L) {
 		else {
 			if (start) utf8_count(&s, e-s, mode-2, start); /* skip */
 			p = s;
-			utf8_count(&p, e-p, mode-2, l);
+			utf8_count(&p, (int)(e - p), mode - 2, (int)l);
 			l = p-s;
 		}
 		lua_pushlstring(L, s, l);
@@ -354,7 +354,7 @@ static int unic_byte (lua_State *L) {
 	const char *s = luaL_checklstring(L, 1, &l), *p, *e=s+l;
 	int n, mode = lua_tointeger(L, lua_upvalueindex(1)), mb = MODE_MBYTE(mode);
 
-	if (mb) { p=s; l = (size_t)utf8_count(&p, l, mode-2, -1); }
+	if (mb) { p=s; l = (size_t)utf8_count(&p, (int)l, mode-2, -1); }
 	posi = posrelat(luaL_optinteger(L, 2, 1), l);
 	pose = posrelat(luaL_optinteger(L, 3, posi), l);
 	if (posi <= 0) posi = 1;
