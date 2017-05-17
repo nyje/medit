@@ -64,7 +64,7 @@ const char* gstr::get() const
 void gstr::steal(char* s)
 {
     g_free(m_p);
-    m_p = s ? g_strdup(s) : nullptr;
+    m_p = s;
 }
 
 gstr gstr::take(char* src)
