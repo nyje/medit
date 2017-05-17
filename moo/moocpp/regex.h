@@ -75,8 +75,13 @@ public:
     ~Regex();
     Regex(const Regex&) = delete;
     Regex& operator=(const Regex&) = delete;
+	Regex(Regex&&);
+	Regex& operator=(Regex&&);
 
-    static std::shared_ptr<Regex> compile(const char* pattern, CompileFlags compile_options = COMPILE_FLAGS_NONE, MatchFlags match_options = MATCH_FLAGS_NONE, GError** error = nullptr);
+	bool is_valid() const;
+	operator bool() const;
+
+    static Regex compile(const char* pattern, CompileFlags compile_options = COMPILE_FLAGS_NONE, MatchFlags match_options = MATCH_FLAGS_NONE, GError** error = nullptr);
 
     const char* get_pattern() const;
     int get_max_backref() const;
@@ -93,11 +98,11 @@ public:
 
     static bool match(const char *pattern, const char *string, CompileFlags compile_options = COMPILE_FLAGS_NONE, MatchFlags match_options = MATCH_FLAGS_NONE);
 
-    std::unique_ptr<MatchInfo> match(const char* string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
-    std::unique_ptr<MatchInfo> match(const gstr& string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
-    std::unique_ptr<MatchInfo> match(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const;
-    std::unique_ptr<MatchInfo> match_all(const char* string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
-    std::unique_ptr<MatchInfo> match_all(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const;
+    MatchInfo match(const char* string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
+	MatchInfo match(const gstr& string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
+	MatchInfo match(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const;
+	MatchInfo match_all(const char* string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
+	MatchInfo match_all(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const;
 
     static std::vector<gstr> split(const char* pattern, const char* string, CompileFlags compile_options = COMPILE_FLAGS_NONE, MatchFlags match_options = MATCH_FLAGS_NONE);
     std::vector<gstr> split(const char* string, MatchFlags match_options = MATCH_FLAGS_NONE) const;
@@ -117,10 +122,16 @@ private:
 class MatchInfo
 {
 public:
-    MatchInfo(const Regex& regex, GMatchInfo* p, bool take_ownership);
-    ~MatchInfo();
-    MatchInfo(const MatchInfo&) = delete;
-    MatchInfo& operator=(const MatchInfo&) = delete;
+	MatchInfo(const Regex& regex);
+	MatchInfo(const Regex& regex, GMatchInfo* p, bool take_ownership);
+	~MatchInfo();
+	MatchInfo(const MatchInfo&) = delete;
+	MatchInfo& operator=(const MatchInfo&) = delete;
+	MatchInfo(MatchInfo&&);
+	MatchInfo& operator=(MatchInfo&&);
+
+	bool is_match() const;
+	operator bool() const;
 
     const Regex& get_regex() const;
     const char* get_string() const;
@@ -137,7 +148,7 @@ public:
     std::vector<gstr> fetch_all() const;
 
 private:
-    const Regex& m_regex;
+    std::reference_wrapper<const Regex> m_regex;
     GMatchInfo* m_p;
     bool m_own;
 };
