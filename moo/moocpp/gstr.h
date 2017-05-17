@@ -67,11 +67,6 @@ private:
     char* m_p;
 };
 
-class gstrbuilder
-{
-
-};
-
 namespace std
 {
 

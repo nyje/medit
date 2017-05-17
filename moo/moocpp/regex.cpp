@@ -16,6 +16,8 @@
 #pragma once
 
 #include "moocpp/regex.h"
+#include "mooutils/mooutils-messages.h"
+#include <utility>
 
 namespace g
 {
@@ -30,12 +32,32 @@ Regex::~Regex()
     g_regex_unref(m_p);
 }
 
-std::shared_ptr<Regex> Regex::compile(const char* pattern, CompileFlags compile_options, MatchFlags match_options, GError** error)
+Regex::Regex(Regex&& other)
+	: m_p(other.m_p)
+{
+	other.m_p = nullptr;
+}
+
+Regex& Regex::operator=(Regex&& other)
+{
+	std::swap(m_p, other.m_p);
+	return *this;
+}
+
+bool Regex::is_valid() const
+{
+	return m_p != nullptr;
+}
+
+Regex::operator bool() const
+{
+	return m_p != nullptr;
+}
+
+Regex Regex::compile(const char* pattern, CompileFlags compile_options, MatchFlags match_options, GError** error)
 {
     GRegex* p = g_regex_new(pattern, GRegexCompileFlags(compile_options), GRegexMatchFlags(match_options), error);
-    if (!p)
-        return nullptr;
-    return std::make_shared<Regex>(p);
+	return Regex{p};
 }
 
 const char* Regex::get_pattern() const
@@ -93,35 +115,35 @@ bool Regex::match(const char *pattern, const char *string, CompileFlags compile_
     return g_regex_match_simple(pattern, string, GRegexCompileFlags(compile_options), GRegexMatchFlags(match_options));
 }
 
-std::unique_ptr<MatchInfo> Regex::match(const char* string, MatchFlags match_options) const
+MatchInfo Regex::match(const char* string, MatchFlags match_options) const
 {
     return match(string, -1, 0, match_options, nullptr);
 }
 
-std::unique_ptr<MatchInfo> Regex::match(const gstr& string, MatchFlags match_options) const
+MatchInfo Regex::match(const gstr& string, MatchFlags match_options) const
 {
     return match(string.get(), match_options);
 }
 
-std::unique_ptr<MatchInfo> Regex::match(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const
+MatchInfo Regex::match(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const
 {
     GMatchInfo* match_info = nullptr;
     if (!g_regex_match_full(m_p, string, string_len, start_position, GRegexMatchFlags(match_options), &match_info, error))
-        return nullptr;
-    return std::make_unique<MatchInfo>(*this, match_info, true);
+		return MatchInfo(*this);
+    return MatchInfo(*this, match_info, true);
 }
 
-std::unique_ptr<MatchInfo> Regex::match_all(const char* string, MatchFlags match_options) const
+MatchInfo Regex::match_all(const char* string, MatchFlags match_options) const
 {
     return match_all(string, -1, 0, match_options, nullptr);
 }
 
-std::unique_ptr<MatchInfo> Regex::match_all(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const
+MatchInfo Regex::match_all(const char* string, ssize_t string_len, int start_position, MatchFlags match_options, GError** error) const
 {
     GMatchInfo* match_info = nullptr;
     if (!g_regex_match_all_full(m_p, string, string_len, start_position, GRegexMatchFlags(match_options), &match_info, error))
-        return nullptr;
-    return std::make_unique<MatchInfo>(*this, match_info, true);
+        return MatchInfo(*this);
+    return MatchInfo(*this, match_info, true);
 }
 
 std::vector<gstr> Regex::split(const char* pattern, const char* string, CompileFlags compile_options, MatchFlags match_options)
@@ -207,17 +229,49 @@ bool Regex::check_replacement(const char* replacement, bool& has_references, GEr
 }
 
 
+MatchInfo::MatchInfo(const Regex& regex)
+	: MatchInfo(regex, nullptr, false)
+{
+}
+
 MatchInfo::MatchInfo(const Regex& regex, GMatchInfo* p, bool take_ownership)
     : m_regex(regex)
     , m_p(p)
     , m_own(take_ownership)
 {
+	moo_assert(m_p || !m_own);
 }
 
 MatchInfo::~MatchInfo()
 {
     if (m_own)
         g_match_info_free(m_p);
+}
+
+MatchInfo::MatchInfo(MatchInfo&& other)
+	: m_regex(other.m_regex)
+	, m_p(other.m_p)
+	, m_own(other.m_own)
+{
+	other.m_own = false;
+}
+
+MatchInfo& MatchInfo::operator=(MatchInfo&& other)
+{
+	std::swap(m_regex, other.m_regex);
+	std::swap(m_p, other.m_p);
+	std::swap(m_own, other.m_own);
+	return *this;
+}
+
+bool MatchInfo::is_match() const
+{
+	return m_p != nullptr;
+}
+
+MatchInfo::operator bool() const
+{
+	return is_match();
 }
 
 const Regex& MatchInfo::get_regex() const
@@ -227,6 +281,7 @@ const Regex& MatchInfo::get_regex() const
 
 const char* MatchInfo::get_string() const
 {
+	g_return_val_if_fail(m_p != nullptr, nullptr);
     return g_match_info_get_string(m_p);
 }
 
