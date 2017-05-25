@@ -16,10 +16,6 @@
 #ifndef MOO_TEXT_SEARCH_PRIVATE_H
 #define MOO_TEXT_SEARCH_PRIVATE_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
 #include <mooedit/native/mootextsearch.h>
 #include <mooglib/moo-glib.h>
 

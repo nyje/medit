@@ -35,13 +35,11 @@
  * @MOO_EDIT_STATUS_CLEAN: doesn't prompt on close, even if it's modified.
  **/
 
+#include "mooedit/mooeditaction-factory.h"
 #include "mooedit/mooedit-private.h"
+#include "mooedit/mooeditview-impl.h"
 #ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditaction-factory.h"
-#include "mooedit/native/mooeditview-impl.h"
 #include "mooedit/native/mooeditbookmark.h"
-#else
-#include "mooedit/sci/mooeditview-impl.h"
 #endif
 #include "mooedit/mooeditdialogs.h"
 #include "mooedit/mooeditprefs.h"
@@ -486,7 +484,6 @@ _moo_edit_set_active_view (MooEdit     *doc,
 
     buffer = moo_edit_get_buffer (doc);
 
-#ifndef MOO_USE_SCI
     if (doc->priv->active_view != NULL && doc->priv->active_view != view)
     {
         GtkTextIter iter;
@@ -504,7 +501,6 @@ _moo_edit_set_active_view (MooEdit     *doc,
         gtk_text_buffer_get_iter_at_mark (buffer, &iter, mark);
         gtk_text_buffer_place_cursor (buffer, &iter);
     }
-#endif // !MOO_USE_SCI
 
     doc->priv->active_view = view;
     doc->priv->dead_active_view = FALSE;

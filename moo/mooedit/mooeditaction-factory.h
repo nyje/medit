@@ -16,10 +16,6 @@
 #ifndef MOO_EDIT_ACTION_FACTORY_H
 #define MOO_EDIT_ACTION_FACTORY_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
 #include <mooutils/mooaction.h>
 #include <mooedit/mooedit.h>
 

@@ -17,9 +17,7 @@
 #define MOO_EDITOR_H
 
 #include <mooedit/mooedit.h>
-#ifndef MOO_USE_SCI
-#include <mooedit/native/mooeditview.h>
-#endif
+#include <mooedit/mooeditview.h>
 #include <mooedit/mooeditwindow.h>
 #include <mooedit/mooeditfileinfo.h>
 #include <mooutils/moouixml.h>

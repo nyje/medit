@@ -16,10 +16,6 @@
 #ifndef MOO_TEXT_STYLE_SCHEME_H
 #define MOO_TEXT_STYLE_SCHEME_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS

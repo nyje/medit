@@ -19,9 +19,6 @@
 
 #include "mooedit/mooplugin-macro.h"
 #include "mooedit/mooedit-script.h"
-#ifdef MOO_USE_SCI
-#include "mooedit/sci/mooeditview.h"
-#endif
 #include "plugins/mooplugin-builtin.h"
 #include "moofileview/moofileentry.h"
 #include "support/moocmdview.h"

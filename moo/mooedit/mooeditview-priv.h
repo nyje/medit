@@ -1,11 +1,7 @@
 #ifndef MOO_EDIT_VIEW_PRIV_H
 #define MOO_EDIT_VIEW_PRIV_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
-#include "mooedit/native/mooeditview-impl.h"
+#include "mooedit/mooeditview-impl.h"
 
 G_BEGIN_DECLS
 
