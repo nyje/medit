@@ -19,9 +19,7 @@
 #include "plugins/mooplugin-builtin.h"
 #include "mooedit/mooeditor.h"
 #include "mooedit/mooeditaction.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditaction-factory.h"
-#endif
+#include "mooedit/mooeditaction-factory.h"
 #include "mooedit/mooplugin-macro.h"
 #include "mooutils/mooutils-misc.h"
 #include "mooutils/mooutils-debug.h"
@@ -123,10 +121,8 @@ unload_user_tools (int type)
 
         if (type == MOO_USER_TOOL_MENU)
             moo_window_class_remove_action ((MooWindowClass*) klass, info->id);
-#ifndef MOO_USE_SCI
         else
             moo_edit_class_remove_action ((MooEditClass*) klass, info->id);
-#endif
 
         g_free (info->id);
         g_free (info);
@@ -412,7 +408,6 @@ load_tool (MooUserToolInfo *info)
 
             break;
 
-#ifndef MOO_USE_SCI
         case MOO_USER_TOOL_CONTEXT:
             klass = g_type_class_peek (MOO_TYPE_EDIT);
             moo_edit_class_new_action ((MooEditClass*) klass, info->id,
@@ -424,7 +419,6 @@ load_tool (MooUserToolInfo *info)
                                        "file-filter", info->filter,
                                        NULL);
             break;
-#endif
     }
 
     if (tool_info->xml)

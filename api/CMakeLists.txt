@@ -44,8 +44,8 @@ SET(source_files
     ../moo/mooapp/moolinklabel.h
     ../moo/mooedit/mooedit-accels.h
     ../moo/mooedit/mooeditaction.c
-    ../moo/mooedit/native/mooeditaction-factory.cpp
-    ../moo/mooedit/native/mooeditaction-factory.h
+    ../moo/mooedit/mooeditaction-factory.c
+    ../moo/mooedit/mooeditaction-factory.h
     ../moo/mooedit/mooeditaction.h
     ../moo/mooedit/native/mooeditbookmark.cpp
     ../moo/mooedit/native/mooeditbookmark.h

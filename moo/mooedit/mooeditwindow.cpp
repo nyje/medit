@@ -26,11 +26,7 @@
 #include "mooedit/mooeditwindow-impl.h"
 #include "mooedit/mooedit-accels.h"
 #include "mooedit/mooeditor-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditview-impl.h"
-#else
-#include "mooedit/sci/mooeditview-impl.h"
-#endif
+#include "mooedit/mooeditview-impl.h"
 #include "mooedit/mooedittab-impl.h"
 #include "mooedit/mooeditfiltersettings.h"
 #ifndef MOO_USE_SCI

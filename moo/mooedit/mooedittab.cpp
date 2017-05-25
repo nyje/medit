@@ -3,11 +3,7 @@
  **/
 
 #include "mooedittab-impl.h"
-#ifndef MOO_USE_SCI
-#include "native/mooeditview-impl.h"
-#else
-#include "sci/mooeditview-impl.h"
-#endif
+#include "mooeditview-impl.h"
 #include "mooeditwindow-impl.h"
 #include "mooedit-impl.h"
 #include <mooutils/moocompat.h>

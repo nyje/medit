@@ -19,12 +19,6 @@ SET(mooedit_gtksourceview_sources
     mooedit/native/mootextsearch.h
     mooedit/native/mootextfind.c
     mooedit/native/mootextfind.h
-    mooedit/native/mooeditview-impl.h
-    mooedit/native/mooeditview-priv.h
-    mooedit/native/mooeditview.cpp
-    mooedit/native/mooeditview.h
-    mooedit/native/mooeditaction-factory.cpp
-    mooedit/native/mooeditaction-factory.h
 )
 
 SET(mooedit_sci_sources
@@ -45,6 +39,8 @@ SET(mooedit_sources
     mooedit/mooedit-script.h
     mooedit/mooedit.cpp
     mooedit/mooedit.h
+    mooedit/mooeditaction-factory.cpp
+    mooedit/mooeditaction-factory.h
     mooedit/mooeditaction.cpp
     mooedit/mooeditaction.h
     mooedit/mooeditconfig.cpp
@@ -74,6 +70,12 @@ SET(mooedit_sources
     mooedit/mooedittab.cpp
     mooedit/mooedittab.h	
     mooedit/mooedittypes.h
+    mooedit/mooeditview-impl.h
+    mooedit/mooeditview-priv.h
+    mooedit/mooeditview-script.cpp
+    mooedit/mooeditview-script.h
+    mooedit/mooeditview.cpp
+    mooedit/mooeditview.h
     mooedit/mooeditwindow-impl.h
     mooedit/mooeditwindow.cpp
     mooedit/mooeditwindow.h

@@ -16,10 +16,6 @@
 #ifndef MOO_TEXT_FIND_H
 #define MOO_TEXT_FIND_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
 #include <gtk/gtk.h>
 #include <mooedit/mooedit-enums.h>
 #include <mooutils/moohistorylist.h>

@@ -16,10 +16,6 @@
 #ifndef MOO_EDIT_BOOKMARK_H
 #define MOO_EDIT_BOOKMARK_H
 
-#ifdef MOO_USE_SCI
-#error "This header must not be used"
-#endif
-
 #include <mooedit/mooedit.h>
 #include <mooedit/moolinemark.h>
 

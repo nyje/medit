@@ -30,16 +30,14 @@
 #include "mooedit/mooeditwindow.h"
 #ifndef MOO_USE_SCI
 #include "mooedit/native/mooeditbookmark.h"
-#else
-#include "mooedit/sci/mooeditview.h"
 #endif
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooedit-enums.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooeditaction.h"
+#include "mooedit/mooeditaction-factory.h"
 #include "mooedit/mootextbuffer.h"
 #ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditaction-factory.h"
 #include "mooedit/native/moolangmgr.h"
 #endif // !MOO_USE_SCI
 #include "mooedit/mooeditfileinfo.h"

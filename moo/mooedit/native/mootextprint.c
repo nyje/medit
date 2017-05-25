@@ -16,9 +16,7 @@
 #include "mooedit/native/mootextprint-private.h"
 #include "mooedit/mooedit.h"
 #include "mooedit/mooedit-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditview-impl.h"
-#endif
+#include "mooedit/mooeditview-impl.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mootext-private.h"
 #include "mooutils/moodialogs.h"

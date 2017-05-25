@@ -15,11 +15,7 @@
 
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooedit-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditview-impl.h"
-#else
-#include "mooedit/sci/mooeditview.h"
-#endif
+#include "mooedit/mooeditview-impl.h"
 #include "mooedit/mooedit-fileops.h"
 #include "mooedit/mootextview-private.h"
 #include "mooedit/mooedit-enums.h"
