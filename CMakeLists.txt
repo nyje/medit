@@ -95,8 +95,8 @@ else()
     set(MOO_OS_UNIX TRUE)
 endif()
 
-set(MOO_BUILD_FROM_MSVC FALSE CACHE BOOL "Create a win32 build from MSVC gtk build")
-set(MOO_BUILD_FROM_MINGW ${MOO_OS_WIN32} CACHE BOOL "Create a win32 build from mingw gtk build")
+set(MOO_BUILD_FROM_MSVC ${MOO_OS_WIN32} CACHE BOOL "Create a win32 build from MSVC gtk build")
+set(MOO_BUILD_FROM_MINGW FALSE CACHE BOOL "Create a win32 build from mingw gtk build")
 
 if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
     find_package(PkgConfig REQUIRED)
@@ -133,15 +133,15 @@ else()
             libmooglib-0)
         set(LIBXML2_LIBRARIES "libxml2-2")
     else()
-        set(MOO_GTK_DIR "C:/gtk-build/gtk/Win32" CACHE PATH "Gtk root dir")
-        set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/bdist" CACHE PATH "Gtk binary dir")
+		set(MOO_GTK_DIR "C:/gtk-build/gtk/x64/release" CACHE PATH "Gtk root dir")
+		set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/x64/bdist" CACHE PATH "Gtk binary dir")
 
         set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0
             gthread-2.0 gtk-win32-2.0 iconv intl libffi libpng16 pango-1.0 pangocairo-1.0 pixman-1 zlib1)
         set(LIBXML2_LIBRARIES libxml2)
     endif()
 
-    set(CMAKE_INSTALL_PREFIX ${MOO_GTK_DIR} CACHE PATH "CMake install prefix" FORCE)
+    #set(CMAKE_INSTALL_PREFIX ${MOO_GTK_DIR} CACHE PATH "CMake install prefix" FORCE)
 
     include_directories(SYSTEM "${MOO_GTK_DIR}/include")
     include_directories(SYSTEM "${MOO_GTK_DIR}/include/glib-2.0")
@@ -186,8 +186,8 @@ else()
     endforeach()
 endif()
 
-find_program(GLIB_GENMARSHAL glib-genmarshal)
-find_program(GDK_PIXBUF_CSOURCE gdk-pixbuf-csource)
+find_program(GLIB_GENMARSHAL glib-genmarshal HINTS ${MOO_GTK_DIR}/bin/glib-genmarshal.exe)
+find_program(GDK_PIXBUF_CSOURCE gdk-pixbuf-csource HINTS ${MOO_GTK_DIR}/bin/gdk-pixbuf-csource.exe)
 
 #find_library(LIBM m)
 
