@@ -1,9 +1,0 @@
-EXPORTS
-	scintilla_object_get_type
-	scintilla_object_new
-	scintilla_object_send_message
-	scintilla_get_type
-	scintilla_new
-	scintilla_set_id
-	scintilla_send_message
-	scintilla_release_resources
