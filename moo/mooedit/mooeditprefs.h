@@ -26,9 +26,7 @@ G_BEGIN_DECLS
 GtkWidget  *moo_edit_prefs_page_new_1   (MooEditor  *editor);
 GtkWidget  *moo_edit_prefs_page_new_2   (MooEditor  *editor);
 GtkWidget  *moo_edit_prefs_page_new_3   (MooEditor  *editor);
-#ifndef MOO_USE_SCI
 GtkWidget  *moo_edit_prefs_page_new_4   (MooEditor  *editor);
-#endif
 GtkWidget  *moo_edit_prefs_page_new_5   (MooEditor  *editor);
 
 /* defined in mooeditprefs.c */
