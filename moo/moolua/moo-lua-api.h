@@ -28,9 +28,7 @@
 #include "mooedit/mooedit.h"
 #include "mooedit/mooeditor.h"
 #include "mooedit/mooeditwindow.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditbookmark.h"
-#endif
+#include "mooedit/mooeditbookmark.h"
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooedit-enums.h"
 #include "mooedit/mooeditprefs.h"

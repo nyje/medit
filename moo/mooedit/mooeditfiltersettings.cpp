@@ -35,9 +35,7 @@ MOO_DEBUG_INIT(filters, FALSE)
 #define PROP_CONFIG             "config"
 
 typedef enum {
-#ifndef MOO_USE_SCI
     MOO_EDIT_FILTER_LANGS,
-#endif
     MOO_EDIT_FILTER_GLOBS,
     MOO_EDIT_FILTER_REGEX,
     MOO_EDIT_FILTER_INVALID
@@ -46,9 +44,7 @@ typedef enum {
 struct MooEditFilter {
     MooEditFilterType type;
     union {
-#ifndef MOO_USE_SCI
         GSList *langs;
-#endif
         GSList *globs;
         GRegex *regex;
         char *string;
@@ -70,10 +66,8 @@ static FilterSettingsStore *settings_store;
 static char             *filter_settings_store_get_setting  (FilterSettingsStore    *store,
                                                              MooEdit                *doc);
 
-#ifndef MOO_USE_SCI
 static MooEditFilter    *moo_edit_filter_new_langs          (const char             *string,
                                                              GError                **error);
-#endif // !MOO_USE_SCI
 static MooEditFilter    *moo_edit_filter_new_regex          (const char             *string,
                                                              GError                **error);
 static MooEditFilter    *moo_edit_filter_new_globs          (const char             *string,
@@ -84,6 +78,7 @@ moo_edit_filter_get_string (MooEditFilter     *filter,
                             MooEditFilterType  default_type)
 {
     GString *str;
+    GSList *l;
 
     g_return_val_if_fail (filter != NULL, NULL);
 
@@ -93,11 +88,9 @@ moo_edit_filter_get_string (MooEditFilter     *filter,
     {
         switch (filter->type)
         {
-#ifndef MOO_USE_SCI
             case MOO_EDIT_FILTER_LANGS:
                 g_string_append (str, "langs:");
                 break;
-#endif
             case MOO_EDIT_FILTER_GLOBS:
                 g_string_append (str, "globs:");
                 break;
@@ -111,17 +104,15 @@ moo_edit_filter_get_string (MooEditFilter     *filter,
 
     switch (filter->type)
     {
-#ifndef MOO_USE_SCI
         case MOO_EDIT_FILTER_LANGS:
         case MOO_EDIT_FILTER_GLOBS:
-            for (GSList* l = filter->u.langs; l != NULL; l = l->next)
+            for (l = filter->u.langs; l != NULL; l = l->next)
             {
                 if (l != filter->u.langs)
                     g_string_append (str, ";");
                 g_string_append (str, (const char*) l->data);
             }
             break;
-#endif
         case MOO_EDIT_FILTER_REGEX:
             g_string_append (str, g_regex_get_pattern (filter->u.regex));
             break;
@@ -140,10 +131,8 @@ _moo_edit_filter_new_full (const char         *string,
 {
     g_return_val_if_fail (string && string[0], NULL);
 
-#ifndef MOO_USE_SCI
     if (!strncmp (string, "langs:", strlen ("langs:")))
         return moo_edit_filter_new_langs (string + strlen ("langs:"), error);
-#endif
     if (!strncmp (string, "globs:", strlen ("globs:")))
         return moo_edit_filter_new_globs (string + strlen ("globs:"), error);
     if (!strncmp (string, "regex:", strlen ("regex:")))
@@ -179,8 +168,6 @@ _moo_edit_filter_new (const char        *string,
 
     return filter;
 }
-
-#ifndef MOO_USE_SCI
 
 static GSList *
 _moo_edit_parse_langs (const char *string)
@@ -222,8 +209,6 @@ moo_edit_filter_new_langs (const char  *string,
 
     return filt;
 }
-
-#endif // !MOO_USE_SCI
 
 static MooEditFilter *
 moo_edit_regex_new_invalid (const char  *string,
@@ -320,13 +305,11 @@ _moo_edit_filter_free (MooEditFilter *filter)
     {
         switch (filter->type)
         {
-#ifndef MOO_USE_SCI
             case MOO_EDIT_FILTER_GLOBS:
             case MOO_EDIT_FILTER_LANGS:
                 g_slist_foreach (filter->u.langs, (GFunc) g_free, NULL);
                 g_slist_free (filter->u.langs);
                 break;
-#endif
             case MOO_EDIT_FILTER_REGEX:
                 if (filter->u.regex)
                     g_regex_unref (filter->u.regex);
@@ -363,8 +346,6 @@ moo_edit_filter_check_globs (GSList  *globs,
     return FALSE;
 }
 
-#ifndef MOO_USE_SCI
-
 static gboolean
 moo_edit_filter_check_langs (GSList  *langs,
                              MooEdit *doc)
@@ -386,8 +367,6 @@ moo_edit_filter_check_langs (GSList  *langs,
     return FALSE;
 }
 
-#endif // !MOO_USE_SCI
-
 static gboolean
 moo_edit_filter_check_regex (GRegex  *regex,
                              MooEdit *doc)
@@ -408,10 +387,8 @@ _moo_edit_filter_match (MooEditFilter *filter,
     {
         case MOO_EDIT_FILTER_GLOBS:
             return moo_edit_filter_check_globs (filter->u.globs, doc);
-#ifndef MOO_USE_SCI
         case MOO_EDIT_FILTER_LANGS:
             return moo_edit_filter_check_langs (filter->u.langs, doc);
-#endif
         case MOO_EDIT_FILTER_REGEX:
             return moo_edit_filter_check_regex (filter->u.regex, doc);
         case MOO_EDIT_FILTER_INVALID:

@@ -75,10 +75,8 @@ struct MooTextViewClass
                                      GtkTextIter    *insert,
                                      GtkTextIter    *selection_bound);
 
-#ifndef MOO_USE_SCI
     void (*apply_style_scheme)      (MooTextView    *view,
                                      MooTextStyleScheme *scheme);
-#endif
 
     MooTextCursor (*get_text_cursor)(MooTextView    *view,
                                      int             x,  /* buffer coordinates */
@@ -133,11 +131,9 @@ void         moo_text_view_set_right_margin_color   (MooTextView        *view,
                                                      const char         *color);
 void         moo_text_view_set_right_margin_offset  (MooTextView        *view,
                                                      guint               offset);
-#ifndef MOO_USE_SCI
 MooTextStyleScheme *moo_text_view_get_style_scheme  (MooTextView        *view);
 void         moo_text_view_set_style_scheme         (MooTextView        *view,
                                                      MooTextStyleScheme *scheme);
-#endif
 
 void         moo_text_view_set_show_line_numbers    (MooTextView        *view,
                                                      gboolean            show);
@@ -147,13 +143,11 @@ void         moo_text_view_set_tab_width            (MooTextView        *view,
 GtkTextTag  *moo_text_view_lookup_tag               (MooTextView        *view,
                                                      const char         *name);
 
-#ifndef MOO_USE_SCI
 MooLang     *moo_text_view_get_lang                 (MooTextView        *view);
 void         moo_text_view_set_lang                 (MooTextView        *view,
                                                      MooLang            *lang);
 void         moo_text_view_set_lang_by_id           (MooTextView        *view,
                                                      const char         *id);
-#endif
 
 void         moo_text_view_set_word_chars           (MooTextView        *view,
                                                      const char         *word_chars);

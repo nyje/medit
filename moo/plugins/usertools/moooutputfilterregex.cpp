@@ -388,14 +388,11 @@ get_tag (MooLineView *view,
 
     if (!tag)
     {
-#ifndef MOO_USE_SCI
         MooLangMgr *lang_mgr;
         MooTextStyleScheme *scheme;
         MooTextStyle *style = NULL;
-#endif
 
         tag = moo_line_view_create_tag (view, name, NULL);
-#ifndef MOO_USE_SCI
         lang_mgr = moo_lang_mgr_default ();
         scheme = moo_lang_mgr_get_active_scheme (lang_mgr);
 
@@ -404,9 +401,7 @@ get_tag (MooLineView *view,
 
         if (style)
             _moo_text_style_apply_to_tag (style, tag);
-        else 
-#endif // !MOO_USE_SCI
-            if (type == OUTPUT_STDERR || !strcmp (name, "output-error") ||
+        else if (type == OUTPUT_STDERR || !strcmp (name, "output-error") ||
                  !strcmp (name, "output-stderr"))
             g_object_set (tag, "foreground", "red", NULL);
     }

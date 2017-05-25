@@ -56,10 +56,9 @@ void        _moo_text_buffer_update_highlight       (MooTextBuffer      *buffer,
 gpointer    _moo_text_buffer_get_undo_stack         (MooTextBuffer      *buffer);
 gboolean    _moo_text_buffer_is_bracket_tag         (MooTextBuffer      *buffer,
                                                      GtkTextTag         *tag);
-#ifndef MOO_USE_SCI
 void        _moo_text_buffer_set_style_scheme       (MooTextBuffer      *buffer,
                                                      MooTextStyleScheme *scheme);
-#endif
+
 
 G_END_DECLS
 
