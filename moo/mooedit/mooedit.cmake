@@ -1,19 +1,5 @@
 LIST(APPEND moo_edit_enum_headers mooedit/mooedit-enums.h)
 
-SET(mooedit_gtksourceview_sources
-    mooedit/native/moolang-private.h
-    mooedit/native/moolang.cpp
-    mooedit/native/moolang.h	
-    mooedit/native/moolangmgr-private.h
-    mooedit/native/moolangmgr.cpp
-    mooedit/native/moolangmgr.h	
-    mooedit/native/mootextstylescheme.c
-    mooedit/native/mootextstylescheme.h
-)
-
-SET(mooedit_sci_sources
-)
-
 SET(mooedit_sources
     mooedit/mooedit.cmake
     ${moo_edit_enum_headers}
@@ -75,6 +61,12 @@ SET(mooedit_sources
     mooedit/moofold.h	
     mooedit/mooindenter.cpp
     mooedit/mooindenter.h	
+    mooedit/moolang-private.h
+    mooedit/moolang.cpp
+    mooedit/moolang.h	
+    mooedit/moolangmgr-private.h
+    mooedit/moolangmgr.cpp
+    mooedit/moolangmgr.h	
     mooedit/moolinebuffer.c	
     mooedit/moolinebuffer.h	
     mooedit/moolinemark.c	
@@ -98,17 +90,13 @@ SET(mooedit_sources
     mooedit/mootextsearch-private.h
     mooedit/mootextsearch.c	
     mooedit/mootextsearch.h
+    mooedit/mootextstylescheme.c
+    mooedit/mootextstylescheme.h
     mooedit/mootextview-input.c
     mooedit/mootextview-private.h
     mooedit/mootextview.c	
     mooedit/mootextview.h
 )
-
-if(MOO_USE_SCI)
-    list(APPEND mooedit_sources ${mooedit_sci_sources})
-else()
-    list(APPEND mooedit_sources ${mooedit_gtksourceview_sources})
-endif()
 
 # SET(built_mooedit_sources mooedit/mooedit-enum-types.h.stamp mooedit/mooedit-enum-types.c.stamp)
 

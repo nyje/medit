@@ -17,9 +17,7 @@
 #include "moocommand.h"
 #include "../support/moocmdview.h"
 #include "mooedit/mooeditprefs.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "mooutils/mooutils-gobject.h"
 #include "mooutils/mooutils-misc.h"
 #include "mooutils/moomarkup.h"

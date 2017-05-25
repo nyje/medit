@@ -20,9 +20,7 @@
 #include "mooedit/mootextview-private.h"
 #include "mooedit/mooedit-enums.h"
 #include "mooedit/mootextbuffer.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "mooutils/mooencodings.h"
 #include "mooutils/mooi18n.h"
 #include <string.h>

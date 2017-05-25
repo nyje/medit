@@ -17,11 +17,9 @@
 
 #include <gtk/gtk.h>
 #include <mooedit/mooindenter.h>
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#include <mooedit/native/mootextstylescheme.h>
-#endif // !MOO_USE_SCI
+#include <mooedit/moolang.h>
 #include <mooedit/mootextsearch.h>
+#include <mooedit/mootextstylescheme.h>
 #include <mooedit/mooedit-enums.h>
 
 G_BEGIN_DECLS

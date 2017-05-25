@@ -223,7 +223,7 @@ add_subdirectory(api)
 #add_subdirectory(po)
 #add_subdirectory(po-gsv)
 
-set(MOO_USE_SCI FALSE CACHE BOOL "Use Scintilla")
+set(MOO_USE_SCI TRUE CACHE BOOL "Use Scintilla")
 if(MOO_USE_SCI)
     add_definitions(-DMOO_USE_SCI=1)
     add_subdirectory(scintilla)

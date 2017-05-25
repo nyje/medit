@@ -35,9 +35,7 @@
 #include "mooedit/mooeditaction.h"
 #include "mooedit/mooeditaction-factory.h"
 #include "mooedit/mootextbuffer.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "mooedit/mooeditfileinfo.h"
 #include "mooedit/mooedit-script.h"
 #include "mooedit/mooedittab.h"

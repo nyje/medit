@@ -24,9 +24,7 @@
 #include "mooedit/mootextfind.h"
 #include "mooedit/mootext-private.h"
 #include "mooedit/mooeditprefs.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "mooedit/mooeditwindow.h"
 #include "mooedit/mooedit.h"
 #include "marshals.h"

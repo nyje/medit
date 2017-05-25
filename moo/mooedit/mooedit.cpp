@@ -46,9 +46,7 @@
 #include "mooedit/mooeditor-impl.h"
 #include "mooedit/mooedittab-impl.h"
 #include "mooedit/mooeditwindow-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "marshals.h"
 #include "mooutils/mooutils-fs.h"
 #include "mooutils/mooi18n.h"

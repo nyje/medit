@@ -17,9 +17,7 @@
 #define MOO_EDITOR_PRIVATE_H
 
 #include "mooedit/mooeditor-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 
 G_BEGIN_DECLS
 
