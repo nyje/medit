@@ -13,7 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mooedit/native/mootextsearch-private.h"
+#include "mooedit/mootextsearch-private.h"
 #include "gtksourceview/gtksourceview-api.h"
 #include "mooutils/mooutils-misc.h"
 #include <mooglib/moo-glib.h>

@@ -13,7 +13,7 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mooedit/native/mootextfind.h"
+#include "mooedit/mootextfind.h"
 #include "mooedit/mootextview.h"
 #include "mooedit/mooeditdialogs.h"
 #ifndef MOO_USE_SCI
