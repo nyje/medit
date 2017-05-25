@@ -58,14 +58,12 @@ struct MooEditPrivate
     MooEditState state;
     MooEditProgress *progress;
 
-#ifndef MOO_USE_SCI
     /***********************************************************************/
     /* Bookmarks
      */
     bool enable_bookmarks;
     GSList *bookmarks; /* sorted by line number */
     guint update_bookmarks_idle;
-#endif
 
     /***********************************************************************/
     /* Actions

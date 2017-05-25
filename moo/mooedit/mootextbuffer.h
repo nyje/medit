@@ -50,11 +50,8 @@ struct MooTextBufferClass
     gboolean (* undo)           (MooTextBuffer      *buffer);
     gboolean (* redo)           (MooTextBuffer      *buffer);
 
-#ifndef MOO_USE_SCI
     void (*cursor_moved)        (MooTextBuffer      *buffer,
                                  const GtkTextIter  *iter);
-#endif
-
     void (*selection_changed)   (MooTextBuffer      *buffer);
 
     void (*line_mark_added)     (MooTextBuffer      *buffer,
@@ -77,7 +74,6 @@ GType       moo_text_buffer_get_type                    (void) G_GNUC_CONST;
 
 GtkTextBuffer *moo_text_buffer_new                      (GtkTextTagTable    *table);
 
-#ifndef MOO_USE_SCI
 void        moo_text_buffer_set_lang                    (MooTextBuffer      *buffer,
                                                          MooLang            *lang);
 MooLang    *moo_text_buffer_get_lang                    (MooTextBuffer      *buffer);
@@ -88,7 +84,6 @@ gboolean    moo_text_buffer_get_highlight               (MooTextBuffer      *buf
 
 void        moo_text_buffer_set_brackets                (MooTextBuffer      *buffer,
                                                          const char         *brackets);
-#endif
 
 gboolean    moo_text_buffer_can_redo                    (MooTextBuffer      *buffer);
 gboolean    moo_text_buffer_can_undo                    (MooTextBuffer      *buffer);

@@ -79,12 +79,10 @@ _moo_edit_init_config (void)
 
     _moo_edit_init_prefs ();
 
-#ifndef MOO_USE_SCI
     _moo_edit_settings[MOO_EDIT_SETTING_LANG] =
         moo_edit_config_install_setting (g_param_spec_string ("lang", "lang", "lang",
                                                               NULL,
                                                               (GParamFlags) G_PARAM_READWRITE));
-#endif
     _moo_edit_settings[MOO_EDIT_SETTING_INDENT] =
         moo_edit_config_install_setting (g_param_spec_string ("indent", "indent", "indent",
                                                               NULL,
@@ -222,20 +220,16 @@ _moo_edit_update_global_config (void)
 void
 _moo_edit_view_apply_prefs (MooEditView *view)
 {
-#ifndef MOO_USE_SCI
     MooLangMgr *mgr;
     MooTextStyleScheme *scheme;
-#endif
     MooDrawWsFlags ws_flags = MOO_DRAW_WS_NONE;
 
     g_return_if_fail (MOO_IS_EDIT_VIEW (view));
 
     g_object_freeze_notify (G_OBJECT (view));
 
-#ifndef MOO_USE_SCI
     mgr = moo_lang_mgr_default ();
     scheme = moo_lang_mgr_get_active_scheme (mgr);
-#endif
 
     if (get_bool (MOO_EDIT_PREFS_SHOW_TABS))
         ws_flags |= MOO_DRAW_WS_TABS;
@@ -246,12 +240,10 @@ _moo_edit_view_apply_prefs (MooEditView *view)
 
     g_object_set (view,
                   "smart-home-end", get_bool (MOO_EDIT_PREFS_SMART_HOME_END),
-#ifndef MOO_USE_SCI
                   "enable-highlight", get_bool (MOO_EDIT_PREFS_ENABLE_HIGHLIGHTING),
                   "highlight-matching-brackets", get_bool (MOO_EDIT_PREFS_HIGHLIGHT_MATCHING),
                   "highlight-mismatching-brackets", get_bool (MOO_EDIT_PREFS_HIGHLIGHT_MISMATCHING),
                   "highlight-current-line", get_bool (MOO_EDIT_PREFS_HIGHLIGHT_CURRENT_LINE),
-#endif
                   "draw-right-margin", get_bool (MOO_EDIT_PREFS_DRAW_RIGHT_MARGIN),
                   "right-margin-offset", get_int (MOO_EDIT_PREFS_RIGHT_MARGIN_OFFSET),
                   "quick-search-flags", get_int (MOO_EDIT_PREFS_QUICK_SEARCH_FLAGS),
@@ -267,10 +259,8 @@ _moo_edit_view_apply_prefs (MooEditView *view)
     _moo_text_view_set_line_numbers_font (MOO_TEXT_VIEW (view),
                                           get_string (MOO_EDIT_PREFS_LINE_NUMBERS_FONT));
 
-#ifndef MOO_USE_SCI
     if (scheme)
         moo_text_view_set_style_scheme (MOO_TEXT_VIEW (view), scheme);
-#endif
 
     g_object_thaw_notify (G_OBJECT (view));
 }

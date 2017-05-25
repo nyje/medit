@@ -7,9 +7,7 @@
 #include "mooedit/mooeditwindow-impl.h"
 #include "mooedit/mooedittab-impl.h"
 #include "mooedit/mooeditor-impl.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mooeditbookmark.h"
-#endif
+#include "mooedit/mooeditbookmark.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooutils/mooutils.h"
 #include "mooutils/moocompat.h"
@@ -31,12 +29,10 @@ static gboolean moo_edit_view_drag_drop             (GtkWidget          *widget,
                                                      gint                x,
                                                      gint                y,
                                                      guint               time);
-#ifndef MOO_USE_SCI
 static void     moo_edit_view_apply_style_scheme    (MooTextView        *view,
                                                      MooTextStyleScheme *scheme);
 static gboolean moo_edit_view_line_mark_clicked     (MooTextView        *view,
                                                      int                 line);
-#endif
 
 G_DEFINE_TYPE (MooEditView, moo_edit_view, MOO_TYPE_TEXT_VIEW)
 
@@ -45,6 +41,7 @@ moo_edit_view_class_init (MooEditViewClass *klass)
 {
     GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
     GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+    MooTextViewClass *textview_class = MOO_TEXT_VIEW_CLASS (klass);
 
     gobject_class->dispose = moo_edit_view_dispose;
 
@@ -53,11 +50,8 @@ moo_edit_view_class_init (MooEditViewClass *klass)
     widget_class->drag_drop = moo_edit_view_drag_drop;
     widget_class->focus_in_event = moo_edit_view_focus_in;
 
-#ifndef MOO_USE_SCI
-    MooTextViewClass *textview_class = MOO_TEXT_VIEW_CLASS (klass);
     textview_class->line_mark_clicked = moo_edit_view_line_mark_clicked;
     textview_class->apply_style_scheme = moo_edit_view_apply_style_scheme;
-#endif
 
     g_type_class_add_private (klass, sizeof (MooEditViewPrivate));
 }
@@ -123,8 +117,6 @@ _moo_edit_view_new (MooEdit *doc)
 }
 
 
-#ifndef MOO_USE_SCI
-
 static gboolean
 moo_edit_view_line_mark_clicked (MooTextView *view,
                                  int          line)
@@ -140,8 +132,6 @@ moo_edit_view_apply_style_scheme (MooTextView        *view,
     MOO_TEXT_VIEW_CLASS (moo_edit_view_parent_class)->apply_style_scheme (view, scheme);
     _moo_edit_update_bookmarks_style (moo_edit_view_get_doc (MOO_EDIT_VIEW (view)));
 }
-
-#endif // !MOO_USE_SCI
 
 
 static gboolean
