@@ -16,9 +16,7 @@
 #include "mooedit/mootextfind.h"
 #include "mooedit/mootextview.h"
 #include "mooedit/mooeditdialogs.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mootextsearch-private.h"
-#endif
+#include "mooedit/mootextsearch-private.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooedit-enums.h"
 #include "mooutils/moohistorycombo.h"

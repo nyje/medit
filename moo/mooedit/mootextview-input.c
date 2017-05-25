@@ -1057,7 +1057,6 @@ _moo_text_view_extend_selection (MooTextView        *view,
     {
         int ch_class;
 
-#ifndef MOO_USE_SCI
         if (!order && view->priv->dnd.double_click_selects_brackets)
         {
             GtkTextIter rstart = *start;
@@ -1088,7 +1087,6 @@ _moo_text_view_extend_selection (MooTextView        *view,
                 }
             }
         }
-#endif // !MOO_USE_SCI
 
         if (order > 0)
         {

@@ -17,9 +17,7 @@
 #define MOO_TEXT_VIEW_PRIVATE_H
 
 #include "mooedit/mootextview.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/mootextsearch.h"
-#endif
+#include "mooedit/mootextsearch.h"
 #include "mooutils/moohistorylist.h"
 #include <gtk/gtk.h>
 
