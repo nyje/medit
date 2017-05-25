@@ -16,10 +16,8 @@
 #ifndef MOO_LANG_MGR_H
 #define MOO_LANG_MGR_H
 
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolang.h"
-#include <mooedit/native/mootextstylescheme.h>
-#endif // !MOO_USE_SCI
+#include <mooedit/moolang.h>
+#include <mooedit/mootextstylescheme.h>
 #include <mooedit/mooeditconfig.h>
 
 G_BEGIN_DECLS

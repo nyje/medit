@@ -16,9 +16,7 @@
 #ifndef MOO_LANG_MGR_PRIVATE_H
 #define MOO_LANG_MGR_PRIVATE_H
 
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolangmgr.h"
 #include "mooedit/mooeditconfig.h"
 #include "gtksourceview/gtksourceview-api.h"
 

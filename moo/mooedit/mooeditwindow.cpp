@@ -29,14 +29,13 @@
 #include "mooedit/mooeditview-impl.h"
 #include "mooedit/mooedittab-impl.h"
 #include "mooedit/mooeditfiltersettings.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolang.h"
 #include "mooedit/mootextbuffer.h"
 #include "mooedit/mooeditprefs.h"
 #include "mooedit/mooplugin.h"
 #include "mooedit/mooeditaction.h"
 #include "mooedit/mooeditbookmark.h"
+#include "mooedit/moolangmgr.h"
 #include "mooutils/moonotebook.h"
 #include "mooutils/moostock.h"
 #include "marshals.h"

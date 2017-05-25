@@ -17,10 +17,8 @@
 #define MOO_LANG_PRIVATE_H
 
 #include "gtksourceview/gtksourceview-api.h"
-#ifndef MOO_USE_SCI
-#include "mooedit/native/moolang.h"
-#include "mooedit/native/moolangmgr.h"
-#endif // !MOO_USE_SCI
+#include "mooedit/moolang.h"
+#include "mooedit/moolangmgr.h"
 #include "mooedit/mooeditconfig.h"
 
 G_BEGIN_DECLS

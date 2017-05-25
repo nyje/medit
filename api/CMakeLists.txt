@@ -94,12 +94,12 @@ SET(source_files
     ../moo/mooedit/moofold.h
     ../moo/mooedit/mooindenter.c
     ../moo/mooedit/mooindenter.h
-    ../moo/mooedit/native/moolang.c
-    ../moo/mooedit/native/moolang.h
-    ../moo/mooedit/native/moolangmgr.c
-    ../moo/mooedit/native/moolangmgr.h
-    ../moo/mooedit/native/moolangmgr-private.h
-    ../moo/mooedit/native/moolang-private.h
+    ../moo/mooedit/moolang.c
+    ../moo/mooedit/moolang.h
+    ../moo/mooedit/moolangmgr.c
+    ../moo/mooedit/moolangmgr.h
+    ../moo/mooedit/moolangmgr-private.h
+    ../moo/mooedit/moolang-private.h
     ../moo/mooedit/moolinebuffer.c
     ../moo/mooedit/moolinebuffer.h
     ../moo/mooedit/moolinemark.c
@@ -122,8 +122,8 @@ SET(source_files
     ../moo/mooedit/mootextsearch.c
     ../moo/mooedit/mootextsearch.h
     ../moo/mooedit/mootextsearch-private.h
-    ../moo/mooedit/native/mootextstylescheme.c
-    ../moo/mooedit/native/mootextstylescheme.h
+    ../moo/mooedit/mootextstylescheme.c
+    ../moo/mooedit/mootextstylescheme.h
     ../moo/mooedit/mootextview.c
     ../moo/mooedit/mootextview.h
     ../moo/mooedit/mootextview-input.c
