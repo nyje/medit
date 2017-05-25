@@ -16,7 +16,7 @@
 #ifndef MOO_TEXT_SEARCH_PRIVATE_H
 #define MOO_TEXT_SEARCH_PRIVATE_H
 
-#include <mooedit/native/mootextsearch.h>
+#include <mooedit/mootextsearch.h>
 #include <mooglib/moo-glib.h>
 
 G_BEGIN_DECLS

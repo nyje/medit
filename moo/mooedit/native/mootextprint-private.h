@@ -16,7 +16,7 @@
 #ifndef MOO_TEXT_PRINT_PRIVATE_H
 #define MOO_TEXT_PRINT_PRIVATE_H
 
-#include <mooedit/native/mootextprint.h>
+#include <mooedit/mootextprint.h>
 
 G_BEGIN_DECLS
 
