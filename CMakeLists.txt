@@ -223,12 +223,6 @@ add_subdirectory(api)
 #add_subdirectory(po)
 #add_subdirectory(po-gsv)
 
-set(MOO_USE_SCI TRUE CACHE BOOL "Use Scintilla")
-if(MOO_USE_SCI)
-    add_definitions(-DMOO_USE_SCI=1)
-    add_subdirectory(scintilla)
-endif()
-
 add_subdirectory(moo)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
