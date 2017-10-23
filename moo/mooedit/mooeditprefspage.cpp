@@ -140,7 +140,7 @@ page_general_init (MooPrefsPage *page)
     {
         MooTextStyleScheme *scheme;
 
-        g_object_set (gxml->fontbutton, "monospace", TRUE, NULL);
+        g_object_set (gxml->fontbutton, "monospace", TRUE, nullptr);
 
         scheme = moo_lang_mgr_get_active_scheme (moo_lang_mgr_default ());
         g_return_if_fail (scheme != NULL);
@@ -407,7 +407,7 @@ scheme_combo_data_func (G_GNUC_UNUSED GtkCellLayout *layout,
     MooTextStyleScheme *scheme = NULL;
     gtk_tree_model_get (model, iter, 0, &scheme, -1);
     g_return_if_fail (scheme != NULL);
-    g_object_set (cell, "text", moo_text_style_scheme_get_name (scheme), NULL);
+    g_object_set (cell, "text", moo_text_style_scheme_get_name (scheme), nullptr);
     g_object_unref (scheme);
 }
 
@@ -652,7 +652,7 @@ set_sensitive (G_GNUC_UNUSED GtkCellLayout *cell_layout,
 {
     g_object_set (cell, "sensitive",
                   !gtk_tree_model_iter_has_child (model, iter),
-                  NULL);
+                  nullptr);
 }
 
 
@@ -733,7 +733,7 @@ lang_combo_init (GtkComboBox   *combo,
     gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo));
     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
     gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
-                                    "text", COLUMN_NAME, NULL);
+                                    "text", COLUMN_NAME, nullptr);
     gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (combo), cell,
                                         set_sensitive, NULL, NULL);
 
@@ -987,7 +987,7 @@ filter_icon_data_func (G_GNUC_UNUSED GtkTreeViewColumn *column,
 {
     gboolean invalid;
     gtk_tree_model_get (model, iter, FILTER_COLUMN_INVALID, &invalid, -1);
-    g_object_set (cell, "visible", invalid, NULL);
+    g_object_set (cell, "visible", invalid, nullptr);
 }
 
 static void
@@ -1006,7 +1006,7 @@ create_filter_column (GtkTreeView  *treeview,
     if (column_id == FILTER_COLUMN_FILTER)
     {
         cell = gtk_cell_renderer_pixbuf_new ();
-        g_object_set (cell, "stock-id", GTK_STOCK_DIALOG_ERROR, NULL);
+        g_object_set (cell, "stock-id", GTK_STOCK_DIALOG_ERROR, nullptr);
         gtk_tree_view_column_pack_start (column, cell, FALSE);
         gtk_tree_view_column_set_cell_data_func (column, cell,
                                                  (GtkTreeCellDataFunc) filter_icon_data_func,
@@ -1015,9 +1015,9 @@ create_filter_column (GtkTreeView  *treeview,
 
     cell = gtk_cell_renderer_text_new ();
     gtk_tree_view_column_pack_start (column, cell, TRUE);
-    gtk_tree_view_column_set_attributes (column, cell, "text", column_id, NULL);
+    gtk_tree_view_column_set_attributes (column, cell, "text", column_id, nullptr);
 
-    g_object_set (cell, "editable", TRUE, NULL);
+    g_object_set (cell, "editable", TRUE, nullptr);
     g_object_set_data (G_OBJECT (cell), "filter-store-column-id", GINT_TO_POINTER (column_id));
     g_signal_connect (cell, "edited", G_CALLBACK (filter_cell_edited), store);
 }

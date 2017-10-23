@@ -47,7 +47,7 @@ _moo_edit_open_dialog (GtkWidget *widget,
     MooOpenInfoArray *info_array = NULL;
     guint i;
 
-    moo_prefs_create_key (moo_edit_setting (MOO_EDIT_PREFS_LAST_DIR), MOO_PREFS_STATE, G_TYPE_STRING, NULL);
+    moo_prefs_create_key (moo_edit_setting (MOO_EDIT_PREFS_LAST_DIR), MOO_PREFS_STATE, G_TYPE_STRING, nullptr);
 
     if (current_doc && moo_prefs_get_bool (moo_edit_setting (MOO_EDIT_PREFS_DIALOGS_OPEN_FOLLOWS_DOC)))
     {
@@ -64,8 +64,8 @@ _moo_edit_open_dialog (GtkWidget *widget,
 
     dialog = moo_file_dialog_new (MOO_FILE_DIALOG_OPEN, widget,
                                   TRUE, GTK_STOCK_OPEN, start,
-                                  NULL);
-    g_object_set (dialog, "enable-encodings", TRUE, NULL);
+                                  nullptr);
+    g_object_set (dialog, "enable-encodings", TRUE, nullptr);
     moo_file_dialog_set_help_id (dialog, "dialog-open");
     moo_file_dialog_set_remember_size (dialog, moo_edit_setting (MOO_EDIT_PREFS_DIALOG_OPEN));
 
@@ -107,7 +107,7 @@ _moo_edit_save_as_dialog (MooEdit    *doc,
     GFile *start = NULL;
     GFile *file = NULL;
 
-    g_return_val_if_fail (MOO_IS_EDIT (doc), NULL);
+    g_return_val_if_fail (MOO_IS_EDIT (doc), nullptr);
 
     moo_prefs_create_key (moo_edit_setting (MOO_EDIT_PREFS_LAST_DIR),
                           MOO_PREFS_STATE, G_TYPE_STRING, NULL);
@@ -128,7 +128,7 @@ _moo_edit_save_as_dialog (MooEdit    *doc,
                                   GTK_WIDGET (moo_edit_get_view (doc)),
                                   FALSE, GTK_STOCK_SAVE_AS,
                                   start, display_basename);
-    g_object_set (dialog, "enable-encodings", TRUE, NULL);
+    g_object_set (dialog, "enable-encodings", TRUE, nullptr);
     moo_file_dialog_set_encoding (dialog, moo_edit_get_encoding (doc));
     moo_file_dialog_set_help_id (dialog, "dialog-save");
 
@@ -252,7 +252,7 @@ name_data_func (G_GNUC_UNUSED GtkTreeViewColumn *column,
     gtk_tree_model_get (model, iter, COLUMN_EDIT, &doc, -1);
     g_return_if_fail (MOO_IS_EDIT (doc));
 
-    g_object_set (cell, "text", moo_edit_get_display_basename (doc), NULL);
+    g_object_set (cell, "text", moo_edit_get_display_basename (doc), nullptr);
     g_object_unref (doc);
 }
 
@@ -337,7 +337,7 @@ files_treeview_init (GtkTreeView *treeview, GtkWidget *dialog, MooEditArray *doc
     gtk_tree_view_append_column (treeview, column);
     cell = gtk_cell_renderer_toggle_new ();
     gtk_tree_view_column_pack_start (column, cell, FALSE);
-    g_object_set (cell, "activatable", TRUE, NULL);
+    g_object_set (cell, "activatable", TRUE, nullptr);
     gtk_tree_view_column_add_attribute (column, cell, "active", COLUMN_SAVE);
     g_signal_connect (cell, "toggled", G_CALLBACK (save_toggled), store);
 
@@ -429,7 +429,7 @@ _moo_edit_save_multiple_changes_dialog (MooEditArray *docs,
                             MOO_STOCK_SAVE_NONE, GTK_RESPONSE_NO,
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             MOO_STOCK_SAVE_SELECTED, GTK_RESPONSE_YES,
-                            NULL);
+                            nullptr);
 
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
 
@@ -530,7 +530,7 @@ moo_edit_question_dialog (MooEdit    *doc,
     gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             button, GTK_RESPONSE_YES,
-                            NULL);
+                            nullptr);
 
     gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
                                              GTK_RESPONSE_YES,
@@ -623,7 +623,7 @@ _moo_edit_try_encoding_dialog (G_GNUC_UNUSED GFile *file,
     gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_OK, GTK_RESPONSE_OK,
-                            NULL);
+                            nullptr);
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
     gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
                                              GTK_RESPONSE_OK,
@@ -779,7 +779,7 @@ _moo_text_search_from_start_dialog (GtkWidget *widget,
     gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                             GTK_STOCK_NO, GTK_RESPONSE_CANCEL,
                             GTK_STOCK_YES, GTK_RESPONSE_YES,
-                            NULL);
+                            nullptr);
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
     gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
                                              GTK_RESPONSE_YES,
@@ -817,7 +817,7 @@ _moo_text_regex_error_dialog (GtkWidget  *parent,
                                      "%s", msg_text);
     moo_window_set_parent (dialog, parent);
     gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_CLOSE,
-                            GTK_RESPONSE_CANCEL, NULL);
+                            GTK_RESPONSE_CANCEL, nullptr);
     gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
 
     gtk_dialog_run (GTK_DIALOG (dialog));

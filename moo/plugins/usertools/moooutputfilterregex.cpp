@@ -184,7 +184,7 @@ find_file_in_dir (const char *file,
     if (!file || !dir)
         return NULL;
 
-    path = g_build_filename (dir, file, NULL);
+    path = g_build_filename (dir, file, nullptr);
 
     if (g_file_test (path, G_FILE_TEST_EXISTS))
         return path;
@@ -401,7 +401,7 @@ get_tag (MooLineView *view,
             _moo_text_style_apply_to_tag (style, tag);
         else if (type == OUTPUT_STDERR || !strcmp (name, "output-error") ||
                  !strcmp (name, "output-stderr"))
-            g_object_set (tag, "foreground", "red", NULL);
+            g_object_set (tag, "foreground", "red", nullptr);
     }
 
     return tag;

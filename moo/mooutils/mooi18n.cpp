@@ -92,7 +92,7 @@ moo_pgettext2 (G_GNUC_UNUSED const char *context, const char *msgctxtid)
     g_return_val_if_fail (msgctxtid != NULL, NULL);
     init_gettext ();
 
-    tmp = g_strjoin (context, "\004", msgctxtid, NULL);
+    tmp = g_strjoin (context, "\004", msgctxtid, nullptr);
     translation = dgettext (GETTEXT_PACKAGE, tmp);
 
     if (translation == tmp)
@@ -171,8 +171,8 @@ test_mooi18n (void)
     char *po_file, *po_file2;
 
     locale_dir = moo_get_locale_dir ();
-    po_file = g_build_filename (locale_dir, "ru", "LC_MESSAGES", GETTEXT_PACKAGE ".mo", NULL);
-    po_file2 = g_build_filename (locale_dir, "ru", "LC_MESSAGES", GETTEXT_PACKAGE "-gsv.mo", NULL);
+    po_file = g_build_filename (locale_dir, "ru", "LC_MESSAGES", GETTEXT_PACKAGE ".mo", nullptr);
+    po_file2 = g_build_filename (locale_dir, "ru", "LC_MESSAGES", GETTEXT_PACKAGE "-gsv.mo", nullptr);
 
     TEST_ASSERT_MSG (g_file_test (po_file, G_FILE_TEST_EXISTS), "mo file '%s' does not exist", po_file);
     TEST_ASSERT_MSG (g_file_test (po_file2, G_FILE_TEST_EXISTS), "mo file '%s' does not exist", po_file2);

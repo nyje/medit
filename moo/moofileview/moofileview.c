@@ -1384,11 +1384,13 @@ init_gui (MooFileView *fileview)
                                            TREEVIEW_PAGE);
             _moo_tree_view_set_active (fileview->priv->view,
                                        GTK_WIDGET (fileview->priv->treeview));
+            break;
 
         case MOO_FILE_VIEW_BOOKMARK:
             fileview->priv->file_view_type = MOO_FILE_VIEW_ICON;
             gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
                                            BOOKMARK_PAGE);
+            break;
     }
 
     moo_file_view_focus_files (fileview);

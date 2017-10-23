@@ -191,7 +191,7 @@ parse_file (const char  *string,
     if (!*current_dir)
         *current_dir = g_get_current_dir ();
 
-    filename = g_build_filename (*current_dir, string, NULL);
+    filename = g_build_filename (*current_dir, string, nullptr);
     ret = parse_filename (filename);
 
     g_free (filename);

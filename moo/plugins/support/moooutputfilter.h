@@ -39,13 +39,16 @@ struct _MooFileLineData {
     int character;
 };
 
-struct MooOutputFilter : public GObject
+struct MooOutputFilter
 {
+    GObject parent;
     MooOutputFilterPrivate *priv;
 };
 
-struct MooOutputFilterClass : public GObjectClass
+struct MooOutputFilterClass
 {
+    GObjectClass parent_class;
+
     void     (*attach)      (MooOutputFilter *filter);
     void     (*detach)      (MooOutputFilter *filter);
 

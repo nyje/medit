@@ -2,6 +2,10 @@
 * all.c -- Lua core, libraries and interpreter in a single file
 */
 
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wmisleading-indentation"
+
 #define luaall_c
 
 #include "lapi.c"

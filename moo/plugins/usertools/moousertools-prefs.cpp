@@ -404,7 +404,7 @@ name_data_func (G_GNUC_UNUSED GtkTreeViewColumn *column,
     gtk_tree_model_get (model, iter, COLUMN_INFO, &info, -1);
     g_return_if_fail (info != NULL);
 
-    g_object_set (cell, "text", info->name, NULL);
+    g_object_set (cell, "text", info->name, nullptr);
 
     _moo_user_tool_info_unref (info);
 }
@@ -466,7 +466,7 @@ command_page_init (MooPrefsPage    *page,
                                              (GtkTreeCellDataFunc) name_data_func,
                                              NULL, NULL);
     gtk_tree_view_append_column (gxml->treeview, column);
-    g_object_set (cell, "editable", TRUE, NULL);
+    g_object_set (cell, "editable", TRUE, nullptr);
     g_signal_connect_swapped (cell, "edited", G_CALLBACK (name_cell_edited), page);
 
     populate_store (store, type);

@@ -181,8 +181,8 @@ moo_cmd_view_constructor (GType                  type,
     view->priv->stdout_tag = gtk_text_buffer_create_tag (buffer, "stdout", NULL);
     view->priv->stderr_tag = gtk_text_buffer_create_tag (buffer, "stderr", NULL);
 
-    g_object_set (view->priv->error_tag, "foreground", "red", NULL);
-    g_object_set (view->priv->stderr_tag, "foreground", "red", NULL);
+    g_object_set (view->priv->error_tag, "foreground", "red", nullptr);
+    g_object_set (view->priv->stderr_tag, "foreground", "red", nullptr);
 
     return object;
 }

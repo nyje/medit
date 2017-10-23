@@ -211,7 +211,7 @@ _moo_edit_update_global_config (void)
                                 "add-newline", add_newline,
                                 "show-line-numbers", show_line_numbers,
                                 "wrap-mode", wrap_mode,
-                                NULL);
+                                nullptr);
 }
 
 
@@ -248,9 +248,9 @@ _moo_edit_view_apply_prefs (MooEditView *view)
                   "auto-indent", get_bool (MOO_EDIT_PREFS_AUTO_INDENT),
                   "tab-indents", get_bool (MOO_EDIT_PREFS_TAB_INDENTS),
                   "backspace-indents", get_bool (MOO_EDIT_PREFS_BACKSPACE_INDENTS),
-                  NULL);
+                  nullptr);
 
-    g_object_set (view, "draw-whitespace", ws_flags, NULL);
+    g_object_set (view, "draw-whitespace", ws_flags, nullptr);
 
     moo_text_view_set_font_from_string (MOO_TEXT_VIEW (view),
                                         get_string (MOO_EDIT_PREFS_FONT));

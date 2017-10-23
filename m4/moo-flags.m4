@@ -91,8 +91,9 @@ MOO_COMPILER
 
 _MOO_AC_CHECK_COMPILER_OPTIONS([dnl
 -Wall -Wextra -fexceptions -fno-strict-aliasing dnl
--Wno-missing-field-initializers -Wno-overlength-strings dnl
+-Wno-missing-field-initializers dnl
 -Wno-format-y2k -Wno-overlength-strings dnl
+-Wno-deprecated-declarations dnl
 ])
 _MOO_AC_CHECK_CXX_COMPILER_OPTIONS([dnl
 -std=c++11 -fno-rtti dnl

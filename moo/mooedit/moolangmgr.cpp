@@ -75,7 +75,7 @@ moo_lang_mgr_init (MooLangMgr *mgr)
 
     mgr->lang_mgr = gtk_source_language_manager_new ();
     dirs = moo_get_data_subdirs (LANGUAGE_DIR);
-    g_object_set (mgr->lang_mgr, "search-path", dirs, NULL);
+    g_object_set (mgr->lang_mgr, "search-path", dirs, nullptr);
     mgr->style_mgr = gtk_source_style_scheme_manager_new ();
     gtk_source_style_scheme_manager_set_search_path (mgr->style_mgr, dirs);
 

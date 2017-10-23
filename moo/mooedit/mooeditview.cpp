@@ -437,7 +437,7 @@ _moo_edit_view_ui_set_line_wrap (MooEditView *view,
     g_return_if_fail (MOO_IS_EDIT_VIEW (view));
     g_return_if_fail (view->priv->doc && view->priv->doc->config);
 
-    g_object_get (view, "wrap-mode", &mode, NULL);
+    g_object_get (view, "wrap-mode", &mode, nullptr);
 
     enabled = enabled != 0;
     old_enabled = mode != GTK_WRAP_NONE;
@@ -454,7 +454,7 @@ _moo_edit_view_ui_set_line_wrap (MooEditView *view,
 
     moo_edit_config_set (view->priv->doc->config,
                          MOO_EDIT_CONFIG_SOURCE_USER,
-                         "wrap-mode", mode, NULL);
+                         "wrap-mode", mode, nullptr);
 }
 
 void
@@ -466,7 +466,7 @@ _moo_edit_view_ui_set_show_line_numbers (MooEditView *view,
     g_return_if_fail (MOO_IS_EDIT_VIEW (view));
     g_return_if_fail (view->priv->doc && view->priv->doc->config);
 
-    g_object_get (view, "show-line-numbers", &old_show, NULL);
+    g_object_get (view, "show-line-numbers", &old_show, nullptr);
 
     if (!old_show == !show)
         return;

@@ -686,7 +686,7 @@ moo_log_window_insert (MooLogWindow *log,
 {
     GtkTextIter iter;
     gtk_text_buffer_get_end_iter (log->buf, &iter);
-    gtk_text_buffer_insert_with_tags (log->buf, &iter, text, -1, tag, NULL);
+    gtk_text_buffer_insert_with_tags (log->buf, &iter, text, -1, tag, nullptr);
     gtk_text_view_scroll_mark_onscreen (log->textview, log->insert);
 }
 
@@ -1193,7 +1193,7 @@ moo_get_user_cache_dir (void)
     G_LOCK (moo_user_cache_dir);
 
     if (!moo_user_cache_dir)
-        moo_user_cache_dir = g_build_filename (g_get_user_cache_dir (), MOO_PACKAGE_NAME, NULL);
+        moo_user_cache_dir = g_build_filename (g_get_user_cache_dir (), MOO_PACKAGE_NAME, nullptr);
 
     G_UNLOCK (moo_user_cache_dir);
 
@@ -1277,7 +1277,7 @@ moo_get_user_data_dir (void)
 
         moo_user_data_dir = g_build_filename (basedir,
                                               MOO_PACKAGE_NAME,
-                                              NULL);
+                                              nullptr);
 
         g_free (freeme);
     }
@@ -1340,7 +1340,7 @@ moo_make_user_data_dir (const char *path)
     user_dir = moo_get_user_data_dir ();
     g_return_val_if_fail (user_dir != NULL, FALSE);
 
-    full_path = g_build_filename (user_dir, path, NULL);
+    full_path = g_build_filename (user_dir, path, nullptr);
     result = _moo_mkdir_with_parents (full_path, &err);
 
     if (result != 0)
@@ -1428,7 +1428,7 @@ enumerate_data_dirs (MooDataDirType  type,
             const char* const *p;
 
             for (p = g_get_system_data_dirs (); p && *p; ++p)
-                g_ptr_array_add (dirs, g_build_filename (*p, MOO_PACKAGE_NAME, NULL));
+                g_ptr_array_add (dirs, g_build_filename (*p, MOO_PACKAGE_NAME, nullptr));
 
             g_ptr_array_add (dirs, g_strdup (MOO_DATA_DIR));
         }
@@ -1576,7 +1576,7 @@ moo_get_stuff_subdirs (const char    *subdir,
     dirs = g_new0 (char*, n_dirs + 1);
 
     for (i = 0; i < n_dirs; ++i)
-        dirs[i] = g_build_filename (data_dirs[i], subdir, NULL);
+        dirs[i] = g_build_filename (data_dirs[i], subdir, nullptr);
 
     g_strfreev (data_dirs);
     return dirs;
@@ -1650,7 +1650,7 @@ get_user_data_file (const char *basename,
 
     g_return_val_if_fail (dir != NULL, NULL);
 
-    file = g_build_filename (dir, basename, NULL);
+    file = g_build_filename (dir, basename, nullptr);
 
     g_free (dir);
     return file;

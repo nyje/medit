@@ -32,13 +32,16 @@ G_BEGIN_DECLS
 
 typedef struct _MooLineViewPrivate  MooLineViewPrivate;
 
-struct MooLineView : public MooTextView
+struct MooLineView
 {
+    MooTextView parent;
     MooLineViewPrivate *priv;
 };
 
-struct MooLineViewClass : public MooTextViewClass
+struct MooLineViewClass
 {
+    MooTextViewClass parent_class;
+
     void     (*activate) (MooLineView *view,
                           int          line);
 };

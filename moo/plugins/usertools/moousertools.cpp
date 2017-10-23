@@ -399,7 +399,7 @@ load_tool (MooUserToolInfo *info)
                                          "label", label,
                                          "default-accel", info->accel,
                                          "command", cmd,
-                                         NULL);
+                                         nullptr);
 
             moo_edit_window_set_action_check (info->id, MOO_ACTION_CHECK_SENSITIVE,
                                               check_sensitive_func,
@@ -417,7 +417,7 @@ load_tool (MooUserToolInfo *info)
                                        "default-accel", info->accel,
                                        "command", cmd,
                                        "file-filter", info->filter,
-                                       NULL);
+                                       nullptr);
             break;
     }
 
@@ -639,7 +639,7 @@ load_directory (const char       *path,
     {
         char *filename;
 
-        filename = g_build_filename (path, names->pdata[i], NULL);
+        filename = g_build_filename (path, names->pdata[i], nullptr);
         load_file (filename, (const char*) names->pdata[i], type, list, ids);
 
         g_free (filename);
@@ -1321,7 +1321,7 @@ moo_tool_action_check_state (MooEditAction *edit_action)
     doc = moo_edit_action_get_doc (edit_action);
     sensitive = moo_command_check_sensitive (action->cmd, doc);
 
-    g_object_set (action, "sensitive", sensitive, NULL);
+    g_object_set (action, "sensitive", sensitive, nullptr);
 }
 
 

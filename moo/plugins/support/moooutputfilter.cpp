@@ -368,7 +368,7 @@ find_file_in_dirs (const char  *filename,
 {
     for ( ; dirs && *dirs; ++dirs)
     {
-        char *path = g_build_filename (*dirs, filename, NULL);
+        char *path = g_build_filename (*dirs, filename, nullptr);
         if (g_file_test (path, G_FILE_TEST_EXISTS))
             return path;
         g_free (path);
