@@ -1,11 +1,11 @@
 plugins_sources +=			\
-	plugins/moofileselector-prefs.c	\
-	plugins/moofileselector.c	\
+	plugins/moofileselector-prefs.cpp\
+	plugins/moofileselector.cpp	\
 	plugins/moofileselector.h	\
 	plugins/mooplugin-builtin.h	\
-	plugins/mooplugin-builtin.c	\
-	plugins/moofilelist.c		\
-	plugins/moofind.c
+	plugins/mooplugin-builtin.cpp	\
+	plugins/moofilelist.cpp		\
+	plugins/moofind.cpp
 
 EXTRA_DIST +=						\
 	plugins/glade/moofileselector-prefs.glade	\

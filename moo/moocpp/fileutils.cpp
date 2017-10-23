@@ -13,8 +13,6 @@
  *   License along with medit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
 #include "moocpp/fileutils.h"
 
 gstr g::build_filename_impl(const char* comp1, const char* comp2, const char* comp3)

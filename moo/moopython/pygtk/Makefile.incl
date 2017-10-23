@@ -22,7 +22,7 @@ EXTRA_DIST +=					\
 	moopython/pygtk/moo.py
 
 built_moo_python_sources +=			\
-	moopython/pygtk/moo-mod.c		\
+	moopython/pygtk/moo-mod.cpp		\
 	moopython/pygtk/moo-mod.h
 
 if MOO_OS_WIN32
@@ -45,7 +45,7 @@ codegen = $(MOO_PYTHON) $(codegen_script) $(codegen_platform) \
 	--codebefore $(srcdir)/moopython/pygtk/codebefore.c \
 	--codeafter $(srcdir)/moopython/pygtk/codeafter.c
 
-moopython/pygtk/moo-mod.c: $(moo_override_files) moopython/pygtk/moo.defs $(codegen_files) \
+moopython/pygtk/moo-mod.cpp: $(moo_override_files) moopython/pygtk/moo.defs $(codegen_files) \
 				$(srcdir)/moopython/pygtk/codebefore.c \
 				$(srcdir)/moopython/pygtk/codeafter.c
 	$(AM_V_at)$(MKDIR_P) moopython/pygtk

@@ -2,9 +2,7 @@
 /* Generated data (by glib-mkenums) */
 
 #include "mooedit/mooedit-enum-types.h"
-
 #include "mooedit/mooedit-enums.h"
-
 /* enum MooEditConfigSource */
 GType
 moo_edit_config_source_get_type (void)
@@ -27,7 +25,6 @@ moo_edit_config_source_get_type (void)
 
     return etype;
 }
-
 /* enum MooSaveResponse */
 GType
 moo_save_response_get_type (void)
@@ -47,7 +44,6 @@ moo_save_response_get_type (void)
 
     return etype;
 }
-
 /* enum MooEditState */
 GType
 moo_edit_state_get_type (void)
@@ -69,7 +65,6 @@ moo_edit_state_get_type (void)
 
     return etype;
 }
-
 /* flags MooEditStatus */
 GType
 moo_edit_status_get_type (void)
@@ -94,7 +89,6 @@ moo_edit_status_get_type (void)
 
     return etype;
 }
-
 /* enum MooLineEndType */
 GType
 moo_line_end_type_get_type (void)
@@ -117,7 +111,6 @@ moo_line_end_type_get_type (void)
 
     return etype;
 }
-
 /* flags MooOpenFlags */
 GType
 moo_open_flags_get_type (void)
@@ -140,7 +133,6 @@ moo_open_flags_get_type (void)
 
     return etype;
 }
-
 /* enum MooTextSelectionType */
 GType
 moo_text_selection_type_get_type (void)
@@ -161,7 +153,6 @@ moo_text_selection_type_get_type (void)
 
     return etype;
 }
-
 /* flags MooTextSearchFlags */
 GType
 moo_text_search_flags_get_type (void)
@@ -183,7 +174,6 @@ moo_text_search_flags_get_type (void)
 
     return etype;
 }
-
 /* flags MooFindFlags */
 GType
 moo_find_flags_get_type (void)
@@ -209,7 +199,6 @@ moo_find_flags_get_type (void)
 
     return etype;
 }
-
 /* flags MooDrawWsFlags */
 GType
 moo_draw_ws_flags_get_type (void)
@@ -231,7 +220,6 @@ moo_draw_ws_flags_get_type (void)
 
     return etype;
 }
-
 /* enum MooActionCheckType */
 GType
 moo_action_check_type_get_type (void)
@@ -252,7 +240,6 @@ moo_action_check_type_get_type (void)
 
     return etype;
 }
-
 /* enum MooTextCursor */
 GType
 moo_text_cursor_get_type (void)
@@ -274,7 +261,6 @@ moo_text_cursor_get_type (void)
 
     return etype;
 }
-
 
 /* Generated data ends here */
 

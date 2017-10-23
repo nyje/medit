@@ -452,7 +452,9 @@ _moo_file_error_from_errno (mgw_errno_t code)
 {
     switch (code.value)
     {
+#ifdef __WIN32__
         case MGW_EACCES:
+#endif
         case MGW_EPERM:
             return MOO_FILE_ERROR_ACCESS_DENIED;
         case MGW_EEXIST:
@@ -1018,7 +1020,8 @@ test_normalize_file_path_win32 (void)
 
     for (i = 0; i < paths->len; i += 2)
     {
-        test_normalize_path_one (paths->pdata[i], paths->pdata[i+1],
+        test_normalize_path_one ((const char*) paths->pdata[i],
+                                 (const char*) paths->pdata[i+1],
                                  normalize_full_path_win32,
                                  "normalize_full_path_win32");
         g_free (paths->pdata[i]);

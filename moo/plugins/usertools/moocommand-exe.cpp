@@ -40,7 +40,7 @@
 #endif
 
 #ifndef __WIN32__
-#define RUN_CMD_FLAGS 0
+#define RUN_CMD_FLAGS ((GSpawnFlags)0)
 #define SCRIPT_EXTENSION ".sh"
 #else
 #define RUN_CMD_FLAGS G_SPAWN_SEARCH_PATH

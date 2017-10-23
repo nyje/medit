@@ -1,18 +1,18 @@
 plugins_sources +=					\
-	plugins/usertools/moousertools.c		\
+	plugins/usertools/moousertools.cpp		\
 	plugins/usertools/moousertools.h		\
-	plugins/usertools/moousertools-prefs.c		\
+	plugins/usertools/moousertools-prefs.cpp	\
 	plugins/usertools/moousertools-prefs.h		\
-	plugins/usertools/moocommand.c			\
+	plugins/usertools/moocommand.cpp		\
 	plugins/usertools/moocommand.h			\
 	plugins/usertools/moocommand-private.h		\
-	plugins/usertools/moocommanddisplay.c		\
+	plugins/usertools/moocommanddisplay.cpp		\
 	plugins/usertools/moocommanddisplay.h		\
-	plugins/usertools/moooutputfilterregex.c	\
+	plugins/usertools/moooutputfilterregex.cpp	\
 	plugins/usertools/moooutputfilterregex.h	\
 	plugins/usertools/moousertools-enums.h		\
-	plugins/usertools/moousertools-enums.c		\
-	plugins/usertools/moocommand-exe.c		\
+	plugins/usertools/moousertools-enums.cpp	\
+	plugins/usertools/moocommand-exe.cpp		\
 	plugins/usertools/moocommand-exe.h		\
 	plugins/usertools/moocommand-script.cpp		\
 	plugins/usertools/moocommand-script.h
