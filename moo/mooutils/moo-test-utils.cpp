@@ -258,7 +258,7 @@ moo_test_run_tests (const gstrvec&  tests,
 
             if (!find_test (name, &single_ts, &single_test))
             {
-                g_printerr ("could not find test %s", name);
+                g_printerr ("could not find test %s", name.get());
                 exit (EXIT_FAILURE);
             }
 

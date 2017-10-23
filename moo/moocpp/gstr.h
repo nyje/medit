@@ -15,6 +15,10 @@
 
 #pragma once
 
+#ifndef __cplusplus
+#error "This is a c++ header"
+#endif
+
 #include <glib.h>
 #include <string.h>
 #include <vector>
@@ -81,23 +85,24 @@ struct hash<gstr>
 
 } // namespace std
 
-template<typename T>
-struct ConstCharSource;
-
-template<>
-struct ConstCharSource<const char*>
+class ConstCharSource
 {
+public:
     static const char* get(const char* s) { return s; }
+
+#if 0
+template<size_t arr_size>
+struct ConstCharSource<char[arr_size]>
+{
+    static const char* get(char (&s)[arr_size]) { return &s[0]; }
 };
 
 template<size_t arr_size>
 struct ConstCharSource<const char[arr_size]>
 {
-    static const char* get(const char s[arr_size]) { return s; }
+    static const char* get(const char (&s)[arr_size]) { return &s[0]; }
 };
+#endif
 
-template<>
-struct ConstCharSource<gstr>
-{
     static const char* get(const gstr& s) { return s.get(); }
 };

@@ -3,6 +3,9 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <config.h>
+#ifndef __WIN32__
+#include <errno.h>
+#endif
 
 G_BEGIN_DECLS
 
@@ -23,6 +26,8 @@ typedef struct mgw_access_mode_t mgw_access_mode_t;
     #error "C libraries may not be shared between medit and glib"
 #endif
 
+#ifdef __WIN32__
+
 enum mgw_errno_value_t
 {
     MGW_ENOERROR = 0,
@@ -38,6 +43,23 @@ enum mgw_errno_value_t
 };
 
 typedef enum mgw_errno_value_t mgw_errno_value_t;
+
+#else
+
+typedef int mgw_errno_value_t;
+
+#define MGW_ENOERROR 0
+#define MGW_EACCES EACCESS
+#define MGW_EPERM EPERM
+#define MGW_EEXIST EEXIST
+#define MGW_ELOOP ELOOP
+#define MGW_ENAMETOOLONG ENAMETOOLONG
+#define MGW_ENOENT ENOENT
+#define MGW_ENOTDIR ENOTDIR
+#define MGW_EROFS EROFS
+#define MGW_EXDEV EXDEV
+
+#endif
 
 struct mgw_errno_t
 {

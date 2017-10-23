@@ -26,19 +26,19 @@ gstr build_filename_impl(const char* comp1, const char* comp2 = nullptr, const c
 template<typename T1>
 gstr build_filename(const T1& comp1)
 {
-    return build_filename_impl(ConstCharSource<T1>::get(comp1));
+    return build_filename_impl(ConstCharSource::get(comp1));
 }
 
 template<typename T1, typename T2>
 gstr build_filename(const T1& comp1, const T2& comp2)
 {
-    return build_filename_impl(ConstCharSource<T1>::get(comp1), ConstCharSource<T2>::get(comp2));
+    return build_filename_impl(ConstCharSource::get(comp1), ConstCharSource::get(comp2));
 }
 
 template<typename T1, typename T2, typename T3>
 gstr build_filename(const T1& comp1, const T2& comp2, const T3& comp3)
 {
-    return build_filename_impl(ConstCharSource<T1>::get(comp1), ConstCharSource<T2>::get(comp2), ConstCharSource<T3>::get(comp3));
+    return build_filename_impl(ConstCharSource::get(comp1), ConstCharSource::get(comp2), ConstCharSource::get(comp3));
 }
 
 gstr build_filenamev(const std::vector<gstr>& components);

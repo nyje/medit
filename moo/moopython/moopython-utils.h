@@ -66,13 +66,19 @@ void          moo_python_remove_path        (const char     *dir);
 
 #define return_Int(v)   return PyInt_FromLong (v)
 
-#define return_AttrError(msg)       return PyErr_SetString (PyExc_AttributeError, msg), NULL
+#ifdef __cplusplus
+const nullptr_t moo_nullptr = nullptr;
+#else
+#define moo_nullptr NULL
+#endif
+
+#define return_AttrError(msg)       return PyErr_SetString (PyExc_AttributeError, msg), moo_nullptr
 #define return_AttrErrorInt(msg)    return PyErr_SetString (PyExc_AttributeError, msg), -1
-#define return_TypeError(msg)       return PyErr_SetString (PyExc_TypeError, msg), NULL
+#define return_TypeError(msg)       return PyErr_SetString (PyExc_TypeError, msg), moo_nullptr
 #define return_TypeErrorInt(msg)    return PyErr_SetString (PyExc_TypeError, msg), -1
-#define return_RuntimeError(msg)    return PyErr_SetString (PyExc_RuntimeError, msg), NULL
+#define return_RuntimeError(msg)    return PyErr_SetString (PyExc_RuntimeError, msg), moo_nullptr
 #define return_RuntimeErrorInt(msg) return PyErr_SetString (PyExc_RuntimeError, msg), -1
-#define return_ValueError(msg)      return PyErr_SetString (PyExc_ValueError, msg), NULL
+#define return_ValueError(msg)      return PyErr_SetString (PyExc_ValueError, msg), moo_nullptr
 #define return_ValueErrorInt(msg)   return PyErr_SetString (PyExc_ValueError, msg), -1
 
 G_END_DECLS

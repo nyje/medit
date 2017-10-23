@@ -49,6 +49,7 @@ include moopython/Makefile.incl
 include plugins/Makefile.incl
 include medit-app/Makefile.incl
 include medit-module/Makefile.incl
+include moocpp/Makefile.incl
 
 BUILT_SOURCES += $(built_moo_sources) $(built_plugins_sources)
 CLEANFILES += $(built_moo_sources) $(built_plugins_sources)

@@ -14,7 +14,7 @@ moo_python_sources +=				\
 	moopython/moopython-utils.h		\
 	moopython/moopython-utils.c		\
 	moopython/moopython-tests.h		\
-	moopython/moopython-tests.c
+	moopython/moopython-tests.cpp
 
 moo_sources +=					\
 	moopython/medit-python.h		\

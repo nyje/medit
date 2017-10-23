@@ -12,7 +12,7 @@ moo_sources +=				\
 	mooutils/moohistorymgr.c	\
 	mooutils/moohistorymgr.h	\
 	mooutils/moo-environ.h		\
-	mooutils/mooaccel.c		\
+	mooutils/mooaccel.cpp		\
 	mooutils/mooaccel.h		\
 	mooutils/mooaccelbutton.c	\
 	mooutils/mooaccelbutton.h	\
@@ -56,7 +56,7 @@ moo_sources +=				\
 	mooutils/moofileicon.h		\
 	mooutils/moofilewatch.c		\
 	mooutils/moofilewatch.h		\
-	mooutils/moofilewriter.c	\
+	mooutils/moofilewriter.cpp	\
 	mooutils/moofilewriter.h	\
 	mooutils/moofilewriter-private.h\
 	mooutils/moofiltermgr.c		\
@@ -71,7 +71,7 @@ moo_sources +=				\
 	mooutils/moohistorycombo.h	\
 	mooutils/moohistorylist.c	\
 	mooutils/moohistorylist.h	\
-	mooutils/mooi18n.c		\
+	mooutils/mooi18n.cpp		\
 	mooutils/mooi18n.h		\
 	mooutils/moolist.h		\
 	mooutils/moomarkup.c		\
@@ -114,10 +114,10 @@ moo_sources +=				\
 	mooutils/mooutils-enums.h	\
 	mooutils/mooutils-file.c	\
 	mooutils/mooutils-file.h	\
-	mooutils/mooutils-fs.c		\
+	mooutils/mooutils-fs.cpp	\
 	mooutils/mooutils-fs.h		\
 	mooutils/mooutils-gobject-private.h \
-	mooutils/mooutils-gobject.c	\
+	mooutils/mooutils-gobject.cpp	\
 	mooutils/mooutils-gobject.h	\
 	mooutils/mooutils-macros.h	\
 	mooutils/mooutils-mem.h		\
@@ -169,7 +169,7 @@ mooutils_unix_sources =			\
 	mooutils/mooappinput-unix.c
 
 mooutils_unittest_sources =		\
-	mooutils/moo-test-utils.c	\
+	mooutils/moo-test-utils.cpp	\
 	mooutils/moo-test-utils.h	\
 	mooutils/moo-test-macros.h
 

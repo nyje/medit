@@ -605,9 +605,11 @@ errno_to_file_error (mgw_errno_t code)
 
     switch (code.value)
     {
+#ifdef EACCESS
         case MGW_EACCES:
             fcode = MOO_FILE_WATCH_ERROR_ACCESS_DENIED;
             break;
+#endif
         case MGW_ENAMETOOLONG:
             fcode = MOO_FILE_WATCH_ERROR_BAD_FILENAME;
             break;

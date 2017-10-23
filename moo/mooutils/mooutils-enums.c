@@ -2,9 +2,7 @@
 /* Generated data (by glib-mkenums) */
 
 #include "mooutils/mooutils-enums.h"
-
 #include "mooutils/moodialogs.h"
-
 /* MooSaveChangesResponse */
 GType
 moo_save_changes_response_get_type (void)
@@ -25,9 +23,7 @@ moo_save_changes_response_get_type (void)
 
     return etype;
 }
-
 #include "mooutils/moofiledialog.h"
-
 /* MooFileDialogType */
 GType
 moo_file_dialog_type_get_type (void)
@@ -49,9 +45,7 @@ moo_file_dialog_type_get_type (void)
 
     return etype;
 }
-
 #include "mooutils/moouixml.h"
-
 /* MooUiNodeType */
 GType
 moo_ui_node_type_get_type (void)
@@ -74,7 +68,6 @@ moo_ui_node_type_get_type (void)
 
     return etype;
 }
-
 /* MooUiNodeFlags */
 GType
 moo_ui_node_flags_get_type (void)
@@ -93,7 +86,6 @@ moo_ui_node_flags_get_type (void)
 
     return etype;
 }
-
 /* MooUiWidgetType */
 GType
 moo_ui_widget_type_get_type (void)
@@ -114,9 +106,7 @@ moo_ui_widget_type_get_type (void)
 
     return etype;
 }
-
 #include "mooutils/moowindow.h"
-
 /* MooCloseResponse */
 GType
 moo_close_response_get_type (void)
@@ -136,7 +126,6 @@ moo_close_response_get_type (void)
 
     return etype;
 }
-
 
 /* Generated data ends here */
 
