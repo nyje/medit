@@ -22,7 +22,7 @@ test_func (MooTestEnv *env)
     {
         char *dir;
         been_here = TRUE;
-        dir = g_build_filename (moo_test_get_data_dir ().get(), "test-python", NULL);
+        dir = g_build_filename (moo_test_get_data_dir ().get(), "test-python", nullptr);
         moo_python_add_path (dir);
         g_free (dir);
     }

@@ -334,7 +334,7 @@ moo_editor_class_init (MooEditorClass *klass)
                                  "label", Q_("Open Recent|_More..."),
                                  "default-accel", MOO_EDIT_ACCEL_OPEN_RECENT_DIALOG,
                                  "closure-callback", action_recent_dialog,
-                                 NULL);
+                                 nullptr);
     g_type_class_unref (edit_window_class);
 
     add_new_window_action ();
@@ -602,7 +602,7 @@ add_new_window_action (void)
                                      "default-accel", MOO_EDIT_ACCEL_NEW_WINDOW,
                                      "closure-callback", moo_editor_new_window,
                                      "closure-proxy-func", moo_edit_window_get_editor,
-                                     NULL);
+                                     nullptr);
 }
 
 
@@ -2997,7 +2997,7 @@ _moo_editor_apply_prefs (MooEditor *editor)
 
     g_object_set (editor,
                   "save-backups", backups,
-                  NULL);
+                  nullptr);
 }
 
 

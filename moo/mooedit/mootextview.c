@@ -3725,6 +3725,7 @@ moo_text_view_size_allocate (GtkWidget     *widget,
         {
             case MOO_TEXT_VIEW_POS_RIGHT:
                 child_alloc.x = MAX (allocation->width - border_width - right, 0);
+                // fallthrough
             case MOO_TEXT_VIEW_POS_LEFT:
                 child_alloc.width = child_req.width;
                 child_alloc.height = MAX (allocation->height - 2*border_width - top - bottom, 1);
@@ -3732,6 +3733,7 @@ moo_text_view_size_allocate (GtkWidget     *widget,
 
             case MOO_TEXT_VIEW_POS_BOTTOM:
                 child_alloc.y = MAX (allocation->height - bottom - border_width, 0);
+                // fallthrough
             case MOO_TEXT_VIEW_POS_TOP:
                 child_alloc.height = child_req.height;
                 child_alloc.width = MAX (allocation->width - 2*border_width - left - right, 1);

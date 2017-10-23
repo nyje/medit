@@ -918,7 +918,7 @@ insert_action_merge (InsertAction   *last_action,
         return FALSE;
     }
 
-    tmp = g_strconcat (last_action->text, action->text, NULL);
+    tmp = g_strconcat (last_action->text, action->text, nullptr);
     g_free (last_action->text);
     last_action->length += action->length;
     last_action->text = tmp;
@@ -953,7 +953,7 @@ delete_action_merge (DeleteAction   *last_action,
             return FALSE;
         }
 
-        tmp = g_strconcat (last_action->text, action->text, NULL);
+        tmp = g_strconcat (last_action->text, action->text, nullptr);
         g_free (last_action->text);
         last_action->end += (action->end - action->start);
         last_action->text = tmp;
@@ -967,7 +967,7 @@ delete_action_merge (DeleteAction   *last_action,
             return FALSE;
         }
 
-        tmp = g_strconcat (action->text, last_action->text, NULL);
+        tmp = g_strconcat (action->text, last_action->text, nullptr);
         g_free (last_action->text);
         last_action->start = action->start;
         last_action->text = tmp;

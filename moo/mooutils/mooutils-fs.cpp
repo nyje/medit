@@ -526,7 +526,7 @@ _moo_filename_to_uri (const char *file,
     if (!_moo_path_is_absolute (file))
     {
         char *cd = g_get_current_dir ();
-        file = freeme = g_build_filename (cd, file, NULL);
+        file = freeme = g_build_filename (cd, file, nullptr);
         g_free (cd);
     }
 
@@ -731,7 +731,7 @@ normalize_full_path_win32 (const char *fullpath)
     {
         if (prefix)
         {
-            char *tmp = g_strconcat (prefix, path, NULL);
+            char *tmp = g_strconcat (prefix, path, nullptr);
             g_free (path);
             path = tmp;
         }
@@ -764,7 +764,7 @@ normalize_path (const char *filename)
     {
         char *working_dir = g_get_current_dir ();
         g_return_val_if_fail (working_dir != NULL, g_strdup (filename));
-        freeme = g_build_filename (working_dir, filename, NULL);
+        freeme = g_build_filename (working_dir, filename, nullptr);
         filename = freeme;
         g_free (working_dir);
     }
@@ -925,7 +925,7 @@ make_cases (gboolean unix_paths)
         {
             g_ptr_array_add (paths, g_strdup (rel_files_common[i]));
             if (rel_files_common[i+1])
-                g_ptr_array_add (paths, g_build_filename (current_dir, rel_files_common[i+1], NULL));
+                g_ptr_array_add (paths, g_build_filename (current_dir, rel_files_common[i+1], nullptr));
             else
                 g_ptr_array_add (paths, g_strdup (current_dir));
         }
@@ -936,7 +936,7 @@ make_cases (gboolean unix_paths)
         {
             g_ptr_array_add (paths, g_strdup (rel_files_unix[i]));
             if (rel_files_unix[i+1])
-                g_ptr_array_add (paths, g_build_filename (current_dir, rel_files_unix[i+1], NULL));
+                g_ptr_array_add (paths, g_build_filename (current_dir, rel_files_unix[i+1], nullptr));
             else
                 g_ptr_array_add (paths, g_strdup (current_dir));
         }

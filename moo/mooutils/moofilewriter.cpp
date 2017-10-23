@@ -631,8 +631,8 @@ test_moo_file_writer (void)
     GError *error = NULL;
 
     dir = moo_test_get_working_dir ();
-    my_dir = g_build_filename (dir, "cfg-writer", NULL);
-    filename = g_build_filename (my_dir, "configfile", NULL);
+    my_dir = g_build_filename (dir, "cfg-writer", nullptr);
+    filename = g_build_filename (my_dir, "configfile", nullptr);
     bak_filename = g_strdup_printf ("%s~", filename);
 
     writer = moo_config_writer_new (filename, TRUE, &error);

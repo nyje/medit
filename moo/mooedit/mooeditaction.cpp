@@ -283,7 +283,7 @@ moo_edit_action_check_state_real (MooEditAction *action)
     visible = moo_edit_action_check_visible (action);
     sensitive = moo_edit_action_check_sensitive (action);
 
-    g_object_set (action, "sensitive", sensitive, "visible", visible, NULL);
+    g_object_set (action, "sensitive", sensitive, "visible", visible, nullptr);
 }
 
 

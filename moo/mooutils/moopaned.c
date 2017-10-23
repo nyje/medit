@@ -1659,6 +1659,7 @@ draw_border (MooPaned       *paned,
             rect.x = widget->allocation.width -
                         paned->priv->button_box_size -
                         paned->priv->border_size;
+            // fallthrough
         case MOO_PANE_POS_LEFT:
             rect.y = 0;
             rect.height = widget->allocation.height;
@@ -1679,6 +1680,7 @@ draw_border (MooPaned       *paned,
             rect.y = widget->allocation.height -
                     paned->priv->button_box_size -
                     paned->priv->border_size;
+            // fallthrough
         case MOO_PANE_POS_TOP:
             rect.x = 0;
             rect.width = widget->allocation.width;
@@ -2043,12 +2045,14 @@ _moo_paned_get_button_position (MooPaned     *paned,
         {
             case MOO_PANE_POS_RIGHT:
                 rect->x = widget->allocation.width - 30;
+                // fallthrough
             case MOO_PANE_POS_LEFT:
                 rect->height = 60;
                 rect->width = 30;
                 break;
             case MOO_PANE_POS_BOTTOM:
                 rect->y = widget->allocation.height - 30;
+                // fallthrough
             case MOO_PANE_POS_TOP:
                 rect->width = 60;
                 rect->height = 30;

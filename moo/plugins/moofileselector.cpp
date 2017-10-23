@@ -162,7 +162,7 @@ _moo_file_selector_class_init (MooFileSelectorClass *klass)
                         G_OBJECT_CLASS_TYPE (klass),
                         G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                         G_CALLBACK (goto_current_doc_dir),
-                        NULL, NULL,
+                        nullptr, nullptr,
                         _moo_marshal_VOID__VOID,
                         G_TYPE_NONE, 0);
 }
@@ -238,7 +238,7 @@ file_selector_go_home (MooFileView *fileview)
 
     dir = moo_prefs_get_filename (PREFS_LAST_DIR);
 
-    if (!dir || !moo_file_view_chdir_path (fileview, dir, NULL))
+    if (!dir || !moo_file_view_chdir_path (fileview, dir, nullptr))
         g_signal_emit_by_name (fileview, "go-home");
 }
 
@@ -254,8 +254,8 @@ moo_file_selector_chdir (MooFileView    *fileview,
 
     if (result)
     {
-        char *new_dir = NULL;
-        g_object_get (fileview, "current-directory", &new_dir, NULL);
+        char *new_dir = nullptr;
+        g_object_get (fileview, "current-directory", &new_dir, nullptr);
         moo_prefs_set_filename (PREFS_LAST_DIR, new_dir);
         g_free (new_dir);
     }
@@ -273,7 +273,7 @@ moo_file_selector_activate (MooFileView    *fileview,
     gboolean is_text = TRUE, is_exe = FALSE;
     mgw_errno_t err;
 
-    g_return_if_fail (path != NULL);
+    g_return_if_fail (path != nullptr);
 
     if (mgw_stat (path, &statbuf, &err) != 0)
     {
@@ -306,7 +306,7 @@ moo_file_selector_activate (MooFileView    *fileview,
 
     if (is_text)
         moo_editor_open_path (moo_edit_window_get_editor (filesel->window),
-                              path, NULL, -1, filesel->window);
+                              path, nullptr, -1, filesel->window);
     else if (!is_exe)
         moo_open_file (path);
 }
@@ -317,11 +317,11 @@ goto_current_doc_dir (MooFileSelector *filesel)
 {
     MooEdit *doc;
     GFile *file, *parent_file;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     doc = moo_edit_window_get_active_doc (filesel->window);
-    file = doc ? moo_edit_get_file (doc) : NULL;
-    parent_file = file ? g_file_get_parent (file) : NULL;
+    file = doc ? moo_edit_get_file (doc) : nullptr;
+    parent_file = file ? g_file_get_parent (file) : nullptr;
 
     if (parent_file)
     {
@@ -375,7 +375,7 @@ create_new_file_dialog (GtkWidget         *parent,
     char *display_dirname, *label_text;
 
     display_dirname = g_filename_display_basename (dirname);
-    g_return_val_if_fail (display_dirname != NULL, NULL);
+    g_return_val_if_fail (display_dirname != nullptr, nullptr);
 
     *xml = new_file_dialog_xml_new ();
     dialog = GTK_WIDGET ((*xml)->NewFileDialog);
@@ -403,12 +403,12 @@ new_file_dialog (GtkWidget   *parent,
                  const char  *dirname,
                  const char  *start_name)
 {
-    NewFileDialogXml *xml = NULL;
-    GtkWidget *dialog = NULL;
-    GtkEntry *entry = NULL;
-    char *fullname = NULL;
+    NewFileDialogXml *xml = nullptr;
+    GtkWidget *dialog = nullptr;
+    GtkEntry *entry = nullptr;
+    char *fullname = nullptr;
 
-    g_return_val_if_fail (dirname != NULL, NULL);
+    g_return_val_if_fail (dirname != nullptr, nullptr);
 
     while (TRUE)
     {
@@ -419,7 +419,7 @@ new_file_dialog (GtkWidget   *parent,
         if (!dialog)
         {
             dialog = create_new_file_dialog (parent, dirname, start_name, &xml);
-            g_return_val_if_fail (dialog != NULL, NULL);
+            g_return_val_if_fail (dialog != nullptr, nullptr);
             entry = GTK_ENTRY (xml->entry);
         }
 
@@ -435,7 +435,7 @@ new_file_dialog (GtkWidget   *parent,
         }
 
         /* XXX error checking, you know */
-        name = g_filename_from_utf8 (text, -1, NULL, NULL, NULL);
+        name = g_filename_from_utf8 (text, -1, nullptr, nullptr, nullptr);
 
         if (!name)
         {
@@ -450,18 +450,18 @@ new_file_dialog (GtkWidget   *parent,
             continue;
         }
 
-        fullname = g_build_filename (dirname, name, NULL);
+        fullname = g_build_filename (dirname, name, nullptr);
         g_free (name);
 
         if (!g_file_test (fullname, G_FILE_TEST_EXISTS))
             goto out;
 
         err_text = g_strdup_printf (_("File '%s' already exists"), text);
-        moo_error_dialog (err_text, NULL, dialog);
+        moo_error_dialog (err_text, nullptr, dialog);
         g_free (err_text);
 
         g_free (fullname);
-        fullname = NULL;
+        fullname = nullptr;
     }
 
 out:
@@ -474,9 +474,9 @@ out:
 static void
 file_selector_create_file (MooFileSelector *filesel)
 {
-    char *path = NULL, *dir = NULL;
+    char *path = nullptr, *dir = nullptr;
     MooEdit *doc;
-    GList *selected = NULL;
+    GList *selected = nullptr;
     MooOpenInfo *info;
 
     selected = _moo_file_view_get_filenames (MOO_FILE_VIEW (filesel));
@@ -491,18 +491,18 @@ file_selector_create_file (MooFileSelector *filesel)
 
         dir = (char*) selected->data;
         g_list_free (selected);
-        selected = NULL;
+        selected = nullptr;
 
         if (!g_file_test (dir, G_FILE_TEST_IS_DIR))
         {
             g_free (dir);
-            dir = NULL;
+            dir = nullptr;
         }
     }
 
     if (!dir)
     {
-        g_object_get (filesel, "current-directory", &dir, NULL);
+        g_object_get (filesel, "current-directory", &dir, nullptr);
 
         if (!dir)
             goto out;
@@ -513,18 +513,18 @@ file_selector_create_file (MooFileSelector *filesel)
     if (!path)
         goto out;
 
-    info = moo_open_info_new (path, NULL, -1, MOO_OPEN_FLAGS_NONE);
+    info = moo_open_info_new (path, nullptr, -1, MOO_OPEN_FLAGS_NONE);
     doc = moo_editor_new_file (moo_edit_window_get_editor (filesel->window),
-                               info, GTK_WIDGET (filesel), NULL);
+                               info, GTK_WIDGET (filesel), nullptr);
     g_object_unref (info);
 
     if (doc)
-        moo_edit_save (doc, NULL);
+        moo_edit_save (doc, nullptr);
 
 out:
     g_free (path);
     g_free (dir);
-    g_list_foreach (selected, (GFunc) g_free, NULL);
+    g_list_foreach (selected, (GFunc) g_free, nullptr);
     g_list_free (selected);
 }
 
@@ -532,8 +532,8 @@ out:
 static void
 file_selector_open_files (MooFileSelector *filesel)
 {
-    GList *selected = NULL;
-    GList *files = NULL;
+    GList *selected = nullptr;
+    GList *files = nullptr;
 
     selected = _moo_file_view_get_filenames (MOO_FILE_VIEW (filesel));
 
@@ -560,7 +560,7 @@ file_selector_open_files (MooFileSelector *filesel)
     while (files)
     {
         moo_editor_open_path (moo_edit_window_get_editor (filesel->window),
-                              (const char*) files->data, NULL, -1, filesel->window);
+                              (const char*) files->data, nullptr, -1, filesel->window);
         g_free (files->data);
         files = g_list_delete_link (files, files);
     }
@@ -570,7 +570,7 @@ static void
 notify_show_hidden_files (MooFileSelector *filesel)
 {
     gboolean show = FALSE;
-    g_object_get (filesel, "show-hidden-files", &show, NULL);
+    g_object_get (filesel, "show-hidden-files", &show, nullptr);
     moo_prefs_set_bool (PREFS_HIDDEN_FILES, show);
 }
 
@@ -596,14 +596,14 @@ moo_file_selector_constructor (GType           type,
     filesel = MOO_FILE_SELECTOR (object);
     fileview = MOO_FILE_VIEW (object);
 
-    g_return_val_if_fail (filesel->window != NULL, object);
+    g_return_val_if_fail (filesel->window != nullptr, object);
 
     file_selector_go_home (MOO_FILE_VIEW (fileview));
 
-    g_object_set (fileview, "show-hidden-files", moo_prefs_get_bool (PREFS_HIDDEN_FILES), NULL);
-    g_signal_connect (fileview, "notify::show-hidden-files", G_CALLBACK (notify_show_hidden_files), NULL);
+    g_object_set (fileview, "show-hidden-files", moo_prefs_get_bool (PREFS_HIDDEN_FILES), nullptr);
+    g_signal_connect (fileview, "notify::show-hidden-files", G_CALLBACK (notify_show_hidden_files), nullptr);
 
-    group = moo_action_collection_get_group (moo_file_view_get_actions (MOO_FILE_VIEW (fileview)), NULL);
+    group = moo_action_collection_get_group (moo_file_view_get_actions (MOO_FILE_VIEW (fileview)), nullptr);
     xml = moo_file_view_get_ui_xml (MOO_FILE_VIEW (fileview));
     merge_id = moo_ui_xml_new_merge_id (xml);
 
@@ -612,7 +612,7 @@ moo_file_selector_constructor (GType           type,
                                  "tooltip", _("Go to current document directory"),
                                  "closure-object", fileview,
                                  "closure-signal", "goto-current-doc-dir",
-                                 NULL);
+                                 nullptr);
     moo_ui_xml_insert_markup (xml, merge_id,
                               "MooFileView/Toolbar", -1,
                               "<item action=\"GoToCurrentDocDir\"/>");
@@ -626,14 +626,14 @@ moo_file_selector_constructor (GType           type,
                                  "stock-id", GTK_STOCK_NEW,
                                  "closure-object", filesel,
                                  "closure-callback", file_selector_create_file,
-                                 NULL);
+                                 nullptr);
     moo_action_group_add_action (group, "Open",
                                  "label", GTK_STOCK_OPEN,
                                  "tooltip", GTK_STOCK_OPEN,
                                  "stock-id", GTK_STOCK_OPEN,
                                  "closure-object", filesel,
                                  "closure-callback", file_selector_open_files,
-                                 NULL);
+                                 nullptr);
     moo_ui_xml_insert_markup_before (xml, merge_id,
                                      "MooFileView/Menu",
                                      "NewFolder",
@@ -644,14 +644,14 @@ moo_file_selector_constructor (GType           type,
                               "<item action=\"Open\"/>");
 
     label = moo_pane_label_new (MOO_STOCK_FILE_SELECTOR,
-                                NULL, _("File Selector"),
+                                nullptr, _("File Selector"),
                                 _("File Selector"));
     moo_edit_window_add_pane (filesel->window, MOO_FILE_SELECTOR_PLUGIN_ID,
                               GTK_WIDGET (filesel), label, MOO_PANE_POS_RIGHT);
     moo_pane_label_free (label);
 
     pane = moo_big_paned_find_pane (filesel->window->paned,
-                                    GTK_WIDGET (filesel), NULL);
+                                    GTK_WIDGET (filesel), nullptr);
     moo_pane_set_drag_dest (pane);
 
     return object;
@@ -773,12 +773,12 @@ save_as_dialog (GtkWidget   *parent,
                 gboolean     ask_name,
                 const char  *title)
 {
-    SaveAsDialogXml *xml = NULL;
-    GtkWidget *dialog = NULL;
-    GtkEntry *entry = NULL;
-    char *fullname = NULL;
+    SaveAsDialogXml *xml = nullptr;
+    GtkWidget *dialog = nullptr;
+    GtkEntry *entry = nullptr;
+    char *fullname = nullptr;
 
-    g_return_val_if_fail (dirname != NULL, NULL);
+    g_return_val_if_fail (dirname != nullptr, nullptr);
 
     while (TRUE)
     {
@@ -811,7 +811,7 @@ save_as_dialog (GtkWidget   *parent,
         }
 
         /* XXX error checking, you know */
-        name = g_filename_from_utf8 (text, -1, NULL, NULL, NULL);
+        name = g_filename_from_utf8 (text, -1, nullptr, nullptr, nullptr);
 
         if (!name)
         {
@@ -826,7 +826,7 @@ save_as_dialog (GtkWidget   *parent,
             continue;
         }
 
-        fullname = g_build_filename (dirname, name, NULL);
+        fullname = g_build_filename (dirname, name, nullptr);
         g_free (name);
 
         if (!g_file_test (fullname, G_FILE_TEST_EXISTS))
@@ -842,7 +842,7 @@ save_as_dialog (GtkWidget   *parent,
 
         g_free (display_dirname);
         g_free (fullname);
-        fullname = NULL;
+        fullname = nullptr;
     }
 
 out:
@@ -858,7 +858,7 @@ moo_file_selector_select_path (MooFileSelector *filesel,
 {
     char *basename;
 
-    g_return_if_fail (filename != NULL);
+    g_return_if_fail (filename != nullptr);
 
     basename = g_path_get_basename (filename);
     _moo_file_view_select_name (MOO_FILE_VIEW (filesel), basename);
@@ -882,8 +882,8 @@ save_as_path (MooEdit    *doc,
 {
     MooSaveInfo *info;
     gboolean result;
-    info = moo_save_info_new (path, NULL);
-    result = moo_edit_save_as (doc, info, NULL);
+    info = moo_save_info_new (path, nullptr);
+    result = moo_edit_save_as (doc, info, nullptr);
     g_object_unref (info);
     return result;
 }
@@ -953,8 +953,8 @@ doc_save_copy (MooFileSelector *filesel,
 
     if (filename)
     {
-        MooSaveInfo *info = moo_save_info_new (filename, NULL);
-        if (moo_edit_save_copy (doc, info, NULL))
+        MooSaveInfo *info = moo_save_info_new (filename, nullptr);
+        if (moo_edit_save_copy (doc, info, nullptr))
             moo_file_selector_select_path (filesel, filename);
         g_object_unref (info);
         g_free (filename);
@@ -971,7 +971,7 @@ doc_move (MooFileSelector *filesel,
     char *filename;
 
     old_file = moo_edit_get_file (doc);
-    g_return_if_fail (old_file != NULL);
+    g_return_if_fail (old_file != nullptr);
 
     filename = save_as_dialog (GTK_WIDGET (filesel), destdir,
                                moo_edit_get_display_basename (doc),
@@ -981,7 +981,7 @@ doc_move (MooFileSelector *filesel,
     {
         if (save_as_path (doc, filename))
         {
-            g_file_delete (old_file, NULL, NULL);
+            g_file_delete (old_file, nullptr, nullptr);
             moo_file_selector_select_path (filesel, filename);
         }
 
@@ -1014,7 +1014,7 @@ drop_item_activated (GObject         *item,
     doc = (MooEdit*) g_object_get_data (item, "moo-file-selector-drop-doc");
     destdir = (char*) g_object_get_data (item, "moo-file-selector-drop-destdir");
     alternate = GPOINTER_TO_INT (g_object_get_data (item, "moo-menu-item-alternate"));
-    g_return_if_fail (doc != NULL && destdir != NULL);
+    g_return_if_fail (doc != nullptr && destdir != nullptr);
 
     action = (DropDocAction) GPOINTER_TO_INT (data);
 
@@ -1086,7 +1086,7 @@ alternate_toggled (GtkWidget *menu)
 
     items = (GSList*) g_object_get_data (G_OBJECT (menu), "moo-menu-items");
 
-    for (l = items; l != NULL; l = l->next)
+    for (l = items; l != nullptr; l = l->next)
     {
         GtkWidget *item = (GtkWidget*) l->data;
         const char *label;
@@ -1108,10 +1108,10 @@ create_drop_doc_menu (MooFileSelector *filesel,
                       const char      *destdir)
 {
     GtkWidget *menu, *item;
-    GSList *items = NULL;
+    GSList *items = nullptr;
 
     menu = moo_menu_new ();
-    g_signal_connect (menu, "alternate-toggled", G_CALLBACK (alternate_toggled), NULL);
+    g_signal_connect (menu, "alternate-toggled", G_CALLBACK (alternate_toggled), nullptr);
 
     item = create_menu_item (filesel, doc, destdir,
                              MOO_STOCK_FILE_MOVE,
@@ -1147,7 +1147,7 @@ create_drop_doc_menu (MooFileSelector *filesel,
     gtk_widget_show (item);
     gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
-    item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CANCEL, NULL);
+    item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CANCEL, nullptr);
     gtk_widget_show (item);
     _moo_menu_item_set_accel_label (item, "Escape");
     gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1170,7 +1170,7 @@ moo_file_selector_drop_doc (MooFileSelector *filesel,
     DropDocAction action;
 
     g_return_if_fail (MOO_IS_EDIT (doc));
-    g_return_if_fail (destdir != NULL);
+    g_return_if_fail (destdir != nullptr);
     g_return_if_fail (GTK_IS_WIDGET (widget));
 
     if (moo_edit_is_untitled (doc))
@@ -1197,7 +1197,7 @@ moo_file_selector_drop_doc (MooFileSelector *filesel,
         GtkWidget *menu = create_drop_doc_menu (filesel, doc, destdir);
         g_object_ref_sink (menu);
         _moo_file_view_drag_finish (MOO_FILE_VIEW (filesel), context, TRUE, FALSE, time);
-        gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, 0);
+        gtk_menu_popup (GTK_MENU (menu), nullptr, nullptr, nullptr, nullptr, 0, 0);
         g_object_unref (menu);
         return;
     }
@@ -1228,7 +1228,7 @@ moo_file_selector_drop_doc (MooFileSelector *filesel,
 static gboolean
 file_selector_plugin_init (G_GNUC_UNUSED Plugin *plugin)
 {
-    moo_prefs_create_key (PREFS_LAST_DIR, MOO_PREFS_STATE, G_TYPE_STRING, NULL);
+    moo_prefs_create_key (PREFS_LAST_DIR, MOO_PREFS_STATE, G_TYPE_STRING, nullptr);
     moo_prefs_create_key (PREFS_HIDDEN_FILES, MOO_PREFS_RC, G_TYPE_BOOLEAN, FALSE);
     return TRUE;
 }
@@ -1239,7 +1239,7 @@ file_selector_plugin_deinit (Plugin *plugin)
 {
     if (plugin->bookmark_mgr)
         g_object_unref (plugin->bookmark_mgr);
-    plugin->bookmark_mgr = NULL;
+    plugin->bookmark_mgr = nullptr;
 }
 
 
@@ -1258,7 +1258,7 @@ file_selector_plugin_attach (MooPlugin     *mplugin,
         g_object_new (MOO_TYPE_FILE_SELECTOR,
                       "bookmark-mgr", plugin->bookmark_mgr,
                       "window", window,
-                      (const char*) NULL));
+                      (const char*) nullptr));
 
     plugin->instances = g_slist_prepend (plugin->instances, filesel);
 }
@@ -1271,7 +1271,7 @@ file_selector_plugin_detach (MooPlugin     *mplugin,
     Plugin *plugin = FILE_SELECTOR_PLUGIN (mplugin);
     GtkWidget *filesel = moo_edit_window_get_pane (window, MOO_FILE_SELECTOR_PLUGIN_ID);
 
-    g_return_if_fail (filesel != NULL);
+    g_return_if_fail (filesel != nullptr);
 
     plugin->instances = g_slist_remove (plugin->instances, filesel);
     moo_edit_window_remove_pane (window, MOO_FILE_SELECTOR_PLUGIN_ID);
@@ -1282,7 +1282,7 @@ void
 _moo_file_selector_update_tools (MooPlugin *plugin)
 {
     GSList *l;
-    for (l = ((Plugin*)plugin)->instances; l != NULL; l = l->next)
+    for (l = ((Plugin*)plugin)->instances; l != nullptr; l = l->next)
         _moo_file_view_tools_load ((MooFileView*) l->data);
 }
 
@@ -1294,7 +1294,7 @@ MOO_PLUGIN_DEFINE_INFO (file_selector,
                         MOO_VERSION)
 MOO_PLUGIN_DEFINE (FileSelector, file_selector,
                    file_selector_plugin_attach, file_selector_plugin_detach,
-                   NULL, NULL,
+                   nullptr, nullptr,
                    _moo_file_selector_prefs_page,
                    0, 0)
 
@@ -1304,7 +1304,7 @@ get_widget_meth (G_GNUC_UNUSED gpointer plugin,
                  MooEditWindow *window)
 {
     gpointer widget = moo_edit_window_get_pane (window, MOO_FILE_SELECTOR_PLUGIN_ID);
-    return widget ? g_object_ref (widget) : NULL;
+    return widget ? g_object_ref (widget) : nullptr;
 }
 
 
@@ -1316,7 +1316,7 @@ _moo_file_selector_plugin_init (void)
     if (!moo_plugin_register (MOO_FILE_SELECTOR_PLUGIN_ID,
                               ptype,
                               &file_selector_plugin_info,
-                              NULL))
+                              nullptr))
         return FALSE;
 
     moo_plugin_method_new ("get-widget", ptype,

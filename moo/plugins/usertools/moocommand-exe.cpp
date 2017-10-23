@@ -957,7 +957,7 @@ init_combo (GtkComboBox *combo,
 
     cell = gtk_cell_renderer_text_new ();
     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
-    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell, "text", 0, NULL);
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell, "text", 0, nullptr);
 
     store = gtk_list_store_new (1, G_TYPE_STRING);
 
@@ -984,7 +984,7 @@ init_filter_combo (GtkComboBox *combo)
     cell = gtk_cell_renderer_text_new ();
     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo), cell, TRUE);
     gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo), cell,
-                                    "text", COLUMN_NAME, NULL);
+                                    "text", COLUMN_NAME, nullptr);
 
     store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_STRING);
 

@@ -244,7 +244,7 @@ moo_ipc_send (GObject    *sender,
     g_string_append (header, ipc_data.app_id);
     g_string_append_printf (header, "%08x", ++ipc_data.stamp);
 
-    g_string_append_printf (header, "%04x", id_len);
+    g_string_append_printf (header, "%04x", (unsigned) id_len);
     g_string_append (header, id);
 
     _moo_app_input_broadcast (header->str, data, len);

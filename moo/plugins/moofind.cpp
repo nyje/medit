@@ -206,7 +206,7 @@ ensure_output (WindowStuff *stuff)
                                       "foreground", "#008040", NULL);
     stuff->error_tag =
             moo_text_view_lookup_tag (MOO_TEXT_VIEW (stuff->output), "error");
-    g_object_set (stuff->error_tag, "foreground", "#C00000", NULL);
+    g_object_set (stuff->error_tag, "foreground", "#C00000", nullptr);
 
     stuff->message_tag =
             moo_text_view_lookup_tag (MOO_TEXT_VIEW (stuff->output), "message");
@@ -255,7 +255,7 @@ find_plugin_init (FindPlugin *plugin)
                                  "default-accel", MOO_EDIT_ACCEL_FIND_IN_FILES,
                                  "stock-id", MOO_STOCK_FIND_IN_FILES,
                                  "closure-callback", find_in_files_cb,
-                                 NULL);
+                                 nullptr);
 
 #ifndef __WIN32__
     moo_window_class_new_action (klass, "FindFile", NULL,
@@ -264,7 +264,7 @@ find_plugin_init (FindPlugin *plugin)
                                  "tooltip", _("Find file"),
                                  "stock-id", MOO_STOCK_FIND_FILE,
                                  "closure-callback", find_file_cb,
-                                 NULL);
+                                 nullptr);
 #endif
 
     if (xml)
@@ -321,7 +321,7 @@ setup_file_combo (MooHistoryCombo *hist_combo)
     GtkWidget *entry;
     MooFileEntryCompletion *completion;
 
-    g_object_set (hist_combo, "enable-completion", FALSE, NULL);
+    g_object_set (hist_combo, "enable-completion", FALSE, nullptr);
 
     entry = MOO_COMBO (hist_combo)->entry;
     completion = MOO_FILE_ENTRY_COMPLETION (

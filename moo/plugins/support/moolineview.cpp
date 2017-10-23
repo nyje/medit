@@ -138,7 +138,7 @@ moo_line_view_init (MooLineView *view)
                   "cursor-visible", FALSE,
                   "current-line-color", "grey",
                   "highlight-matching-brackets", FALSE,
-                  NULL);
+                  nullptr);
 }
 
 
@@ -527,7 +527,7 @@ check_if_scrolled (MooLineView *view)
     if (view->priv->hscrollbar && GTK_WIDGET_VISIBLE (view->priv->hscrollbar))
     {
         int space;
-        gtk_widget_style_get (GTK_WIDGET (view)->parent, "scrollbar-spacing", &space, NULL);
+        gtk_widget_style_get (GTK_WIDGET (view)->parent, "scrollbar-spacing", &space, nullptr);
         delta = MAX (delta - 1, space + view->priv->hscrollbar->allocation.height) + 1;
     }
 
@@ -578,14 +578,14 @@ moo_line_view_write (MooLineView    *view,
 
     if (g_utf8_validate (text, len, NULL))
     {
-        gtk_text_buffer_insert_with_tags (buffer, &iter, text, len, tag, NULL);
+        gtk_text_buffer_insert_with_tags (buffer, &iter, text, len, tag, nullptr);
     }
     else
     {
         char *text_utf8 = g_locale_to_utf8 (text, len, NULL, NULL, NULL);
 
         if (text_utf8)
-            gtk_text_buffer_insert_with_tags (buffer, &iter, text_utf8, -1, tag, NULL);
+            gtk_text_buffer_insert_with_tags (buffer, &iter, text_utf8, -1, tag, nullptr);
         else
             g_warning ("could not convert '%s' to utf8", text);
 

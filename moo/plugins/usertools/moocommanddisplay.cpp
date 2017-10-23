@@ -223,7 +223,7 @@ init_factory_combo (MooCommandDisplay *display,
 
     cell = gtk_cell_renderer_text_new ();
     gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (display->factory_combo), cell, TRUE);
-    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (display->factory_combo), cell, "text", 0, NULL);
+    gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (display->factory_combo), cell, "text", 0, nullptr);
 
     store = gtk_list_store_new (1, G_TYPE_STRING);
 

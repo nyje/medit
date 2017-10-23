@@ -195,7 +195,7 @@ file_list_init (FileList *list)
     gtk_tree_store_set_column_types (GTK_TREE_STORE (list), 2, types);
 
     list->n_user_items = 0;
-    list->docs = NULL;
+    list->docs = nullptr;
 }
 
 static void
@@ -217,7 +217,7 @@ static Item *
 get_item_at_iter (FileList    *list,
                   GtkTreeIter *iter)
 {
-    Item *item = NULL;
+    Item *item = nullptr;
 
     gtk_tree_model_get (GTK_TREE_MODEL (list), iter, COLUMN_ITEM, &item, -1);
 
@@ -234,7 +234,7 @@ get_item_at_path (FileList    *list,
     GtkTreeIter iter;
 
     if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (list), &iter, path))
-        return NULL;
+        return nullptr;
     else
         return get_item_at_iter (list, &iter);
 }
@@ -315,10 +315,10 @@ file_new (void)
     ITEM (file)->ref_count = 1;
     ITEM (file)->type = ITEM_FILE;
 
-    file->uri = NULL;
-    file->doc = NULL;
-    file->display_name = NULL;
-    file->display_basename = NULL;
+    file->uri = nullptr;
+    file->doc = nullptr;
+    file->display_name = nullptr;
+    file->display_basename = nullptr;
 
     return file;
 }
@@ -328,7 +328,7 @@ file_new_doc (MooEdit *doc)
 {
     File *file;
 
-    g_return_val_if_fail (MOO_IS_EDIT (doc), NULL);
+    g_return_val_if_fail (MOO_IS_EDIT (doc), nullptr);
 
     file = file_new ();
     file_set_doc (file, doc);
@@ -343,8 +343,8 @@ file_set_uri (File       *file,
     char *tmp;
     char *filename;
 
-    g_return_if_fail (file != NULL);
-    g_return_if_fail (uri != NULL);
+    g_return_if_fail (file != nullptr);
+    g_return_if_fail (uri != nullptr);
 
     tmp = file->uri;
     file->uri = g_strdup (uri);
@@ -353,7 +353,7 @@ file_set_uri (File       *file,
     g_free (file->display_name);
     g_free (file->display_basename);
 
-    filename = g_filename_from_uri (uri, NULL, NULL);
+    filename = g_filename_from_uri (uri, nullptr, nullptr);
 
     if (filename)
     {
@@ -374,7 +374,7 @@ file_new_uri (const char *uri)
 {
     File *file;
 
-    g_return_val_if_fail (uri != NULL, NULL);
+    g_return_val_if_fail (uri != nullptr, nullptr);
 
     file = file_new ();
     file_set_uri (file, uri);
@@ -402,7 +402,7 @@ item_get_tooltip (Item *item)
     if (ITEM_IS_FILE (item))
         return FILE_ITEM (item)->display_name;
     else
-        return NULL;
+        return nullptr;
 }
 
 static Item *
@@ -455,7 +455,7 @@ check_list (G_GNUC_UNUSED FileList *list)
     GtkTreeIter iter;
     int index = 0;
 
-    if (gtk_tree_model_iter_children (GTK_TREE_MODEL (list), &iter, NULL))
+    if (gtk_tree_model_iter_children (GTK_TREE_MODEL (list), &iter, nullptr))
     {
         do
         {
@@ -463,12 +463,12 @@ check_list (G_GNUC_UNUSED FileList *list)
 
             if (list->n_user_items)
             {
-                g_assert (index == list->n_user_items || item != NULL);
-                g_assert (index != list->n_user_items || item == NULL);
+                g_assert (index == list->n_user_items || item != nullptr);
+                g_assert (index != list->n_user_items || item == nullptr);
             }
             else
             {
-                g_assert (item != NULL);
+                g_assert (item != nullptr);
             }
 
             index += 1;
@@ -477,7 +477,7 @@ check_list (G_GNUC_UNUSED FileList *list)
     }
 
     g_assert (list->n_user_items == 0 ||
-              list->n_user_items < gtk_tree_model_iter_n_children (GTK_TREE_MODEL (list), NULL));
+              list->n_user_items < gtk_tree_model_iter_n_children (GTK_TREE_MODEL (list), nullptr));
 #endif
 }
 
@@ -519,7 +519,7 @@ file_list_find_uri (FileList    *list,
                     const char  *uri,
                     GtkTreeIter *iter)
 {
-    return iter_find_uri (list, uri, NULL, iter);
+    return iter_find_uri (list, uri, nullptr, iter);
 }
 
 
@@ -543,7 +543,7 @@ file_list_remove_row (FileList    *list,
     if (last_user_item)
     {
         GtkTreeIter sep;
-        gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), &sep, NULL, 0);
+        gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), &sep, nullptr, 0);
         gtk_tree_store_remove (GTK_TREE_STORE (list), &sep);
     }
 
@@ -555,7 +555,7 @@ file_list_append_row (FileList    *list,
                       Item        *item,
                       GtkTreeIter *iter)
 {
-    gtk_tree_store_append (GTK_TREE_STORE (list), iter, NULL);
+    gtk_tree_store_append (GTK_TREE_STORE (list), iter, nullptr);
     gtk_tree_store_set (GTK_TREE_STORE (list), iter,
                         COLUMN_ITEM, item,
                         COLUMN_TOOLTIP, item_get_tooltip (item),
@@ -596,7 +596,7 @@ file_list_insert_row (FileList    *list,
     if (first_user_item)
     {
         GtkTreeIter sep;
-        gtk_tree_store_insert (GTK_TREE_STORE (list), &sep, NULL, list->n_user_items);
+        gtk_tree_store_insert (GTK_TREE_STORE (list), &sep, nullptr, list->n_user_items);
         gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), iter, parent_iter, index);
     }
 
@@ -639,7 +639,7 @@ get_doc_row (FileList *list, MooEdit *doc)
 {
     GtkTreeRowReference *row = file_list_row_data.get(doc);
     if (row && g_object_get_qdata (G_OBJECT (doc), FILE_LIST_QUARK) != list->plugin)
-        row = NULL;
+        row = nullptr;
     return row;
 }
 
@@ -724,14 +724,14 @@ file_list_update_doc (FileList *list,
 
     item = get_item_at_iter (list, &iter);
     DEBUG_ASSERT (ITEM_IS_FILE (item) && FILE_ITEM (item)->doc == doc);
-    DEBUG_ASSERT (FILE_ITEM (item)->uri != NULL);
+    DEBUG_ASSERT (FILE_ITEM (item)->uri != nullptr);
 
     gstr new_uri = gstr::take (moo_edit_get_uri (doc));
 
     if (new_uri.empty() || strcmp (new_uri.get(), FILE_ITEM (item)->uri) != 0)
     {
         file_list_row_data.set(doc, nullptr);
-        file_set_doc (FILE_ITEM (item), NULL);
+        file_set_doc (FILE_ITEM (item), nullptr);
         file_list_add_doc (list, doc, FALSE);
     }
 }
@@ -742,7 +742,7 @@ file_list_remove_doc (FileList *list,
 {
     GtkTreeIter iter;
 
-    DEBUG_ASSERT (g_slist_find (list->docs, doc) != NULL);
+    DEBUG_ASSERT (g_slist_find (list->docs, doc) != nullptr);
 
     if (doc_get_list_iter (list, doc, &iter))
     {
@@ -755,13 +755,13 @@ file_list_remove_doc (FileList *list,
         if (file_list_iter_is_auto (list, &iter))
             file_list_remove_row (list, &iter);
         else
-            file_set_doc (FILE_ITEM (item), NULL);
+            file_set_doc (FILE_ITEM (item), nullptr);
     }
 
     if (get_doc_row (list, doc))
     {
         file_list_row_data.set(doc, nullptr);
-        g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, NULL);
+        g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, nullptr);
     }
 
     disconnect_doc (list, doc);
@@ -774,10 +774,10 @@ remove_auto_items (FileList *list)
 
     if (list->n_user_items)
         while (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), &iter,
-                                              NULL, list->n_user_items + 1))
+                                              nullptr, list->n_user_items + 1))
             gtk_tree_store_remove (GTK_TREE_STORE (list), &iter);
     else
-        while (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), &iter, NULL, 0))
+        while (gtk_tree_model_iter_nth_child (GTK_TREE_MODEL (list), &iter, nullptr, 0))
             gtk_tree_store_remove (GTK_TREE_STORE (list), &iter);
 }
 
@@ -790,13 +790,13 @@ file_list_update (FileList *list,
 
     remove_auto_items (list);
 
-    for (l = docs; l != NULL; l = l->next)
+    for (l = docs; l != nullptr; l = l->next)
         file_list_update_doc (list, (MooEdit*) l->data);
 
     old_docs = g_slist_copy (list->docs);
-    for (l = docs; l != NULL; l = l->next)
+    for (l = docs; l != nullptr; l = l->next)
         old_docs = g_slist_remove (old_docs, l->data);
-    for (l = old_docs; l != NULL; l = l->next)
+    for (l = old_docs; l != nullptr; l = l->next)
         file_list_remove_doc (list, (MooEdit*) l->data);
 
     check_list (list);
@@ -818,13 +818,13 @@ file_list_shutdown (FileList *list)
         {
             Item *item = get_item_at_iter (list, &iter);
             DEBUG_ASSERT (ITEM_IS_FILE (item));
-            file_set_doc (FILE_ITEM (item), NULL);
+            file_set_doc (FILE_ITEM (item), nullptr);
         }
 
         if (get_doc_row (list, doc))
         {
             file_list_row_data.set(doc, nullptr);
-            g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, NULL);
+            g_object_set_qdata (G_OBJECT (doc), FILE_LIST_QUARK, nullptr);
         }
 
         disconnect_doc (list, doc);
@@ -836,8 +836,8 @@ static UIConfig *
 ui_config_new (void)
 {
     UIConfig *cfg = g_new0 (UIConfig, 1);
-    cfg->expanded_rows = NULL;
-    cfg->selected_row = NULL;
+    cfg->expanded_rows = nullptr;
+    cfg->selected_row = nullptr;
     return cfg;
 }
 
@@ -846,7 +846,7 @@ ui_config_free (UIConfig *cfg)
 {
     if (cfg)
     {
-        g_slist_foreach (cfg->expanded_rows, (GFunc) gtk_tree_path_free, NULL);
+        g_slist_foreach (cfg->expanded_rows, (GFunc) gtk_tree_path_free, nullptr);
         g_slist_free (cfg->expanded_rows);
         gtk_tree_path_free (cfg->selected_row);
         g_free (cfg);
@@ -879,7 +879,7 @@ parse_node (FileList      *list,
         file_list_insert_row (list, ITEM (group), &iter, parent, -1);
         item_unref (ITEM (group));
 
-        for (child = elm->children; child != NULL; child = child->next)
+        for (child = elm->children; child != nullptr; child = child->next)
             if (MOO_MARKUP_IS_ELEMENT (child))
                 parse_node (list, child, &iter, filename, ui_config);
     }
@@ -905,7 +905,7 @@ parse_node (FileList      *list,
         const char *expanded_rows;
         const char *selected_row;
         UIConfig *config;
-        char **rows = NULL, **p;
+        char **rows = nullptr, **p;
 
         if (*ui_config)
         {
@@ -949,11 +949,11 @@ file_list_load_config (FileList    *list,
                        UIConfig   **ui_configp)
 {
     MooMarkupDoc *doc;
-    GError *error = NULL;
+    GError *error = nullptr;
     MooMarkupNode *root, *node;
     const char *version;
 
-    *ui_configp = NULL;
+    *ui_configp = nullptr;
 
     if (!g_file_test (filename, G_FILE_TEST_EXISTS))
         return;
@@ -984,12 +984,12 @@ file_list_load_config (FileList    *list,
         goto out;
     }
 
-    for (node = root->children; node != NULL; node = node->next)
+    for (node = root->children; node != nullptr; node = node->next)
     {
         if (!MOO_MARKUP_IS_ELEMENT (node))
             continue;
 
-        parse_node (list, node, NULL, filename, ui_configp);
+        parse_node (list, node, nullptr, filename, ui_configp);
     }
 
 out:
@@ -1061,7 +1061,7 @@ file_list_save_config (FileList   *list,
 {
     GtkTreeIter iter;
     GString *buffer;
-    GError *error = NULL;
+    GError *error = nullptr;
 
     if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (list), &iter))
     {
@@ -1083,7 +1083,7 @@ file_list_save_config (FileList   *list,
 
             g_string_append (buffer, " " PROP_EXPANDED_ROWS "=\"");
 
-            for (l = ui_config->expanded_rows; l != NULL; l = l->next)
+            for (l = ui_config->expanded_rows; l != nullptr; l = l->next)
             {
                 GtkTreePath *path = (GtkTreePath*) l->data;
                 char *tmp = gtk_tree_path_to_string (path);
@@ -1135,9 +1135,9 @@ static GtkTreePath *
 file_list_add_group (FileList    *list,
                      GtkTreePath *path)
 {
-    GtkTreePath *parent = NULL;
+    GtkTreePath *parent = nullptr;
     GtkTreeIter parent_iter, new_iter;
-    GtkTreeIter *piter = NULL;
+    GtkTreeIter *piter = nullptr;
     Group *group;
     int index = -1;
 
@@ -1205,7 +1205,7 @@ static void
 file_list_remove_items (FileList *list,
                         GList    *paths)
 {
-    GSList *rows = NULL;
+    GSList *rows = nullptr;
 
     while (paths)
     {
@@ -1223,7 +1223,7 @@ file_list_remove_items (FileList *list,
 
     while (rows)
     {
-        GtkTreePath *path = NULL;
+        GtkTreePath *path = nullptr;
 
         if (gtk_tree_row_reference_valid ((GtkTreeRowReference*) rows->data))
             path = gtk_tree_row_reference_get_path ((GtkTreeRowReference*) rows->data);
@@ -1316,12 +1316,12 @@ copy_row (FileList    *list,
 {
     GtkTreeRowReference *source_row;
     GtkTreeIter iter, parent_iter;
-    GtkTreeIter *piter = NULL;
+    GtkTreeIter *piter = nullptr;
     Item *item;
 
     gtk_tree_model_get_iter (GTK_TREE_MODEL (list), &iter, source);
     item = get_item_at_iter (list, &iter);
-    g_return_if_fail (item != NULL);
+    g_return_if_fail (item != nullptr);
 
     source_row = gtk_tree_row_reference_new (GTK_TREE_MODEL (list), source);
 
@@ -1346,7 +1346,7 @@ move_row (FileList    *list,
           GtkTreePath *parent,
           int          index)
 {
-    GtkTreePath *source_parent = NULL;
+    GtkTreePath *source_parent = nullptr;
     gboolean same_parent = FALSE;
     GtkTreeIter iter;
     Item *item;
@@ -1366,7 +1366,7 @@ move_row (FileList    *list,
             file_set_uri (FILE_ITEM (item), uri.get());
 
         file_list_row_data.set(FILE_ITEM (item)->doc, nullptr);
-        file_set_doc (FILE_ITEM (item), NULL);
+        file_set_doc (FILE_ITEM (item), nullptr);
     }
 
     if (gtk_tree_path_get_depth (source) > 1)
@@ -1382,7 +1382,7 @@ move_row (FileList    *list,
 
     if (same_parent)
     {
-        GtkTreeIter *piter = NULL;
+        GtkTreeIter *piter = nullptr;
         gboolean first_user = FALSE;
 
         if (parent)
@@ -1399,7 +1399,7 @@ move_row (FileList    *list,
         if (index >= gtk_tree_model_iter_n_children (GTK_TREE_MODEL (list), piter) || index < 0)
         {
             gtk_tree_model_get_iter (GTK_TREE_MODEL (list), &iter, source);
-            gtk_tree_store_move_before (GTK_TREE_STORE (list), &iter, NULL);
+            gtk_tree_store_move_before (GTK_TREE_STORE (list), &iter, nullptr);
         }
         else
         {
@@ -1411,7 +1411,7 @@ move_row (FileList    *list,
 
         if (first_user)
             gtk_tree_store_insert (GTK_TREE_STORE (list), &iter,
-                                   NULL, list->n_user_items);
+                                   nullptr, list->n_user_items);
     }
     else
     {
@@ -1444,7 +1444,7 @@ uri_is_directory (const char *uri)
     char *filename;
     gboolean retval = FALSE;
 
-    filename = g_filename_from_uri (uri, NULL, NULL);
+    filename = g_filename_from_uri (uri, nullptr, nullptr);
 
     if (filename)
         retval = g_file_test (filename, G_FILE_TEST_IS_DIR);
@@ -1496,9 +1496,9 @@ add_row_from_uri (FileList    *list,
                   int          index)
 {
     GtkTreeIter iter, dummy;
-    GtkTreeIter *piter = NULL;
+    GtkTreeIter *piter = nullptr;
 
-    g_return_val_if_fail (uri != NULL, FALSE);
+    g_return_val_if_fail (uri != nullptr, FALSE);
 
     if (parent)
     {
@@ -1521,10 +1521,10 @@ find_drop_destination (FileList     *list,
                        int          *index)
 {
     int n_children;
-    Group *parent_group = NULL;
+    Group *parent_group = nullptr;
     GtkTreeIter parent_iter;
 
-    *parent_path = NULL;
+    *parent_path = nullptr;
     *index = 0;
 
     if (gtk_tree_path_get_depth (dest) > 1)
@@ -1571,7 +1571,7 @@ find_drop_destination (FileList     *list,
         }
         else
         {
-            parent_group = NULL;
+            parent_group = nullptr;
             *index = gtk_tree_path_get_indices (parent)[0];
         }
 
@@ -1610,7 +1610,7 @@ drop_uris (FileList     *list,
            GtkTreePath  *dest,
            char        **uris)
 {
-    GtkTreePath *parent_path = NULL;
+    GtkTreePath *parent_path = nullptr;
     int index = 0;
 
     if (!find_drop_destination (list, dest, &parent_path, &index))
@@ -1638,7 +1638,7 @@ drop_tree_model_row (FileList    *list,
                      GtkTreePath *dest,
                      GtkTreePath *source)
 {
-    GtkTreePath *parent_path = NULL;
+    GtkTreePath *parent_path = nullptr;
     int index;
     gboolean retval;
 
@@ -1678,10 +1678,10 @@ drag_dest_drag_data_received (GtkTreeDragDest  *drag_dest,
 {
     if (selection_data->target == TREE_MODEL_ROW_ATOM)
     {
-        GtkTreePath *path = NULL;
+        GtkTreePath *path = nullptr;
         gboolean retval;
 
-        if (!gtk_tree_get_row_drag_data (selection_data, NULL, &path))
+        if (!gtk_tree_get_row_drag_data (selection_data, nullptr, &path))
             return FALSE;
 
         if ((retval = drop_tree_model_row (FILE_LIST (drag_dest), dest, path)))
@@ -1729,8 +1729,8 @@ _moo_str_semicase_compare (const char *string,
     gboolean has_upper;
     const char *p;
 
-    g_return_val_if_fail (string != NULL, FALSE);
-    g_return_val_if_fail (key != NULL, FALSE);
+    g_return_val_if_fail (string != nullptr, FALSE);
+    g_return_val_if_fail (key != nullptr, FALSE);
 
     for (p = key, has_upper = FALSE; *p && !has_upper; ++p)
         has_upper = g_ascii_isupper (*p);
@@ -1747,7 +1747,7 @@ row_separator_func (GtkTreeModel *model,
                     GtkTreeIter  *iter)
 {
     Item *item = get_item_at_iter (FILE_LIST (model), iter);
-    return item == NULL;
+    return item == nullptr;
 }
 
 static gboolean
@@ -1756,7 +1756,7 @@ tree_view_search_equal_func (GtkTreeModel *model,
                              const char   *key,
                              GtkTreeIter  *iter)
 {
-    const char *compare_with = NULL;
+    const char *compare_with = nullptr;
     Item *item;
 
     item = get_item_at_iter (FILE_LIST (model), iter);
@@ -1780,9 +1780,9 @@ pixbuf_data_func (G_GNUC_UNUSED GtkTreeViewColumn *column,
 {
     Item *item = get_item_at_iter (FILE_LIST (model), iter);
     if (ITEM_IS_GROUP (item))
-        g_object_set (cell, "stock-id", GTK_STOCK_DIRECTORY, NULL);
+        g_object_set (cell, "stock-id", GTK_STOCK_DIRECTORY, nullptr);
     else if (ITEM_IS_FILE (item))
-        g_object_set (cell, "stock-id", GTK_STOCK_FILE, NULL);
+        g_object_set (cell, "stock-id", GTK_STOCK_FILE, nullptr);
 }
 
 static void
@@ -1794,9 +1794,9 @@ text_data_func (G_GNUC_UNUSED GtkTreeViewColumn *column,
     Item *item = get_item_at_iter (FILE_LIST (model), iter);
 
     if (ITEM_IS_GROUP (item))
-        g_object_set (cell, "text", GROUP_ITEM (item)->name, NULL);
+        g_object_set (cell, "text", GROUP_ITEM (item)->name, nullptr);
     else if (ITEM_IS_FILE (item))
-        g_object_set (cell, "text", FILE_ITEM (item)->display_basename, NULL);
+        g_object_set (cell, "text", FILE_ITEM (item)->display_basename, nullptr);
 }
 
 static void
@@ -1809,10 +1809,10 @@ text_cell_edited (GtkCellRenderer *cell,
     Item *item;
     GtkTreePath *path;
 
-    g_object_set (cell, "editable", FALSE, NULL);
+    g_object_set (cell, "editable", FALSE, nullptr);
 
     path = gtk_tree_path_new_from_string (path_string);
-    g_return_if_fail (path != NULL);
+    g_return_if_fail (path != nullptr);
 
     gtk_tree_model_get_iter (GTK_TREE_MODEL (plugin->list), &iter, path);
     item = get_item_at_iter (plugin->list, &iter);
@@ -1827,14 +1827,14 @@ text_cell_edited (GtkCellRenderer *cell,
 static void
 text_cell_editing_canceled (GtkCellRenderer *cell)
 {
-    g_object_set (cell, "editable", FALSE, NULL);
+    g_object_set (cell, "editable", FALSE, nullptr);
 }
 
 static void
 start_edit (WindowPlugin *plugin,
             GtkTreePath  *path)
 {
-    g_object_set (plugin->text_cell, "editable", TRUE, NULL);
+    g_object_set (plugin->text_cell, "editable", TRUE, nullptr);
     gtk_tree_view_set_cursor_on_cell (plugin->treeview,
                                       path, plugin->column,
                                       plugin->text_cell,
@@ -1846,13 +1846,13 @@ get_selected_rows (WindowPlugin *plugin)
 {
     GtkTreeSelection *selection;
     selection = gtk_tree_view_get_selection (plugin->treeview);
-    return gtk_tree_selection_get_selected_rows (selection, NULL);
+    return gtk_tree_selection_get_selected_rows (selection, nullptr);
 }
 
 static void
 path_list_free (GList *paths)
 {
-    g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
+    g_list_foreach (paths, (GFunc) gtk_tree_path_free, nullptr);
     g_list_free (paths);
 }
 
@@ -1893,7 +1893,7 @@ add_group_activated (G_GNUC_UNUSED GtkWidget *menuitem,
     if (selected)
         path = (GtkTreePath*) g_list_last (selected)->data;
     else
-        path = NULL;
+        path = nullptr;
 
     new_path = file_list_add_group (plugin->list, path);
 
@@ -1937,7 +1937,7 @@ open_file (WindowPlugin *plugin,
     Item *item;
 
     item = get_item_at_path (plugin->list, path);
-    g_return_if_fail (item != NULL);
+    g_return_if_fail (item != nullptr);
 
     if (ITEM_IS_FILE (item))
     {
@@ -1950,7 +1950,7 @@ open_file (WindowPlugin *plugin,
         else
         {
             moo_editor_open_uri (moo_editor_instance (),
-                                 FILE_ITEM (item)->uri, NULL, -1,
+                                 FILE_ITEM (item)->uri, nullptr, -1,
                                  MOO_WIN_PLUGIN (plugin)->window);
         }
     }
@@ -1986,7 +1986,7 @@ open_activated (G_GNUC_UNUSED GtkWidget *menuitem,
 
     selected = get_selected_rows (plugin);
 
-    for (l = selected; l != NULL; l = l->next)
+    for (l = selected; l != nullptr; l = l->next)
         open_file (plugin, (GtkTreePath*) l->data);
 
     path_list_free (selected);
@@ -1997,7 +1997,7 @@ can_open (G_GNUC_UNUSED FileList *list,
           GList *paths)
 {
     /* XXX */
-    return paths != NULL;
+    return paths != nullptr;
 }
 
 static gboolean
@@ -2027,26 +2027,26 @@ popup_menu (WindowPlugin *plugin,
     GtkTreePath *single_path;
     Item *single_item;
 
-    single_path = (selected && !selected->next) ? (GtkTreePath*) selected->data : NULL;
-    single_item = single_path ? get_item_at_path (plugin->list, single_path) : NULL;
+    single_path = (selected && !selected->next) ? (GtkTreePath*) selected->data : nullptr;
+    single_item = single_path ? get_item_at_path (plugin->list, single_path) : nullptr;
 
     menu = gtk_menu_new ();
 
     if (can_open (plugin->list, selected))
     {
-        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_OPEN, NULL);
+        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_OPEN, nullptr);
         g_signal_connect (menuitem, "activate", G_CALLBACK (open_activated), plugin);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
     }
 
-    menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ADD, NULL);
+    menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_ADD, nullptr);
     gtk_label_set_text (GTK_LABEL (GTK_BIN (menuitem)->child), "Add Group");
     g_signal_connect (menuitem, "activate", G_CALLBACK (add_group_activated), plugin);
     gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
 
     if (selected)
     {
-        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_REMOVE, NULL);
+        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_REMOVE, nullptr);
         g_signal_connect (menuitem, "activate", G_CALLBACK (remove_activated), plugin);
         gtk_widget_set_sensitive (menuitem, can_remove (plugin->list, selected));
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
@@ -2054,14 +2054,14 @@ popup_menu (WindowPlugin *plugin,
 
     if (single_item && ITEM_IS_GROUP (single_item))
     {
-        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_EDIT, NULL);
+        menuitem = gtk_image_menu_item_new_from_stock (GTK_STOCK_EDIT, nullptr);
         gtk_label_set_text (GTK_LABEL (GTK_BIN (menuitem)->child), "Rename");
         g_signal_connect (menuitem, "activate", G_CALLBACK (rename_activated), plugin);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem);
     }
 
     gtk_widget_show_all (menu);
-    gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
+    gtk_menu_popup (GTK_MENU (menu), nullptr, nullptr, nullptr, nullptr, button, time);
 }
 
 static gboolean
@@ -2070,7 +2070,7 @@ treeview_button_press (GtkTreeView    *treeview,
                        WindowPlugin   *plugin)
 {
     GtkTreeSelection *selection;
-    GtkTreePath *path = NULL;
+    GtkTreePath *path = nullptr;
     GList *selected;
     int x, y;
 
@@ -2078,7 +2078,7 @@ treeview_button_press (GtkTreeView    *treeview,
         return FALSE;
 
     gtk_tree_view_get_path_at_pos (treeview, (int) event->x, (int) event->y,
-                                   &path, NULL, &x, &y);
+                                   &path, nullptr, &x, &y);
 
     selection = gtk_tree_view_get_selection (treeview);
 
@@ -2087,13 +2087,13 @@ treeview_button_press (GtkTreeView    *treeview,
     else if (!gtk_tree_selection_path_is_selected (selection, path))
         gtk_tree_view_set_cursor (treeview, path, plugin->column, FALSE);
 
-    selected = gtk_tree_selection_get_selected_rows (selection, NULL);
+    selected = gtk_tree_selection_get_selected_rows (selection, nullptr);
     popup_menu (plugin, selected, event->button, event->time);
 
     if (path)
         gtk_tree_path_free (path);
 
-    g_list_foreach (selected, (GFunc) gtk_tree_path_free, NULL);
+    g_list_foreach (selected, (GFunc) gtk_tree_path_free, nullptr);
     g_list_free (selected);
 
     return TRUE;
@@ -2106,7 +2106,7 @@ treeview_row_activated (WindowPlugin *plugin,
     Item *item;
 
     item = get_item_at_path (plugin->list, path);
-    g_return_if_fail (item != NULL);
+    g_return_if_fail (item != nullptr);
 
     if (ITEM_IS_FILE (item))
         open_file (plugin, path);
@@ -2126,10 +2126,10 @@ create_treeview (WindowPlugin *plugin)
     gtk_tree_view_set_headers_visible (plugin->treeview, FALSE);
     gtk_tree_view_set_row_separator_func (plugin->treeview,
                                           (GtkTreeViewRowSeparatorFunc) row_separator_func,
-                                          NULL, NULL);
+                                          nullptr, nullptr);
     gtk_tree_view_set_search_equal_func (plugin->treeview,
                                          (GtkTreeViewSearchEqualFunc) tree_view_search_equal_func,
-                                         NULL, NULL);
+                                         nullptr, nullptr);
     gtk_tree_view_set_tooltip_column (plugin->treeview, COLUMN_TOOLTIP);
 
     selection = gtk_tree_view_get_selection (plugin->treeview);
@@ -2163,13 +2163,13 @@ create_treeview (WindowPlugin *plugin)
     gtk_tree_view_column_pack_start (plugin->column, cell, FALSE);
     gtk_tree_view_column_set_cell_data_func (plugin->column, cell,
                                              (GtkTreeCellDataFunc) pixbuf_data_func,
-                                             NULL, NULL);
+                                             nullptr, nullptr);
 
     plugin->text_cell = gtk_cell_renderer_text_new ();
     gtk_tree_view_column_pack_start (plugin->column, plugin->text_cell, TRUE);
     gtk_tree_view_column_set_cell_data_func (plugin->column, plugin->text_cell,
                                              (GtkTreeCellDataFunc) text_data_func,
-                                             NULL, NULL);
+                                             nullptr, nullptr);
     g_signal_connect (plugin->text_cell, "edited",
                       G_CALLBACK (text_cell_edited), plugin);
     g_signal_connect (plugin->text_cell, "editing-canceled",
@@ -2179,7 +2179,7 @@ create_treeview (WindowPlugin *plugin)
 static void
 create_model (WindowPlugin *plugin)
 {
-    plugin->list = (FileList*) g_object_new (file_list_get_type (), (const char*) NULL);
+    plugin->list = (FileList*) g_object_new (file_list_get_type (), (const char*) nullptr);
     plugin->list->plugin = plugin;
 
     file_list_load_config (plugin->list, plugin->filename, &plugin->ui_config);
@@ -2218,7 +2218,7 @@ do_update (WindowPlugin *plugin)
 
     docs = moo_edit_window_get_docs (MOO_WIN_PLUGIN (plugin)->window);
 
-    for (i = 0, list = NULL; i < docs->n_elms; ++i)
+    for (i = 0, list = nullptr; i < docs->n_elms; ++i)
         list = g_slist_prepend (list, docs->elms[i]);
 
     list = g_slist_sort (list, (GCompareFunc) compare_docs_by_name);
@@ -2233,7 +2233,7 @@ do_update (WindowPlugin *plugin)
 static void
 window_plugin_queue_update (WindowPlugin *plugin)
 {
-    g_return_if_fail (plugin != NULL);
+    g_return_if_fail (plugin != nullptr);
 
     if (!plugin->update_idle)
         plugin->update_idle = g_idle_add ((GSourceFunc) do_update,
@@ -2250,7 +2250,7 @@ load_ui_config (WindowPlugin *plugin)
     {
         UIConfig *cfg = plugin->ui_config;
 
-        plugin->ui_config = NULL;
+        plugin->ui_config = nullptr;
 
         while (cfg->expanded_rows)
         {
@@ -2262,7 +2262,7 @@ load_ui_config (WindowPlugin *plugin)
         }
 
         if (cfg->selected_row)
-            gtk_tree_view_set_cursor (plugin->treeview, cfg->selected_row, NULL, FALSE);
+            gtk_tree_view_set_cursor (plugin->treeview, cfg->selected_row, nullptr, FALSE);
         else
             _moo_tree_view_select_first (plugin->treeview);
 
@@ -2316,7 +2316,7 @@ do_update_ui (WindowPlugin *plugin)
 static void
 window_plugin_queue_update_ui (WindowPlugin *plugin)
 {
-    g_return_if_fail (plugin != NULL);
+    g_return_if_fail (plugin != nullptr);
     if (!plugin->update_ui_idle)
         plugin->update_ui_idle = g_idle_add ((GSourceFunc) do_update_ui,
                                              plugin);
@@ -2339,14 +2339,14 @@ file_list_window_plugin_create (WindowPlugin *plugin)
     create_treeview (plugin);
     create_model (plugin);
 
-    scrolled_window = gtk_scrolled_window_new (NULL, NULL);
+    scrolled_window = gtk_scrolled_window_new (nullptr, nullptr);
     gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window),
                                     GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (plugin->treeview));
     gtk_widget_show_all (scrolled_window);
 
     label = moo_pane_label_new (GTK_STOCK_DIRECTORY,
-                                NULL, _("File List"),
+                                nullptr, _("File List"),
                                 _("File List"));
     moo_edit_window_add_pane (window,
                               FILE_LIST_PLUGIN_ID,
@@ -2355,7 +2355,7 @@ file_list_window_plugin_create (WindowPlugin *plugin)
     moo_pane_label_free (label);
 
     pane = moo_big_paned_find_pane (window->paned,
-                                    GTK_WIDGET (scrolled_window), NULL);
+                                    GTK_WIDGET (scrolled_window), nullptr);
     moo_pane_set_drag_dest (pane);
 
     plugin->first_time_show = TRUE;
@@ -2409,7 +2409,7 @@ MOO_PLUGIN_DEFINE_INFO (file_list,
                         MOO_VERSION)
 MOO_WIN_PLUGIN_DEFINE (FileList, file_list)
 MOO_PLUGIN_DEFINE (FileList, file_list,
-                   NULL, NULL, NULL, NULL, NULL,
+                   nullptr, nullptr, nullptr, nullptr, nullptr,
                    file_list_window_plugin_get_type (), 0)
 
 

@@ -36,13 +36,16 @@ G_BEGIN_DECLS
 
 typedef struct _MooCmdViewPrivate  MooCmdViewPrivate;
 
-struct MooCmdView : public MooLineView
+struct MooCmdView
 {
+    MooLineView parent;
     MooCmdViewPrivate *priv;
 };
 
-struct MooCmdViewClass : public MooLineViewClass
+struct MooCmdViewClass
 {
+    MooLineViewClass parent_class;
+
     void     (*job_started) (MooCmdView *view,
                              const char *job_name);
     void     (*job_finished)(MooCmdView *view);
