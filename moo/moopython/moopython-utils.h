@@ -67,7 +67,7 @@ void          moo_python_remove_path        (const char     *dir);
 #define return_Int(v)   return PyInt_FromLong (v)
 
 #ifdef __cplusplus
-const nullptr_t moo_nullptr = nullptr;
+const std::nullptr_t moo_nullptr = nullptr;
 #else
 #define moo_nullptr NULL
 #endif
