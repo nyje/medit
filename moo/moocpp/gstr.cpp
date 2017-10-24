@@ -20,7 +20,7 @@ gstr::gstr()
 {
 }
 
-gstr::gstr(nullptr_t)
+gstr::gstr(std::nullptr_t)
     : gstr()
 {
 }
@@ -112,7 +112,7 @@ bool gstr::operator==(const char* other) const
     return strcmp(get(), other ? other : "") == 0;
 }
 
-bool gstr::operator==(nullptr_t) const
+bool gstr::operator==(std::nullptr_t) const
 {
     return empty();
 }
