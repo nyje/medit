@@ -2,9 +2,11 @@
 * all.c -- Lua core, libraries and interpreter in a single file
 */
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wsign-compare"
 #pragma GCC diagnostic ignored "-Wmisleading-indentation"
+#endif
 
 #define luaall_c
 
