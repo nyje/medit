@@ -68,9 +68,9 @@ set(MEDIT_PORTABLE_MAGIC_FILE_NAME "medit-portable")
 set(MEDIT_PORTABLE_DATA_DIR "medit-portable-data")
 set(MEDIT_PORTABLE_CACHE_DIR "medit-portable-cache")
 
-set(MOO_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/${MOO_PACKAGE_NAME}")
-set(MOO_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib/${MOO_PACKAGE_NAME}")
-set(MOO_DOC_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/${MOO_PACKAGE_NAME}")
+set(MOO_DATA_DIR "share/${MOO_PACKAGE_NAME}")
+set(MOO_LIB_DIR "lib/${MOO_PACKAGE_NAME}")
+set(MOO_DOC_DIR "share/doc/${MOO_PACKAGE_NAME}")
 set(MOO_HELP_DIR "${MOO_DOC_DIR}/help")
 set(MOO_TEXT_LANG_FILES_DIR "${MOO_DATA_DIR}/language-specs")
 set(MOO_PYTHON_PLUGIN_DIR "${MOO_DATA_DIR}/plugins")
@@ -124,8 +124,8 @@ if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
 else()
 
     if(MOO_BUILD_FROM_MINGW)
-    set(MOO_GTK_DIR "C:/Projects/gtk/release/target" CACHE PATH "Gtk root dir")
-    set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
+		set(MOO_GTK_DIR "C:/Projects/gtk/release/target" CACHE PATH "Gtk root dir")
+		set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
 
         set(GTK_LIBRARIES libgtk-win32-2.0-0 libatk-1.0-0 libgdk-win32-2.0-0 libgdk_pixbuf-2.0-0
 		    libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
@@ -135,6 +135,7 @@ else()
     else()
 		set(MOO_GTK_DIR "C:/gtk-build/gtk/x64/release" CACHE PATH "Gtk root dir")
 		set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/x64/bdist" CACHE PATH "Gtk binary dir")
+		set(MOO_PYTHON_DIST_DIR "C:/projects/python-bdist" CACHE PATH "Python binary dir")
 
         set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0
             gthread-2.0 gtk-win32-2.0 iconv intl libffi libpng16 pango-1.0 pangocairo-1.0 pixman-1 zlib1)
@@ -228,5 +229,9 @@ add_subdirectory(moo)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config-cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 if(WIN32)
-    install(DIRECTORY plat/win32/medit-data/bin plat/win32/medit-data/etc DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(DIRECTORY plat/win32/medit-data/bin plat/win32/medit-data/etc DESTINATION .)
 endif(WIN32)
+
+if(WIN32)
+    include(plat/win32/installer.cmake)
+endif()
