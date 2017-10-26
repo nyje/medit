@@ -30,7 +30,7 @@ class gstr
 {
 public:
     gstr();
-    gstr(nullptr_t);
+    gstr(std::nullptr_t);
     explicit gstr(const char* s);
     gstr(char* s, bool);
     ~gstr();
@@ -52,7 +52,7 @@ public:
 
     bool operator==(const gstr& other) const;
     bool operator==(const char* other) const;
-    bool operator==(nullptr_t) const;
+    bool operator==(std::nullptr_t) const;
     
     template<typename T>
     bool operator!=(const T& other) const

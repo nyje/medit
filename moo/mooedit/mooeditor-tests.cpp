@@ -32,7 +32,7 @@ check_contents (const gstr& filename,
     if (!g_file_get_contents (filename.get(), &contents, NULL, &error))
     {
         TEST_FAILED_MSG ("could not load file '%s': %s",
-                         filename, error->message);
+                         filename.get(), error->message);
         g_error_free (error);
         return;
     }
@@ -223,7 +223,7 @@ test_suite_init (G_GNUC_UNUSED gpointer data)
     if (_moo_mkdir_with_parents (test_data.working_dir.get(), &err) != 0)
     {
         g_critical ("could not create directory '%s': %s",
-                    test_data.working_dir,
+                    test_data.working_dir.get(),
                     mgw_strerror (err));
         test_data.working_dir.clear();
         return FALSE;
@@ -242,7 +242,7 @@ test_suite_cleanup (G_GNUC_UNUSED gpointer data)
     if (!_moo_remove_dir (test_data.working_dir.get(), TRUE, &error))
     {
         g_critical ("could not remove directory '%s': %s",
-                    test_data.working_dir, error->message);
+                    test_data.working_dir.get(), error->message);
         g_error_free (error);
         error = NULL;
     }

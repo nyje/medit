@@ -86,7 +86,7 @@ public:
         return ObjectPtr(obj, ObjectMemPolicy::CopyReference);
     }
 
-    ObjectPtr& operator=(nullptr_t)
+    ObjectPtr& operator=(std::nullptr_t)
     {
         reset();
         return *this;
@@ -127,7 +127,7 @@ public:
         return m_p == nullptr;
     }
 
-    bool operator==(const nullptr_t&) const
+    bool operator==(const std::nullptr_t&) const
     {
         return m_p == nullptr;
     }

@@ -119,6 +119,7 @@ moo_sources +=				\
 	mooutils/mooutils-gobject-private.h \
 	mooutils/mooutils-gobject.cpp	\
 	mooutils/mooutils-gobject.h	\
+	mooutils/mooutils-gpp.h		\
 	mooutils/mooutils-macros.h	\
 	mooutils/mooutils-mem.h		\
 	mooutils/mooutils-messages.h	\
@@ -162,8 +163,8 @@ mooutils/mooutils-enums.c.stamp: $(moo_utils_enum_headers) Makefile mooutils/moo
 endif
 
 mooutils_win32_sources =		\
-	mooutils/mooutils-win32.c	\
-	mooutils/mooappinput-win32.c
+	mooutils/mooutils-win32.cpp	\
+	mooutils/mooappinput-win32.cpp
 
 mooutils_unix_sources =			\
 	mooutils/mooappinput-unix.c
