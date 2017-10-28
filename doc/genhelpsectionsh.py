@@ -8,6 +8,7 @@ import optparse
 op = optparse.OptionParser()
 op.add_option("--toc", action="store")
 op.add_option("--srcdir", action="store")
+op.add_option("--output", action="store")
 (opts, args) = op.parse_args()
 
 srcdir = opts.srcdir or '.'
@@ -62,10 +63,20 @@ for section in map_hsection_to_id:
 map_hsection_to_html['PREFS_PLUGINS'] = map_hsection_to_html['PREFS_DIALOG']
 map_hsection_to_html['PREFS_VIEW'] = map_hsection_to_html['PREFS_DIALOG']
 
-print '#ifndef MOO_HELP_SECTIONS_H'
-print '#define MOO_HELP_SECTIONS_H'
-print ''
-for section in sorted(map_hsection_to_html.keys()):
-    print '#define HELP_SECTION_%s "%s"' % (section, map_hsection_to_html[section])
-print ''
-print '#endif /* MOO_HELP_SECTIONS_H */'
+def write(out):
+    out.write('#ifndef MOO_HELP_SECTIONS_H\n')
+    out.write('#define MOO_HELP_SECTIONS_H\n')
+    out.write('\n')
+    for section in sorted(map_hsection_to_html.keys()):
+        out.write('#define HELP_SECTION_%s "%s"\n' % (section, map_hsection_to_html[section]))
+    out.write('\n')
+    out.write('#endif /* MOO_HELP_SECTIONS_H */\n')
+
+if opts.output:
+    with open(opts.output + '.tmp', 'w') as out:
+        write(out)
+    if os.path.exists(opts.output):
+        os.remove(opts.output)
+    os.rename(opts.output + '.tmp', opts.output)
+else:
+    write(sys.stdout)
