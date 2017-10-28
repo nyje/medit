@@ -1,0 +1,6 @@
+FILE(READ LINGUAS linguas_content)
+STRING(REGEX MATCHALL "[a-zA-Z_]+" langs "${linguas_content}")
+FOREACH(lang ${langs})
+    CONFIGURE_FILE(${lang}.po ${lang}.po COPYONLY)
+ENDFOREACH()
+GETTEXT_PROCESS_POT_FILE(${GETTEXT_PACKAGE}.pot ALL INSTALL_DESTINATION "share/locale" LANGUAGES ${langs})
