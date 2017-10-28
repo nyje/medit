@@ -1,3 +1,11 @@
+2017-10-28  Yevgen Muntyan  <emuntyan@users.sourceforge.net>
+
+    * === Released 1.2.90-devel ===
+
+    Add _Keywords key to the desktop file, patch by josgalo.
+    Updated French translation by Yannick Duchêne.
+    Ulrich Eckhardt's feature of automatic synchronization with files on disk.
+
 2014-03-20  Yevgen Muntyan  <emuntyan@users.sourceforge.net>
 
     * === Released 1.2.0 ===
