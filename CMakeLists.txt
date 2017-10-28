@@ -96,9 +96,8 @@ else()
 endif()
 
 set(MOO_BUILD_FROM_MSVC ${MOO_OS_WIN32} CACHE BOOL "Create a win32 build from MSVC gtk build")
-set(MOO_BUILD_FROM_MINGW FALSE CACHE BOOL "Create a win32 build from mingw gtk build")
 
-if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
+if(NOT MOO_BUILD_FROM_MSVC)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GTK REQUIRED gtk+-2.0)
     pkg_check_modules(GMODULE REQUIRED gmodule-2.0)
@@ -123,24 +122,13 @@ if(NOT MOO_BUILD_FROM_MINGW AND NOT MOO_BUILD_FROM_MSVC)
     pkg_check_modules(LIBXML2 REQUIRED libxml-2.0)
 else()
 
-    if(MOO_BUILD_FROM_MINGW)
-		set(MOO_GTK_DIR "C:/Projects/gtk/release/target" CACHE PATH "Gtk root dir")
-		set(MOO_GTK_DIST_DIR "C:/Projects/gtk/release/bdist" CACHE PATH "Gtk binary dir")
+	set(MOO_GTK_DIR "C:/gtk-build/gtk/x64/release" CACHE PATH "Gtk root dir")
+	set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/x64/bdist" CACHE PATH "Gtk binary dir")
+	set(MOO_PYTHON_DIST_DIR "C:/projects/python-bdist" CACHE PATH "Python binary dir")
 
-        set(GTK_LIBRARIES libgtk-win32-2.0-0 libatk-1.0-0 libgdk-win32-2.0-0 libgdk_pixbuf-2.0-0
-		    libpango-1.0-0 libpangocairo-1.0-0 libcairo-2
-		    libgio-2.0-0 libgobject-2.0-0 libgmodule-2.0-0 libgthread-2.0-0 libglib-2.0-0 libintl-8
-            libmooglib-0)
-        set(LIBXML2_LIBRARIES "libxml2-2")
-    else()
-		set(MOO_GTK_DIR "C:/gtk-build/gtk/x64/release" CACHE PATH "Gtk root dir")
-		set(MOO_GTK_DIST_DIR "C:/gtk-build/gtk/x64/bdist" CACHE PATH "Gtk binary dir")
-		set(MOO_PYTHON_DIST_DIR "C:/projects/python-bdist" CACHE PATH "Python binary dir")
-
-        set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0
-            gthread-2.0 gtk-win32-2.0 iconv intl libffi libpng16 pango-1.0 pangocairo-1.0 pixman-1 zlib1)
-        set(LIBXML2_LIBRARIES libxml2)
-    endif()
+    set(GTK_LIBRARIES atk-1.0 cairo gdk_pixbuf-2.0 gdk-win32-2.0 gio-2.0 glib-2.0 gmodule-2.0 gobject-2.0
+        gthread-2.0 gtk-win32-2.0 iconv intl libffi libpng16 pango-1.0 pangocairo-1.0 pixman-1 zlib1)
+    set(LIBXML2_LIBRARIES libxml2)
 
     #set(CMAKE_INSTALL_PREFIX ${MOO_GTK_DIR} CACHE PATH "CMake install prefix" FORCE)
 
@@ -190,8 +178,6 @@ endif()
 find_program(GLIB_GENMARSHAL glib-genmarshal HINTS ${MOO_GTK_DIR}/bin/glib-genmarshal.exe)
 find_program(GDK_PIXBUF_CSOURCE gdk-pixbuf-csource HINTS ${MOO_GTK_DIR}/bin/gdk-pixbuf-csource.exe)
 
-#find_library(LIBM m)
-
 set(PythonInterp_FIND_VERSION TRUE)
 set(PythonInterp_FIND_VERSION_MAJOR 2)
 find_package(PythonInterp REQUIRED)
@@ -200,8 +186,6 @@ set(MOO_PYTHON "${PYTHON_EXECUTABLE}")
 set(MOO_ENABLE_PYTHON TRUE CACHE BOOL "Use python")
 
 add_definitions(-DHAVE_CONFIG_H=1 -DXDG_PREFIX=_moo_edit_xdg "-DG_LOG_DOMAIN=\"Moo\"")
-#add_definitions(-DGDK_DISABLE_DEPRECATED=1)
-#add_definitions(-DGTK_DISABLE_DEPRECATED=1)
 
 if(WIN32)
     add_definitions(-DUNICODE=1 -D_UNICODE=1 -D__WIN32__=1 -DSTRICT=1 -D_CRT_SECURE_NO_WARNINGS=1 -D_CRT_NONSTDC_NO_WARNINGS=1)
@@ -211,7 +195,6 @@ if(WIN32)
     list(APPEND MEDIT_LIBS Shlwapi.lib)
 endif(WIN32)
 
-# zzz SUBDIRS = po po-gsv api doc moo
 add_subdirectory(api)
 
 add_subdirectory(doc)

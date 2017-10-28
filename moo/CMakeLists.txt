@@ -138,35 +138,17 @@ if(MOO_USE_PCH)
         SOURCE_CXX moo-pch.cpp)
 endif()
 
-if(MOO_BUILD_FROM_MINGW)
-    LIST(APPEND MEDIT_LIBS libmooglib-0)
-endif()
-
 target_link_libraries(medit
     ${GTK_LIBRARIES}
     ${GMODULE_LIBRARIES}
     ${LIBXML2_LIBRARIES}
     ${XLIB_LIBRARIES}
-    #${LIBM}
     ${PYTHON_LIBRARY}
     ${moo_libadd}
     ${MEDIT_LIBS}
 )
 
 install(TARGETS medit RUNTIME DESTINATION bin)
-
-if(MOO_BUILD_FROM_MINGW)
-    # xxx this is wrong, doing it temporarily so it doesn't install python lib every time
-    if(NOT EXISTS "${MOO_GTK_DIST_DIR}/bin/libglib-2.0-0.dll")
-		install(DIRECTORY ${MOO_GTK_DIST_DIR}/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
-		install(DIRECTORY ${MOO_GTK_DIST_DIR}/etc DESTINATION ${CMAKE_INSTALL_PREFIX})
-		install(DIRECTORY ${MOO_GTK_DIST_DIR}/lib DESTINATION ${CMAKE_INSTALL_PREFIX})
-		install(DIRECTORY ${MOO_GTK_DIST_DIR}/share DESTINATION ${CMAKE_INSTALL_PREFIX})
-    endif()
-
-    #install(DIRECTORY ${CMAKE_SOURCE_DIR}/plat/win32/gtk-win/extra/medit-data/bin DESTINATION ${CMAKE_INSTALL_PREFIX})
-    #install(DIRECTORY ${CMAKE_SOURCE_DIR}/plat/win32/gtk-win/extra/medit-data/etc DESTINATION ${CMAKE_INSTALL_PREFIX})
-endif()
 
 # zzz
 # if MOO_OS_UNIX
