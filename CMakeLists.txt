@@ -204,7 +204,7 @@ set(MOO_PYTHON "${PYTHON_EXECUTABLE}")
 
 set(MOO_ENABLE_PYTHON TRUE CACHE BOOL "Use python")
 
-add_definitions(-DHAVE_CONFIG_H=1 -DXDG_PREFIX=_moo_edit_xdg -DG_LOG_DOMAIN=\"Moo\")
+add_definitions(-DHAVE_CONFIG_H=1 -DXDG_PREFIX=_moo_edit_xdg "-DG_LOG_DOMAIN=\"Moo\"")
 #add_definitions(-DGDK_DISABLE_DEPRECATED=1)
 #add_definitions(-DGTK_DISABLE_DEPRECATED=1)
 
@@ -218,7 +218,10 @@ endif(WIN32)
 
 # zzz SUBDIRS = po po-gsv api doc moo
 add_subdirectory(api)
-# add_subdirectory(doc)
+
+add_subdirectory(doc)
+include_directories("${CMAKE_BINARY_DIR}/doc")
+add_definitions(-DMOO_ENABLE_HELP)
 
 #set(ENABLE_NLS TRUE)
 #add_subdirectory(po)

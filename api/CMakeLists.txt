@@ -294,11 +294,11 @@ SET(source_files
     ../moo/mooutils/moowin32/ms/unistd.h
     ../moo/mooutils/moowindow.c
     ../moo/mooutils/moowindow.h
-    ../moo/plugins/support/moocmdview.c
+    ../moo/plugins/support/moocmdview.cpp
     ../moo/plugins/support/moocmdview.h
     ../moo/plugins/support/mooeditwindowoutput.c
     ../moo/plugins/support/mooeditwindowoutput.h
-    ../moo/plugins/support/moolineview.c
+    ../moo/plugins/support/moolineview.cpp
     ../moo/plugins/support/moolineview.h
     ../moo/plugins/support/moooutputfilter.c
     ../moo/plugins/support/moooutputfilter.h
