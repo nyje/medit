@@ -192,11 +192,6 @@ find_program(GDK_PIXBUF_CSOURCE gdk-pixbuf-csource HINTS ${MOO_GTK_DIR}/bin/gdk-
 
 #find_library(LIBM m)
 
-find_package(Gettext REQUIRED)
-set(GETTEXT_PACKAGE "${MOO_PACKAGE_NAME}")
-set(GETTEXT_PACKAGE_GSV "${MOO_PACKAGE_NAME}-gsv")
-# MOO_INTL
-
 set(PythonInterp_FIND_VERSION TRUE)
 set(PythonInterp_FIND_VERSION_MAJOR 2)
 find_package(PythonInterp REQUIRED)
@@ -223,9 +218,17 @@ add_subdirectory(doc)
 include_directories("${CMAKE_BINARY_DIR}/doc")
 add_definitions(-DMOO_ENABLE_HELP)
 
-#set(ENABLE_NLS TRUE)
-#add_subdirectory(po)
-#add_subdirectory(po-gsv)
+set(ENABLE_NLS TRUE CACHE BOOL "Enable translations")
+if (ENABLE_NLS)
+	find_package(Gettext REQUIRED)
+	if(NOT GETTEXT_FOUND)
+		MESSAGE(FATAL_ERROR "gettext executable not found")
+	endif()
+	set(GETTEXT_PACKAGE "${MOO_PACKAGE_NAME}")
+	set(GETTEXT_PACKAGE_GSV "${MOO_PACKAGE_NAME}-gsv")
+	add_subdirectory(po)
+	add_subdirectory(po-gsv)
+endif()
 
 add_subdirectory(moo)
 
