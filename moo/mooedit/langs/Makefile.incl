@@ -128,7 +128,7 @@ lang_files =				\
 	mooedit/langs/xml.lang		\
 	mooedit/langs/xslt.lang		\
 	mooedit/langs/yacc.lang		\
-	mooedit/langs/yaml.lang	\
+	mooedit/langs/yaml.lang
 
 scheme_files =				\
 	mooedit/langs/kate.xml		\
@@ -138,7 +138,7 @@ scheme_files =				\
 	mooedit/langs/tango.xml		\
 	mooedit/langs/medit.xml		\
 	mooedit/langs/solarized-dark.xml	\
-	mooedit/langs/solarized-light.xml	\
+	mooedit/langs/solarized-light.xml
 
 langs_DATA =				\
 	$(lang_files)			\
