@@ -76,6 +76,8 @@ set(MOO_TEXT_LANG_FILES_DIR "${MOO_DATA_DIR}/language-specs")
 set(MOO_PYTHON_PLUGIN_DIR "${MOO_DATA_DIR}/plugins")
 set(MOO_PYTHON_LIB_DIR "${MOO_DATA_DIR}/python")
 
+set(MOO_INSTALL_EVERYTHING TRUE CACHE BOOL "Install gtk, python, langs, everything")
+
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
