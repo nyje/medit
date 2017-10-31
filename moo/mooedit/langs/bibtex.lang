@@ -16,12 +16,11 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="bibtex" _name="BibTeX" version="2.0" _section="Markup">
+<language id="bibtex" name="BibTeX" version="2.0" _section="Markup">
   <metadata>
     <property name="mimetypes">text/x-bibtex</property>
     <property name="globs">*.bib</property>
@@ -29,57 +28,84 @@
   </metadata>
 
   <styles>
-    <style id="entry-type" _name="Entries" map-to="def:keyword"/>
-    <style id="field"      _name="Field"   map-to="def:identifier"/>
+    <style id="entry-type" name="Entries" map-to="def:keyword"/>
+    <style id="field"      name="Field"   map-to="def:identifier"/>
+    <style id="string"     name="String"  map-to="def:string"/>
   </styles>
 
   <default-regex-options case-sensitive="false"/>
-  
+
   <definitions>
 
     <context id="entry-type" style-ref="entry-type" class="no-spell-check">
       <prefix>@</prefix>
 
-      <keyword>book</keyword>
       <keyword>article</keyword>
+      <keyword>book</keyword>
       <keyword>booklet</keyword>
       <keyword>conference</keyword>
       <keyword>inbook</keyword>
       <keyword>incollection</keyword>
       <keyword>inproceedings</keyword>
+      <keyword>lambda</keyword>
       <keyword>manual</keyword>
       <keyword>mastersthesis</keyword>
-      <keyword>lambda</keyword>
       <keyword>misc</keyword>
+      <keyword>online</keyword>
       <keyword>phdthesis</keyword>
       <keyword>proceedings</keyword>
+      <keyword>report</keyword>
       <keyword>techreport</keyword>
       <keyword>unpublished</keyword>
     </context>
 
     <context id="field" style-ref="field" class="no-spell-check">
+      <keyword>address</keyword>
       <keyword>author</keyword>
-      <keyword>title</keyword>
+      <keyword>booktitle</keyword>
+      <keyword>chapter</keyword>
+      <keyword>crossref</keyword>
+      <keyword>doi</keyword>
+      <keyword>edition</keyword>
+      <keyword>editor</keyword>
+      <keyword>eprint</keyword>
+      <keyword>eprinttype</keyword>
+      <keyword>howpublished</keyword>
+      <keyword>institution</keyword>
+      <keyword>isbn</keyword>
+      <keyword>issn</keyword>
       <keyword>journal</keyword>
-      <keyword>year</keyword>
-      <keyword>volume</keyword>
-      <keyword>number</keyword>
-      <keyword>pages</keyword>
+      <keyword>key</keyword>
+      <keyword>keywords</keyword>
+      <keyword>language</keyword>
+      <keyword>location</keyword>
       <keyword>month</keyword>
       <keyword>note</keyword>
-      <keyword>key</keyword>
-      <keyword>publisher</keyword>
-      <keyword>editor</keyword>
-      <keyword>series</keyword>
-      <keyword>address</keyword>
-      <keyword>edition</keyword>
-      <keyword>howpublished</keyword>
-      <keyword>booktitle</keyword>
+      <keyword>number</keyword>
+      <keyword>numpages</keyword>
       <keyword>organization</keyword>
-      <keyword>chapter</keyword>
+      <keyword>pages</keyword>
+      <keyword>publisher</keyword>
       <keyword>school</keyword>
-      <keyword>institution</keyword>
+      <keyword>series</keyword>
+      <keyword>subtitle</keyword>
+      <keyword>title</keyword>
       <keyword>type</keyword>
+      <keyword>url</keyword>
+      <keyword>urldate</keyword>
+      <keyword>volume</keyword>
+      <keyword>year</keyword>
+    </context>
+
+    <context id="string" class-disabled="no-spell-check">
+      <match extended="true">
+        =\s*(\{.*?\})|(".*?")
+      </match>
+
+      <include>
+        <context sub-pattern="1" style-ref="string" class="string"/>
+        <context sub-pattern="2" style-ref="string" class="string"/>
+      </include>
     </context>
 
     <context id="bibtex">
@@ -87,6 +113,7 @@
         <context ref="latex:latex"/>
         <context ref="entry-type"/>
         <context ref="field"/>
+        <context ref="string"/>
       </include>
     </context>
   </definitions>

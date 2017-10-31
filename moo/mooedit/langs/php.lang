@@ -6,55 +6,54 @@
  Author: Francesco Gigli <jaramir@aruba.it>
  Copyright (C) 2003 Francesco Gigli <jaramir@aruba.it>
  Copyright (C) 2004 David A Knight <david@ritter.demon.co.uk>
- Copyright (C) 2005 Rowan Lewis <rowanjl@gmail.com>
  Copyright (C) 2006 Steve Frécinaux <steve@istique.net>
  Copyright (C) 2007 Patryk Zawadzki <patrys@pld-linux.org>
  Copyright (C) 2007 Eric Norige <thelema@swbell.net>
  Copyright (C) 2012 Christopher Blay <chris.b.blay@gmail.com>
 
- This library is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
+ GtkSourceView is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful,
+ GtkSourceView is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="php" _name="PHP" version="2.0" _section="Scripts">
+<language id="php" name="PHP" version="2.0" _section="Script">
   <metadata>
     <property name="mimetypes">text/x-php;application/x-php;text/x-php-source;application/x-php-source</property>
     <property name="globs">*.php;*.php3;*.php4;*.phtml</property>
-    <property name="line-comment-start">#</property>
+    <property name="line-comment-start">//</property>
     <property name="block-comment-start">/*</property>
     <property name="block-comment-end">*/</property>
   </metadata>
 
   <styles>
-    <style id="comment" _name="Comment" map-to="def:comment"/>
-    <style id="error" _name="Error" map-to="def:error"/>
-    <style id="variable" _name="Variable" map-to="def:identifier"/>
-    <style id="identifier" _name="Identifier"/> <!-- map to nothing -->
-    <style id="escape" _name="Escaped Character" map-to="def:special-char"/>
-    <style id="string" _name="String" map-to="def:string"/>
-    <style id="here-doc" _name="Heredoc" map-to="def:string"/>
-    <style id="here-doc-bound" _name="Heredoc Bound" map-to="def:keyword"/>
-    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
-    <style id="common-function" _name="Common Function" map-to="def:keyword"/>
-    <style id="operator" _name="Operator" map-to="def:operator"/>
-    <style id="type" _name="Data Type" map-to="def:type"/>
-    <style id="null-value" _name="Null Value" map-to="def:special-constant"/>
-    <style id="boolean" _name="Boolean value" map-to="def:boolean"/>
-    <style id="floating-point" _name="Floating point number" map-to="def:floating-point"/>
-    <style id="decimal" _name="Decimal number" map-to="def:decimal"/>
-    <style id="octal" _name="Octal number" map-to="def:base-n-integer"/>
-    <style id="hexadecimal" _name="Hexadecimal number" map-to="def:base-n-integer"/>
+    <style id="preprocessor" name="Preprocessor tags" map-to="def:preprocessor"/>
+    <style id="comment" name="Comment" map-to="def:comment"/>
+    <style id="error" name="Error" map-to="def:error"/>
+    <style id="variable" name="Variable" map-to="def:identifier"/>
+    <style id="identifier" name="Identifier"/> <!-- map to nothing -->
+    <style id="escape" name="Escaped Character" map-to="def:special-char"/>
+    <style id="string" name="String" map-to="def:string"/>
+    <style id="here-doc" name="Heredoc" map-to="def:string"/>
+    <style id="here-doc-bound" name="Heredoc Bound" map-to="def:keyword"/>
+    <style id="keyword" name="Keyword" map-to="def:keyword"/>
+    <style id="common-function" name="Common Function" map-to="def:keyword"/>
+    <style id="operator" name="Operator" map-to="def:operator"/>
+    <style id="type" name="Data Type" map-to="def:type"/>
+    <style id="null-value" name="Null Value" map-to="def:special-constant"/>
+    <style id="boolean" name="Boolean value" map-to="def:boolean"/>
+    <style id="floating-point" name="Floating point number" map-to="def:floating-point"/>
+    <style id="decimal" name="Decimal number" map-to="def:decimal"/>
+    <style id="octal" name="Octal number" map-to="def:base-n-integer"/>
+    <style id="hexadecimal" name="Hexadecimal number" map-to="def:base-n-integer"/>
   </styles>
 
   <definitions>
@@ -325,8 +324,8 @@
       <start>&lt;([?](php)?)</start>
       <end>[?]&gt;</end>
       <include>
-        <context sub-pattern="0" where="start" style-ref="keyword"/>
-        <context sub-pattern="0" where="end" style-ref="keyword"/>
+        <context sub-pattern="0" where="start" style-ref="preprocessor"/>
+        <context sub-pattern="0" where="end" style-ref="preprocessor"/>
         <context ref="cpp-line-comment"/>
         <context ref="bash-line-comment"/>
         <context ref="c-block-comment"/>
@@ -346,7 +345,7 @@
         <context ref="decimal-number"/>
         <context ref="octal-number"/>
         <context ref="hexadecimal-number"/>
-	<context ref="identifier"/>
+        <context ref="identifier"/>
       </include>
     </context>
 

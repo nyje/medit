@@ -19,12 +19,11 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="js" _name="JavaScript" version="2.0" _section="Scripts">
+<language id="js" name="JavaScript" version="2.0" _section="Script">
   <metadata>
     <property name="mimetypes">application/javascript;application/x-javascript;text/x-javascript;text/javascript;text/x-js</property>
     <property name="globs">*.js;*.node</property>
@@ -34,24 +33,24 @@
   </metadata>
 
   <styles>
-    <style id="escape"          _name="Escaped Character"        map-to="def:special-char"/>
-    <style id="null-value"      _name="Null Value"               map-to="def:special-constant"/>
-    <style id="undefined-value" _name="Undefined Value"          map-to="def:special-constant"/>
-    <style id="boolean"         _name="Boolean Value"            map-to="def:boolean"/>
-    <style id="keyword"         _name="Keyword"                  map-to="def:keyword"/>
-    <style id="type"            _name="Data Type"                map-to="def:type"/>
-    <style id="function"        _name="Function"                 map-to="def:builtin"/>
-    <style id="properties"      _name="Properties"               map-to="def:statement"/>
-    <style id="constructors"    _name="Constructors"             map-to="def:type"/>
-    <style id="future-words"    _name="Future Reserved Keywords" map-to="def:error"/>
-    <style id="string"          _name="String"                   map-to="def:string"/>
-    <style id="regex"           _name="Regular Expression"       map-to="def:string"/>
+    <style id="escape"          name="Escaped Character"        map-to="def:special-char"/>
+    <style id="null-value"      name="Null Value"               map-to="def:special-constant"/>
+    <style id="undefined-value" name="Undefined Value"          map-to="def:special-constant"/>
+    <style id="boolean"         name="Boolean Value"            map-to="def:boolean"/>
+    <style id="keyword"         name="Keyword"                  map-to="def:keyword"/>
+    <style id="type"            name="Data Type"                map-to="def:type"/>
+    <style id="function"        name="Function"                 map-to="def:builtin"/>
+    <style id="properties"      name="Properties"               map-to="def:statement"/>
+    <style id="constructors"    name="Constructors"             map-to="def:type"/>
+    <style id="future-words"    name="Future Reserved Keywords" map-to="def:error"/>
+    <style id="string"          name="String"                   map-to="def:string"/>
+    <style id="regex"           name="Regular Expression"       map-to="def:string"/>
   </styles>
 
   <definitions>
 
     <!--regex-->
-    <define-regex id="regex-opts">[iomx]*[neus]?[iomx]*</define-regex>
+    <define-regex id="regex-opts">[gim]*</define-regex>
 
     <!--contexts NOT used in the main context-->
     <context id="escape" style-ref="escape">
@@ -73,7 +72,8 @@
           [^/]*
           \/
           \%{regex-opts}
-          ([),;.]|\s|$)
+          \s*
+          ([),;.\/\]:}]|$)
         )</start>
       <end>\/\%{regex-opts}</end>
       <include>
@@ -105,6 +105,8 @@
     </context>
 
     <context id="keywords" style-ref="keyword">
+      <keyword>async</keyword>
+      <keyword>await</keyword>
       <keyword>break</keyword>
       <keyword>case</keyword>
       <keyword>catch</keyword>
@@ -123,6 +125,7 @@
       <keyword>instanceof</keyword>
       <keyword>in</keyword>
       <keyword>new</keyword>
+      <keyword>of</keyword>
       <keyword>return</keyword>
       <keyword>switch</keyword>
       <keyword>this</keyword>
@@ -133,6 +136,10 @@
       <keyword>void</keyword>
       <keyword>while</keyword>
       <keyword>with</keyword>
+      <keyword>class</keyword>
+      <keyword>extends</keyword>
+      <keyword>super</keyword>
+      <keyword>static</keyword>
     </context>
 
     <context id="unofficial-keywords" style-ref="keyword">
@@ -293,10 +300,7 @@
     </context>
 
     <context id="future-words" style-ref="future-words">
-      <keyword>class</keyword>
       <keyword>enum</keyword>
-      <keyword>extends</keyword>
-      <keyword>super</keyword>
 
       <!-- in strict mode -->
       <keyword>implements</keyword>
@@ -305,7 +309,17 @@
       <keyword>private</keyword>
       <keyword>protected</keyword>
       <keyword>public</keyword>
-      <keyword>static</keyword>
+    </context>
+
+    <context id="template-string" style-ref="string">
+      <start>`</start>
+      <end>`</end>
+      <include>
+        <context id="template-expression" style-ref="function">
+          <start>\$\{</start>
+          <end>\}</end>
+        </context>
+      </include>
     </context>
 
     <!--main context-->
@@ -316,6 +330,7 @@
         <context ref="def:c-like-close-comment-outside-comment"/>
         <context ref="def:string" style-ref="string"/>
         <context ref="def:single-quoted-string" style-ref="string"/>
+        <context ref="template-string"/>
         <context ref="def:float"/>
         <context ref="def:decimal"/>
         <context ref="def:octal"/>

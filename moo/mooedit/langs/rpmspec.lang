@@ -16,12 +16,12 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="rpmspec" _name="RPM spec" version="2.0" _section="Others">
+<!-- Translators: do not translate "spec", it's the file extension. -->
+<language id="rpmspec" _name="RPM spec" version="2.0" _section="Other">
   <metadata>
     <property name="mimetypes">text/x-rpm-spec</property>
     <property name="globs">*.spec</property>
@@ -29,32 +29,32 @@
   </metadata>
 
   <styles>
-    <style id="define" _name="Define" map-to="def:preprocessor"/>
-    <style id="header" _name="Header" map-to="def:keyword"/>
-    <style id="section" _name="Section" map-to="def:type"/>
-    <style id="spec-macro" _name="Spec Macro" map-to="def:preprocessor"/>
-    <style id="directory-macro" _name="Directory Macro" map-to="def:identifier"/>
-    <style id="command-macro" _name="Command Macro" map-to="def:identifier"/>
-    <style id="conditional-macro" _name="Conditional Macro" map-to="def:preprocessor"/>
-    <style id="other-macro" _name="Other Macro" map-to="def:identifier"/>
-    <style id="flow-conditional" _name="Flow Conditional" map-to="def:preprocessor"/>
-    <style id="rpm-var" _name="RPM Variable" map-to="def:identifier"/>
-    <style id="switch" _name="Switch" map-to="def:operator"/>
-    <style id="changelog-date" _name="Date" map-to="changelog:date"/>
-    <style id="changelog-email" _name="Email" map-to="changelog:email"/>
+    <style id="define" name="Define" map-to="def:preprocessor"/>
+    <style id="header" name="Header" map-to="def:keyword"/>
+    <style id="section" name="Section" map-to="def:type"/>
+    <style id="spec-macro" name="Spec Macro" map-to="def:preprocessor"/>
+    <style id="directory-macro" name="Directory Macro" map-to="def:identifier"/>
+    <style id="command-macro" name="Command Macro" map-to="def:identifier"/>
+    <style id="conditional-macro" name="Conditional Macro" map-to="def:preprocessor"/>
+    <style id="other-macro" name="Other Macro" map-to="def:identifier"/>
+    <style id="flow-conditional" name="Flow Conditional" map-to="def:preprocessor"/>
+    <style id="rpm-var" name="RPM Variable" map-to="def:identifier"/>
+    <style id="switch" name="Switch" map-to="def:operator"/>
+    <style id="changelog-date" name="Date" map-to="changelog:date"/>
+    <style id="changelog-email" name="Email" map-to="changelog:email"/>
   </styles>
 
   <definitions>
 
     <context id="define" style-ref="define" end-at-line-end="true">
-      <start>%define</start>
+      <start>%(?:define|global)</start>
       <include>
         <context ref="def:line-continue" ignore-style="true"/>
       </include>
     </context>
 
     <context id="conditional-define" style-ref="define" end-at-line-end="true">
-      <start>%\{\!\?.*%define</start>
+      <start>%\{\!\?.*%(?:define|global)</start>
       <end>\}</end>
       <include>
         <context ref="def:line-continue" ignore-style="true"/>
@@ -69,6 +69,7 @@
       <keyword>[A-Za-z]+Req</keyword>
       <keyword>Build[A-Za-z]+</keyword>
       <keyword>Conflicts</keyword>
+      <keyword>Enhances</keyword>
       <keyword>Epoch</keyword>
       <keyword>Group</keyword>
       <keyword>Icon</keyword>
@@ -119,11 +120,15 @@
       <keyword>defattr</keyword>
       <keyword>docdir</keyword>
       <keyword>doc</keyword>
+      <keyword>license</keyword>
       <keyword>setup</keyword>
+      <keyword>autosetup</keyword>
       <keyword>config</keyword>
       <keyword>configure</keyword>
       <keyword>make</keyword>
       <keyword>makeinstall</keyword>
+      <keyword>make_install</keyword>
+      <keyword>make_build</keyword>
       <keyword>dir</keyword>
       <keyword>ghost</keyword>
       <keyword>patch[0-9]+</keyword>

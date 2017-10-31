@@ -12,31 +12,30 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  You should have received a copy of the GNU Lesser General Public License
+  along with this library; if not, see <http://www.gnu.org/licenses/>.
 -->
-<language id="gdb-log" _name="GDB Log" version="2.0" _section="Others">
+<language id="gdb-log" _name="GDB Log" version="2.0" _section="Other">
   <metadata>
     <property name="globs">*.gdb</property>
   </metadata>
 
   <styles>
-    <style id="thread-action" _name="Thread Action" map-to="def:comment"/>
-    <style id="thread-header" _name="Thread Header" map-to="def:statement"/>
-    <style id="frame-number" _name="Frame Number" map-to="def:keyword"/>
-    <style id="address" _name="Address" map-to="def:number"/>
-    <style id="function" _name="Function" map-to="def:function"/>
-    <style id="string" _name="String" map-to="def:string"/>
-    <style id="filename" _name="Filename" map-to="def:statement"/>
-    <style id="optimized-out" _name="Optimized Out" map-to="def:special-constant"/>
-    <style id="incomplete-sequence" _name="Incomplete Sequence" map-to="def:special-constant"/>
-    <style id="prompt" _name="Prompt" map-to="def:comment"/>
+    <style id="thread-action" name="Thread Action" map-to="def:comment"/>
+    <style id="thread-header" name="Thread Header" map-to="def:statement"/>
+    <style id="frame-number" name="Frame Number" map-to="def:keyword"/>
+    <style id="address" name="Address" map-to="def:number"/>
+    <style id="function" name="Function" map-to="def:function"/>
+    <style id="string" name="String" map-to="def:string"/>
+    <style id="filename" name="Filename" map-to="def:statement"/>
+    <style id="optimized-out" name="Optimized Out" map-to="def:special-constant"/>
+    <style id="incomplete-sequence" name="Incomplete Sequence" map-to="def:special-constant"/>
+    <style id="prompt" name="Prompt" map-to="def:comment"/>
   </styles>
 
   <definitions>
     <define-regex id="identifier">[A-Za-z_][A-Za-z0-9_]*(?:@@[A-Za-z0-9_\.]+)?</define-regex>
-    <define-regex id="filename">[A-Za-z0-9_/\-\.]+</define-regex>
+    <define-regex id="filename">.+?</define-regex>
 
     <!-- Either a decimal number (single to multi-digit, signed or unsigned) or a standard hexadecimal number -->
     <define-regex id="thread-number">(?:-?[1-9][0-9]*|\%{def:hexadecimal})</define-regex>

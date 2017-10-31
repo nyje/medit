@@ -16,18 +16,17 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
 <!--
 	D Language specification
 
 	Reference:
-		http://www.digitalmars.com/d/lex.html
+		http://dlang.org/type.html
 -->
-<language id="d" _name="D" version="2.0" _section="Sources">
+<language id="d" name="D" version="2.0" _section="Source">
   <metadata>
     <property name="mimetypes">text/x-dsrc</property>
     <property name="globs">*.d</property>
@@ -37,19 +36,19 @@
   </metadata>
 
   <styles>
-    <style id="comment" _name="Comment" map-to="def:comment"/>
-    <style id="error" _name="Error" map-to="def:error"/>
-    <style id="string" _name="String" map-to="def:string"/>
-    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
-    <style id="type" _name="Data Type" map-to="def:type"/>
-    <style id="special-token" _name="Special Token" map-to="def:preprocessor"/>
-    <style id="null-value" _name="Null Value" map-to="def:special-constant"/>
-    <style id="boolean" _name="Boolean" map-to="def:boolean"/>
-    <style id="floating-point" _name="Floating point number" map-to="def:floating-point"/>
-    <style id="decimal" _name="Decimal number" map-to="def:decimal"/>
-    <style id="binary" _name="Binary number" map-to="def:base-n-integer"/>
-    <style id="octal" _name="Octal number" map-to="def:base-n-integer"/>
-    <style id="hexadecimal" _name="Hexadecimal number" map-to="def:base-n-integer"/>
+    <style id="comment" name="Comment" map-to="def:comment"/>
+    <style id="error" name="Error" map-to="def:error"/>
+    <style id="string" name="String" map-to="def:string"/>
+    <style id="keyword" name="Keyword" map-to="def:keyword"/>
+    <style id="type" name="Data Type" map-to="def:type"/>
+    <style id="special-token" name="Special Token" map-to="def:preprocessor"/>
+    <style id="null-value" name="Null Value" map-to="def:special-constant"/>
+    <style id="boolean" name="Boolean" map-to="def:boolean"/>
+    <style id="floating-point" name="Floating point number" map-to="def:floating-point"/>
+    <style id="decimal" name="Decimal number" map-to="def:decimal"/>
+    <style id="binary" name="Binary number" map-to="def:base-n-integer"/>
+    <style id="octal" name="Octal number" map-to="def:base-n-integer"/>
+    <style id="hexadecimal" name="Hexadecimal number" map-to="def:base-n-integer"/>
   </styles>
 
   <definitions>
@@ -146,6 +145,7 @@
       <keyword>private</keyword>
       <keyword>protected</keyword>
       <keyword>public</keyword>
+      <keyword>ref</keyword>
       <keyword>return</keyword>
       <keyword>scope</keyword>
       <keyword>super</keyword>
@@ -160,6 +160,11 @@
       <keyword>version</keyword>
       <keyword>while</keyword>
       <keyword>with</keyword>
+
+      <!-- added in D2 -->
+      <keyword>lazy</keyword>
+      <keyword>pure</keyword>
+      <keyword>nothrow</keyword>
     </context>
 
     <context id="types" style-ref="type">
@@ -186,8 +191,10 @@
       <keyword>long</keyword>
       <keyword>module</keyword>
       <keyword>package</keyword>
+      <keyword>ptrdiff_t</keyword>
       <keyword>real</keyword>
       <keyword>short</keyword>
+      <keyword>size_t</keyword>
       <keyword>struct</keyword>
       <keyword>template</keyword>
       <keyword>typedef</keyword>
@@ -206,13 +213,27 @@
       <keyword>extern</keyword>
       <keyword>static</keyword>
       <keyword>volatile</keyword>
+
+      <!-- added in D2 -->
+      <keyword>__gshared</keyword>
+      <keyword>__traits</keyword>
+      <keyword>__vector</keyword>
+      <keyword>__parameters</keyword>
+      <keyword>shared</keyword>
+      <keyword>string</keyword>
+      <keyword>dstring</keyword>
+      <keyword>wstring</keyword>
+      <keyword>immutable</keyword>
     </context>
 
     <context id="special-tokens" style-ref="special-token">
       <keyword>#line</keyword>
-      <keyword>__FILE__</keyword>
-      <keyword>__LINE__</keyword>
       <keyword>__DATE__</keyword>
+      <keyword>__FILE__</keyword>
+      <keyword>__FUNCTION__</keyword>
+      <keyword>__LINE__</keyword>
+      <keyword>__MODULE__</keyword>
+      <keyword>__PRETTY_FUNCTION__</keyword>
       <keyword>__TIME__</keyword>
       <keyword>__TIMESTAMP__</keyword>
       <keyword>__VENDOR__</keyword>
