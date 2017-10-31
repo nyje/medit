@@ -129,21 +129,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/help/img/prefs-file-select
 	MAIN_DEPENDENCY img/prefs-file-selector.png
 )
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/help DESTINATION ${MOO_DOC_DIR})
-
-#EXTRA_DIST = help built/moo-help-sections.h built/medit.1
-
-#install-data-local:
-#	$(MKDIR_P) $(DESTDIR)$(MOO_HELP_DIR)/img $(DESTDIR)$(MOO_HELP_DIR)/script
-#	cd $(srcdir) && $(INSTALL_DATA) help/*.html help/*.css $(DESTDIR)$(MOO_HELP_DIR)
-#	cd $(srcdir) && $(INSTALL_DATA) help/script/*.html $(DESTDIR)$(MOO_HELP_DIR)/script
-#	cd $(srcdir) && $(INSTALL_DATA) help/img/*.png $(DESTDIR)$(MOO_HELP_DIR)/img
-
-#uninstall-local:
-#	rm -f $(DESTDIR)$(MOO_HELP_DIR)/*.html \
-#		$(DESTDIR)$(MOO_HELP_DIR)/*.css \
-#		$(DESTDIR)$(MOO_HELP_DIR)/script/*.html \
-#		$(DESTDIR)$(MOO_HELP_DIR)/img/*.png
+if(MOO_INSTALL_EVERYTHING)
+	install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/help DESTINATION ${MOO_DOC_DIR})
+endif()
 
 add_custom_target(docs ALL DEPENDS
 	${CMAKE_CURRENT_SOURCE_DIR}/help/help.html
