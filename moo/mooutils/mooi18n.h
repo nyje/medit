@@ -18,19 +18,46 @@
 #include <config.h>
 #include <mooglib/moo-glib.h>
 
+G_BEGIN_DECLS
+
+#define moo_dgettext(d,s) D_(d,s)
+
+const char *moo_gettext (const char *string) G_GNUC_FORMAT (1);
+const char *moo_pgettext (const char *msgctxtid, gsize msgidoffset) G_GNUC_FORMAT (1);
+const char *moo_pgettext2 (const char *context, const char *msgctxtid) G_GNUC_FORMAT (2);
+const char *moo_dpgettext (const char *domain, const char *msgctxtid, gsize msgidoffset) G_GNUC_FORMAT (2);
+const char *_moo_gsv_gettext (const char *string) G_GNUC_FORMAT (1);
+char *_moo_gsv_dgettext (const char *domain, const char *string) G_GNUC_FORMAT (2);
+
+G_END_DECLS
+
 #ifdef ENABLE_NLS
 
 #include <libintl.h>
 #include <string.h>
 
 #define _(String) moo_gettext (String)
-#define Q_(String) g_strip_context ((String), moo_gettext (String))
 #define N_(String) (String)
 #define D_(String,Domain) dgettext (Domain, String)
-#define QD_(String,Domain) g_strip_context ((String), D_ (String, Domain))
 #define C_(Context,String) moo_pgettext (Context "\004" String, strlen (Context) + 1)
 #define NC_(Context,String) (String)
 #define DC_(Context,String,Domain) moo_dpgettext (Domain, Context "\004" String, strlen (Context) + 1)
+
+ // On windows the following produces wrong results when there is no translation, because the
+ // arguments to g_strip_context() are two different character buffers (with identical contents),
+ // i.e. it generates and uses two different buffers for the same string literal. There is probably
+ // a compiler flag to avoid that duplication, but it's safer to just fix the macros instead.
+ //#define Q_(String) g_strip_context ((String), moo_gettext (String))
+inline static const char* Q_(const char* msgid)
+{
+	return g_strip_context(msgid, _(msgid));
+}
+
+//#define QD_(String,Domain) g_strip_context ((String), D_ (String, Domain))
+inline static const char* QD_(const char* msgid, const char* domain)
+{
+	return g_strip_context(msgid, D_(msgid, domain));
+}
 
 #else /* !ENABLE_NLS */
 
@@ -70,17 +97,3 @@ _moo_strip_context (const char* s)
 #define bind_textdomain_codeset(Domain,Codeset) (Codeset)
 
 #endif /* !ENABLE_NLS */
-
-
-G_BEGIN_DECLS
-
-#define moo_dgettext(d,s) D_(d,s)
-
-const char *moo_gettext (const char *string) G_GNUC_FORMAT (1);
-const char *moo_pgettext (const char *msgctxtid, gsize msgidoffset) G_GNUC_FORMAT (1);
-const char *moo_pgettext2 (const char *context, const char *msgctxtid) G_GNUC_FORMAT (2);
-const char *moo_dpgettext (const char *domain, const char *msgctxtid, gsize msgidoffset) G_GNUC_FORMAT (2);
-const char *_moo_gsv_gettext (const char *string) G_GNUC_FORMAT (1);
-char *_moo_gsv_dgettext (const char *domain, const char *string) G_GNUC_FORMAT (2);
-
-G_END_DECLS
