@@ -15,27 +15,55 @@
  Library General Public License for more details.
 
  You should have received a copy of the GNU Library General Public
- License along with this library; if not, write to the
- Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA 02111-1307, USA.
+ License along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="proto" name="Protobuf" version="2.0" _section="Others">
+<language id="proto" name="Protobuf" version="2.0" _section="Other">
   <metadata>
     <property name="mimetypes">text/x-protobuf</property>
     <property name="globs">*.proto</property>
     <property name="line-comment-start">//</property>
+    <property name="block-comment-start">/*</property>
+    <property name="block-comment-end">*/</property>
   </metadata>
 
   <styles>
-    <style id="variable" _name="Variable"      map-to="def:type"/>
-    <style id="type"     _name="Data Type"     map-to="def:type"/>
-    <style id="keyword"  _name="Keyword"       map-to="def:keyword"/>
-    <style id="boolean"  _name="Boolean value" map-to="def:boolean"/>
-    <style id="string"   _name="String"        map-to="def:string"/>
+    <style id="comment" name="Comment" map-to="def:comment"/>
+    <style id="statement" name="Statement" map-to="def:preprocessor"/>
+    <style id="variable" name="Variable" map-to="def:type"/>
+    <style id="type" name="Data Type" map-to="def:type"/>
+    <style id="keyword" name="Keyword" map-to="def:keyword"/>
+    <style id="boolean" name="Boolean value" map-to="def:boolean"/>
+    <style id="string" name="String" map-to="def:string"/>
   </styles>
 
   <definitions>
+
+    <context id="syntax">
+      <match>(syntax)\s+=\s+("proto2"|"proto3");</match>
+      <include>
+        <context sub-pattern="1" style-ref="statement"/>
+        <context sub-pattern="2" style-ref="string"/>
+      </include>
+    </context>
+
+    <context id="package">
+      <match>(package)\s+(.*);</match>
+      <include>
+        <context sub-pattern="1" style-ref="statement"/>
+        <context sub-pattern="2" style-ref="string"/>
+      </include>
+    </context>
+
+    <context id="import">
+      <match>(import)(\s+(weak|public))?\s+(".*");</match>
+      <include>
+        <context sub-pattern="1" style-ref="statement"/>
+        <context sub-pattern="2" style-ref="statement"/>
+        <context sub-pattern="4" style-ref="string"/>
+      </include>
+    </context>
+
     <context id="variable" style-ref="variable">
       <match>[$@%][$]?[a-zA-Z_][a-zA-Z0-9_]*</match>
     </context>
@@ -46,24 +74,23 @@
     </context>
 
     <context id="keywords" style-ref="keyword">
-      <keyword>message</keyword>
-      <keyword>enum</keyword>
-      <keyword>package</keyword>
-      <keyword>required</keyword>
-      <keyword>optional</keyword>
-      <keyword>repeated</keyword>
-      <keyword>import</keyword>
-      <keyword>extensions</keyword>
-      <keyword>to</keyword>
-      <keyword>extend</keyword>
-      <keyword>service</keyword>
-      <keyword>rpc</keyword>
-      <keyword>returns</keyword>
-      <keyword>option</keyword>
-
       <keyword>default</keyword>
-      <keyword>packed</keyword>
       <keyword>deprecated</keyword>
+      <keyword>enum</keyword>
+      <keyword>extend</keyword>
+      <keyword>extensions</keyword>
+      <keyword>message</keyword>
+      <keyword>oneof</keyword>
+      <keyword>optional</keyword>
+      <keyword>option</keyword>
+      <keyword>package</keyword>
+      <keyword>packed</keyword>
+      <keyword>repeated</keyword>
+      <keyword>required</keyword>
+      <keyword>returns</keyword>
+      <keyword>rpc</keyword>
+      <keyword>service</keyword>
+      <keyword>to</keyword>
     </context>
 
     <context id="types" style-ref="type">
@@ -91,7 +118,11 @@
 
     <context id="proto" class="no-spell-check">
       <include>
-        <context ref="def:c-like-comment"/>
+        <context ref="def:c-like-comment" style-ref="comment"/>
+        <context ref="def:c-like-comment-multiline" style-ref="comment"/>
+        <context ref="syntax"/>
+        <context ref="package"/>
+        <context ref="import"/>
         <context ref="variable"/>
         <context ref="string"/>
         <context ref="keywords"/>

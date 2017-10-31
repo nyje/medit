@@ -17,12 +17,11 @@
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ You should have received a copy of the GNU Lesser General Public License
+ along with this library; if not, see <http://www.gnu.org/licenses/>.
 
 -->
-<language id="c" _name="C" version="2.0" _section="Sources">
+<language id="c" name="C" version="2.0" _section="Source">
   <metadata>
     <property name="mimetypes">text/x-c;text/x-csrc;image/x-xpixmap</property>
     <property name="globs">*.c</property>
@@ -32,26 +31,26 @@
   </metadata>
 
   <styles>
-    <style id="comment"           _name="Comment"               map-to="def:comment"/>
-    <style id="string"            _name="String"                map-to="def:string"/>
-    <style id="preprocessor"      _name="Preprocessor"          map-to="def:preprocessor"/>
-    <style id="common-defines"    _name="Common Defines"        map-to="def:special-constant"/>
-    <style id="included-file"     _name="Included File"         map-to="def:string"/>
-    <style id="char"              _name="Character"             map-to="def:character"/>
-    <style id="keyword"           _name="Keyword"               map-to="def:keyword"/>
-    <style id="operator"          _name="Operator"              map-to="def:operator"/>
-    <style id="type"              _name="Data Type"             map-to="def:type"/>
-    <style id="storage-class"     _name="Storage Class"         map-to="def:type"/>
-    <style id="printf"            _name="printf Conversion"     map-to="def:special-char"/>
-    <style id="escaped-character" _name="Escaped Character"     map-to="def:special-char"/>
-    <style id="floating-point"    _name="Floating point number" map-to="def:floating-point"/>
-    <style id="decimal"           _name="Decimal number"        map-to="def:decimal"/>
-    <style id="octal"             _name="Octal number"          map-to="def:base-n-integer"/>
-    <style id="hexadecimal"       _name="Hexadecimal number"    map-to="def:base-n-integer"/>
-    <style id="boolean"           _name="Boolean value"         map-to="def:boolean"/>
-    <style id="standard-stream"   _name="Standard stream"       map-to="def:constant"/>
-    <style id="signal-name"       _name="Signal name"           map-to="def:constant"/>
-    <style id="error"             _name="Error"                 map-to="def:error"/>
+    <style id="comment"           name="Comment"               map-to="def:comment"/>
+    <style id="string"            name="String"                map-to="def:string"/>
+    <style id="preprocessor"      name="Preprocessor"          map-to="def:preprocessor"/>
+    <style id="common-defines"    name="Common Defines"        map-to="def:special-constant"/>
+    <style id="included-file"     name="Included File"         map-to="def:string"/>
+    <style id="char"              name="Character"             map-to="def:character"/>
+    <style id="keyword"           name="Keyword"               map-to="def:keyword"/>
+    <style id="operator"          name="Operator"              map-to="def:operator"/>
+    <style id="type"              name="Data Type"             map-to="def:type"/>
+    <style id="storage-class"     name="Storage Class"         map-to="def:type"/>
+    <style id="printf"            name="printf Conversion"     map-to="def:special-char"/>
+    <style id="escaped-character" name="Escaped Character"     map-to="def:special-char"/>
+    <style id="floating-point"    name="Floating point number" map-to="def:floating-point"/>
+    <style id="decimal"           name="Decimal number"        map-to="def:decimal"/>
+    <style id="octal"             name="Octal number"          map-to="def:base-n-integer"/>
+    <style id="hexadecimal"       name="Hexadecimal number"    map-to="def:base-n-integer"/>
+    <style id="boolean"           name="Boolean value"         map-to="def:boolean"/>
+    <style id="standard-stream"   name="Standard stream"       map-to="def:constant"/>
+    <style id="signal-name"       name="Signal name"           map-to="def:constant"/>
+    <style id="error"             name="Error"                 map-to="def:error"/>
   </styles>
 
   <definitions>
@@ -106,7 +105,7 @@
         (".*?"|&lt;.*&gt;)
       </match>
       <include>
-        <context id="included-file" sub-pattern="2" style-ref="included-file"/>
+        <context id="included-file" sub-pattern="2" style-ref="included-file" class="path"/>
       </include>
     </context>
 
@@ -136,7 +135,7 @@
       </include>
     </context>
 
-    <context id="char" style-ref="char">
+    <context id="char" style-ref="char" class="string">
       <match>L?'(\%{escaped-character}|.)'</match>
     </context>
 
@@ -213,7 +212,12 @@
     </context>
 
     <context id="operators" style-ref="operator">
+      <keyword>(_A|a)lignof</keyword>
+      <keyword>_Generic</keyword>
+      <keyword>offsetof</keyword>
+      <keyword>(_S|s)tatic_assert</keyword>
       <keyword>sizeof</keyword>
+      <keyword>typeof</keyword>
     </context>
 
     <context id="types" style-ref="type">
@@ -222,10 +226,13 @@
       <keyword>_Imaginary</keyword>
       <keyword>bool</keyword>
       <keyword>char</keyword>
+      <keyword>char(16|32)_t</keyword>
       <keyword>double</keyword>
       <keyword>float</keyword>
       <keyword>int</keyword>
-      <keyword>(u)?int(8|16|32|64)_t</keyword>
+      <keyword>(u)?int(_least|_fast)?(8|16|32|64)_t</keyword>
+      <keyword>(u)?intmax_t</keyword>
+      <keyword>(u)?intptr_t</keyword>
       <keyword>long</keyword>
       <keyword>ptrdiff_t</keyword>
       <keyword>off(64)?_t</keyword>
@@ -240,6 +247,10 @@
     </context>
 
     <context id="storage-class" style-ref="storage-class">
+      <keyword>(_A|a)lignas</keyword>
+      <keyword>_Atomic</keyword>
+      <keyword>(_N|n)oreturn</keyword>
+      <keyword>(_T|t)hread_local</keyword>
       <keyword>auto</keyword>
       <keyword>const</keyword>
       <keyword>extern</keyword>
@@ -303,9 +314,9 @@
     <context id="c" class="no-spell-check">
       <include>
         <context ref="gtk-doc:inline-docs-section"/>
-        <context ref="def:c-like-comment"/>
-        <context ref="def:c-like-comment-multiline"/>
-        <context ref="def:c-like-close-comment-outside-comment"/>
+        <context ref="def:c-like-comment" style-ref="comment"/>
+        <context ref="def:c-like-comment-multiline" style-ref="comment"/>
+        <context ref="def:c-like-close-comment-outside-comment" style-ref="comment"/>
         <context ref="if0-comment"/>
         <context ref="include"/>
         <context ref="preprocessor"/>
