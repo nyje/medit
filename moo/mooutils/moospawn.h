@@ -64,12 +64,6 @@ struct _MooCmdClass
                              const char *line);
 };
 
-#ifdef MOO_PATCHED_G_SPAWN_WIN32_HIDDEN_CONSOLE
-#define MOO_SPAWN_WIN32_HIDDEN_CONSOLE G_SPAWN_WIN32_HIDDEN_CONSOLE
-#else
-#define MOO_SPAWN_WIN32_HIDDEN_CONSOLE ((GSpawnFlags)0)
-#endif
-
 GType       _moo_cmd_get_type       (void) G_GNUC_CONST;
 
 MooCmd     *_moo_cmd_new            (const char *working_dir,
