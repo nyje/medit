@@ -120,7 +120,7 @@ cfunc__execute (lua_State *L)
     }
 
     if (!g_spawn_sync (NULL, argv, NULL,
-                       (GSpawnFlags) (G_SPAWN_SEARCH_PATH | MOO_SPAWN_WIN32_HIDDEN_CONSOLE),
+                       (GSpawnFlags) (G_SPAWN_SEARCH_PATH | G_SPAWN_WIN32_HIDDEN_CONSOLE),
                        NULL, NULL, NULL, NULL,
                        &exit_status, &error))
     {
