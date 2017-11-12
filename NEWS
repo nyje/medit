@@ -3,10 +3,10 @@
     * === Released 1.2.91-devel ===
 
     New lang files from gtksourceview.
-	Fixed translated labels on windows.
-	Fixed grep command on windows.
-	Fixed a bug where scrolling would never stop.
-	Open Containing Folder menu item for windows.
+    Fixed translated labels on windows.
+    Fixed grep command on windows.
+    Fixed a bug where scrolling would never stop.
+    Open Containing Folder menu item for windows.
 
 2017-10-28  Yevgen Muntyan  <emuntyan@users.sourceforge.net>
 
