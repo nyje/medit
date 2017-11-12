@@ -2130,15 +2130,28 @@ copy_full_path_activated (GtkWidget     *item,
 {
     MooEdit *doc = widget_doc.get(item);
     GtkClipboard *clipboard = gtk_widget_get_clipboard(item, GDK_SELECTION_CLIPBOARD);
-    gtk_clipboard_set_text(clipboard, moo_edit_get_filename(doc), -1);
+	char *filename = moo_edit_get_filename(doc);
+	gtk_clipboard_set_text(clipboard, filename, -1);
+	g_free(filename);
 }
 
+
+#ifdef __WIN32__
 
 static void
-open_containing_folder_activated (G_GNUC_UNUSED GtkWidget     *item,
+open_containing_folder_activated (GtkWidget     *item,
                                   G_GNUC_UNUSED MooEditWindow *window)
 {
+	MooEdit *doc = widget_doc.get(item);
+	char **argv = g_new0(char*, 4);
+	argv[0] = g_strdup("explorer");
+	argv[1] = g_strdup("/select,");
+	argv[2] = moo_edit_get_filename(doc);
+	g_spawn_async(nullptr, argv, nullptr, G_SPAWN_SEARCH_PATH, nullptr, nullptr, nullptr, nullptr);
+	g_strfreev(argv);
 }
+
+#endif // __WIN32__
 
 
 /****************************************************************************/
@@ -2313,11 +2326,13 @@ notebook_populate_popup (MooEditWindow      *window,
                       G_CALLBACK(copy_full_path_activated),
                       !moo_edit_is_untitled (doc));
 
+#ifdef __WIN32__
     /* Item in document tab context menu */
     add_tab_menu_item(C_("tab-context-menu", "Open Containing Folder"),
                       doc, window, menu, MOO_EDIT_TAB (child),
                       G_CALLBACK(open_containing_folder_activated),
                       !moo_edit_is_untitled(doc));
+#endif // __WIN32__
 
     if (moo_edit_window_get_n_tabs (window) > 1)
     {
