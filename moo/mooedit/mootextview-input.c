@@ -872,6 +872,8 @@ _moo_text_view_button_release_event (GtkWidget      *widget,
     MooTextView *view = MOO_TEXT_VIEW (widget);
     GtkTextIter iter;
 
+	stop_drag_scroll (view);
+
     switch (view->priv->dnd.type)
     {
         case MOO_TEXT_VIEW_DRAG_NONE:
@@ -884,7 +886,6 @@ _moo_text_view_button_release_event (GtkWidget      *widget,
         case MOO_TEXT_VIEW_DRAG_SELECT_LINES:
             /* everything should be done already in button_press and
              * motion_notify handlers */
-            stop_drag_scroll (view);
             break;
 
         case MOO_TEXT_VIEW_DRAG_DRAG:
